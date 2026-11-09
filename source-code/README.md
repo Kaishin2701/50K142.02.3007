@@ -56,3 +56,7 @@ npm run dev
 Open the local URL printed by Vite. Run `npm run build` from frontend/ to check TypeScript and create a production build.
 
 The Vite development server proxies `/api` to port 3000. Run the local server in a second terminal. See docs/deployment.md for Supabase, Render and SePay setup, and docs/frontend-design.md for design references and review limitations. Empty scaffold directories contain .gitkeep so Git can track them.
+
+## Shop menu data
+
+The photographed shop menu is available as an optional import: 160 item/size choices across 11 categories, with explicitly approved demo recipes and stock. No menu-management screen is added. See [docs/menu-data.md](docs/menu-data.md) for commands, omitted unreadable rows and the distinction between real menu prices and demo inventory. This import never runs automatically during startup or deployment.

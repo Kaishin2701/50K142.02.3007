@@ -10,6 +10,7 @@
     "start": "node dist/server.js",
     "migrate": "tsx scripts/migrate.ts",
     "seed": "tsx scripts/seed.ts",
+    "menu:import": "tsx scripts/import-menu.ts",
     "test": "tsx --test tests/*.test.ts"
   },
   "dependencies": {

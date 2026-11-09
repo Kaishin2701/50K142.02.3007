@@ -1,0 +1,83 @@
+{
+  "source": "Ảnh menu Mê Tea & More do người dùng cung cấp, 09/11/2026. Giá VND; công thức và tồn kho chỉ là dữ liệu demo được người dùng chấp thuận.",
+  "groups": [
+    {"category":"Cà phê","sizes":["S","M","L"],"items":[
+      ["Cà phê muối",20000,28000,35000],
+      ["Cà phê kem trứng",20000,28000,35000],
+      ["Cà phê sữa",15000,23000,30000],
+      ["Cà phê đen",14000,20000,26000],
+      ["Cà phê sữa gấu",null,null,32000],
+      ["Bạc xỉu",null,20000,26000],
+      ["Bạc xỉu muối",null,25000,30000],
+      ["Cà phê sữa Sài Gòn",null,20000,28000],
+      ["Cà phê đen Sài Gòn",null,20000,26000],
+      ["Cà phê sữa tươi đường đen",null,25000,30000],
+      ["Cà phê sữa tươi sương sáo",null,25000,30000],
+      ["Cà phê sữa dừa",null,27000,32000]
+    ]},
+    {"category":"Mê Soda","sizes":["L"],"items":[
+      ["Soda táo xanh",20000],["Soda dâu",20000],["Soda việt quất",20000],
+      ["Soda đào",20000],["Soda xoài",20000],["Soda nhiệt đới",25000],["Soda dâu tằm",25000]
+    ]},
+    {"category":"Trà sữa","sizes":["M","L"],"items":[
+      ["Trà sữa không topping",18000,23000],
+      ["Trà sữa trân châu trắng / đen",20000,25000],
+      ["Trà sữa bánh flan",25000,35000],
+      ["Trà sữa trân châu flan",30000,40000],
+      ["Trà sữa full thạch",30000,40000],
+      ["Trà sữa đặc biệt",35000,45000],
+      ["Trà sữa khúc bạch phô mai mặn",30000,40000],
+      ["Trà sữa kem trứng",25000,30000]
+    ]},
+    {"category":"Cam ép & Trà tắc","sizes":["L"],"items":[
+      ["Trà tắc",12000],["Trà tắc xí muội",15000],["Trà tắc cam xí muội",18000],
+      ["Trà tắc xí muội trân châu",20000],["Chanh xí muội",20000]
+    ]},
+    {"category":"Sữa tươi","sizes":["M","L"],"items":[
+      ["Sữa tươi trân châu đường đen",25000,30000],
+      ["Sữa tươi dâu",22000,28000],["Sữa tươi xoài",22000,28000],["Sữa tươi việt quất",22000,28000],
+      ["Sữa tươi kem trứng trân châu",27000,35000],["Sữa tươi cà phê sương sáo",25000,30000]
+    ]},
+    {"category":"Matcha","sizes":["M","L"],"items":[
+      ["Matcha latte",22000,27000],["Matcha kem muối",27000,32000],
+      ["Matcha kem trứng",27000,32000],["Matcha sữa dừa",29000,35000],
+      ["Matcha full topping",32000,40000],["Matcha kem flan",32000,37000],["Matcha sữa gấu",null,32000]
+    ]},
+    {"category":"Cacao","sizes":["M","L"],"items":[
+      ["Cacao latte",22000,27000],["Cacao kem muối",27000,32000],
+      ["Cacao kem trứng",27000,32000],["Cacao sữa dừa",29000,35000],
+      ["Cacao full topping",32000,40000],["Cacao kem flan",32000,37000],["Cacao sữa gấu",null,32000]
+    ]},
+    {"category":"Khoai môn","sizes":["M","L"],"items":[
+      ["Khoai môn latte",22000,27000],["Khoai môn kem muối",27000,32000],
+      ["Khoai môn kem trứng",27000,32000],["Khoai môn sữa dừa",29000,35000],
+      ["Khoai môn full topping",32000,40000],["Khoai môn kem flan",32000,37000],["Khoai môn sữa gấu",null,32000]
+    ]},
+    {"category":"Sữa chua","sizes":["M","L"],"items":[
+      ["Sữa chua đá",22000,30000],["Sữa chua dâu",null,30000],["Sữa chua xoài",null,30000],
+      ["Sữa chua việt quất",null,30000],["Sữa chua nha đam",null,30000],["Sữa chua đào",null,30000]
+    ]},
+    {"category":"Trà trái cây","sizes":["M","L"],"items":[
+      ["Trà trái cây nhiệt đới",22000,28000],["Trà xoài chanh dây",22000,28000],
+      ["Trà xoài nha đam",25000,30000],["Trà ổi hồng trân châu",22000,28000],
+      ["Trà ổi hồng nhiều ổi",25000,30000],["Trà mãng cầu",25000,30000],
+      ["Trà mãng cầu nha đam",30000,35000],["Trà mãng cầu hibicus",30000,38000],
+      ["Trà Hibicus (Atiso đỏ)",22000,28000],["Trà Hibicus nha đam",26000,32000],
+      ["Trà Hibicus trân châu",25000,30000],["Trà Hibicus cam đào",30000,35000],
+      ["Trà lựu đỏ hibicus",30000,35000],["Trà lựu đỏ mãng cầu",30000,38000],
+      ["Trà đào",22000,28000],["Trà đào trân châu",25000,30000],
+      ["Trà dâu tây",27000,32000],["Trà dâu tây mãng cầu",30000,40000]
+    ]},
+    {"category":"Topping","sizes":[null],"items":[
+      ["Trân châu trắng",7000],["Thạch dừa",8000],["Nha đam",8000],["Đào lát",10000],
+      ["Flan",10000],["Sương sáo",7000],["Thạch pudding",10000],["Thạch phô mai",12000],
+      ["Kem muối",10000],["Kem trứng",10000],["Khúc bạch phô mai mặn",12000]
+    ]}
+  ],
+  "pending": [
+    "Cam ép: giá bị che.",
+    "Dòng topping ngay sau Trân châu trắng: bị che/gạch bỏ.",
+    "Dòng trà trái cây sau Trà Hibicus cam đào: bị che/gạch bỏ.",
+    "Trà lựu đỏ thạch dừa và Trà lựu đỏ trân châu: cần xác nhận cột size/giá, chưa nhập."
+  ]
+}

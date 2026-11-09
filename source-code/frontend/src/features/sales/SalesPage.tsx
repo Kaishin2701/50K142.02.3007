@@ -21,6 +21,7 @@ const categories = [
   'Cà phê',
   'Mê Soda',
   'Trà sữa',
+  'Trà trái cây',
   'Cam ép & Trà tắc',
   'Sữa tươi',
   'Matcha',
