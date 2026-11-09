@@ -1,0 +1,20 @@
+import { Router } from 'express';
+import { z } from 'zod';
+import { shiftFields,shiftInput,availabilityInput,changeInput,type shiftsService } from './shifts.service.js';
+import { permit } from '../../middleware/auth.js';
+import { controller,param } from '../../shared/http.js';
+import { date,id } from '../../shared/validation.js';
+export function shiftsRoutes(service:ReturnType<typeof shiftsService>){const r=Router();
+ r.get('/',controller(async req=>{const v=z.object({from:date,to:date}).strict().parse(req.query);return service.calendar(req.actor!,v.from,v.to);}));
+ r.get('/co-workers',permit('Nhân viên'),controller(async req=>{const v=z.object({from:date,to:date}).strict().parse(req.query);return service.coWorkers(req.actor!,v.from,v.to);}));
+ r.post('/',permit('Quản lý'),controller(async req=>service.create(shiftInput.parse(req.body)),201));
+ r.get('/requests',controller(async req=>service.requests(req.actor!)));
+ r.post('/requests',permit('Nhân viên'),controller(async req=>service.request(req.actor!,changeInput.parse(req.body)),201));
+ r.post('/requests/:id/respond',permit('Nhân viên'),controller(async req=>service.respond(req.actor!,param(req),z.object({dong_y:z.boolean()}).strict().parse(req.body).dong_y)));
+ r.post('/requests/:id/decide',permit('Quản lý'),controller(async req=>service.decide(param(req),z.object({dong_y:z.boolean()}).strict().parse(req.body).dong_y)));
+ r.post('/availability',permit('Nhân viên'),controller(async req=>service.register(req.actor!,availabilityInput.parse(req.body)),201));
+ r.delete('/availability/:id',permit('Nhân viên'),controller(async req=>service.cancelRegistration(req.actor!,param(req))));
+ r.patch('/:id',permit('Quản lý'),controller(async req=>service.update(param(req),shiftFields.parse(req.body))));
+ r.get('/:id/candidates',permit('Quản lý'),controller(async req=>service.candidates(param(req))));
+ r.put('/:id/assignments',permit('Quản lý'),controller(async req=>service.assign(param(req),z.object({ma_nhan_vien:z.array(id).min(1).max(100).refine(v=>new Set(v).size===v.length)}).strict().parse(req.body).ma_nhan_vien)));
+ return r;}

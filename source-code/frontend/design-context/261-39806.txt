@@ -1,0 +1,588 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/a8342ea8-7816-482c-a4bb-e473af1ad7ad";
+const imgLogoImage = `${assetPathPrefix}/b4c0b.png`;
+const imgVector = `${assetPathPrefix}/ed483.svg`;
+const imgVector1 = `${assetPathPrefix}/97b10.svg`;
+const imgVector2 = `${assetPathPrefix}/daaae.svg`;
+const imgVector3 = `${assetPathPrefix}/8bfd0.svg`;
+const imgVector4 = `${assetPathPrefix}/5424e.svg`;
+const imgVector5 = `${assetPathPrefix}/bce45.svg`;
+const imgVector6 = `${assetPathPrefix}/be514.svg`;
+
+export default function Gd4221LchSNhpHangQunLy() {
+  return (
+    <div className="bg-[#faf5ed] relative size-full" data-node-id="261:39806" data-name="GD4.2-2-1 - Lịch sử nhập hàng - Quản lý">
+      <div className="absolute bg-[#ede0c8] h-[992px] left-[16px] overflow-clip rounded-[12px] top-[16px] w-[310px]" data-node-id="261:39807" data-name="Sidebar — Quản lý">
+        <div className="absolute left-[104.5px] rounded-[10px] size-[101px] top-[36px]" data-node-id="342:2149" data-name="Logo image">
+          <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[10px] size-full" src={imgLogoImage} />
+        </div>
+        <div className="absolute drop-shadow-[0px_4px_6px_rgba(198,125,83,0.25)] h-[41px] left-[18px] rounded-[12px] top-[160px] w-[274px]" data-node-id="342:2150" data-name="Rectangle" />
+        <div className="absolute inset-[17.52%_81.53%_81.05%_12.66%]" data-node-id="342:2151" data-name="Vector">
+          <div className="absolute inset-[-5.61%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[171.5px] w-[212px]" data-node-id="342:2152">
+          Tổng quan
+        </p>
+        <div className="absolute inset-[22.33%_81.56%_76.39%_12.76%]" data-node-id="342:2153" data-name="Vector">
+          <div className="absolute inset-[-6.32%_-4.55%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector1} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[218.5px] w-[192px]" data-node-id="342:2154">
+          Quản lý đơn hàng
+        </p>
+        <div className="absolute inset-[22.58%_12.66%_76.71%_86.21%]" data-node-id="342:2155" data-name="Vector">
+          <div className="absolute inset-[-11.43%_-32.32%_-11.43%_-22.86%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector2} />
+          </div>
+        </div>
+        <div className="absolute bg-[#c67d53] h-[41px] left-[18px] rounded-[12px] shadow-[0px_4px_12px_0px_rgba(198,125,83,0.25)] top-[254px] w-[274px]" data-node-id="342:2157" data-name="Rectangle" />
+        <div className="absolute inset-[26.92%_81.53%_71.49%_12.66%]" data-node-id="342:2158" data-name="Vector">
+          <div className="absolute inset-[-5.05%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector3} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[14px] text-white top-[265.5px] w-[192px]" data-node-id="342:2159">
+          Kho
+        </p>
+        <div className="absolute inset-[27.49%_12.1%_72.15%_85.65%]" data-node-id="342:2160" data-name="Vector">
+          <div className="absolute inset-[-22.86%_-11.43%_-32.32%_-11.43%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector4} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[74px] text-[#4a3525] text-[13px] top-[309px] w-[202px]" data-node-id="342:2161">
+          Tổng hợp tồn kho
+        </p>
+        <div className="absolute bg-[#fcf7f0] h-[32px] left-[18px] rounded-[10px] top-[339px] w-[274px]" data-node-id="342:2162" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[74px] text-[#4a3525] text-[13px] top-[347px] w-[202px]" data-node-id="342:2163">
+          Lịch sử nhập hàng
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[74px] text-[#4a3525] text-[13px] top-[385px] w-[202px]" data-node-id="342:2164">
+          Lịch sử hao hụt
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[74px] text-[#4a3525] text-[13px] top-[423px] w-[202px]" data-node-id="342:2165">
+          Duyệt báo cáo cuối ca
+        </p>
+        <div className="absolute inset-[47.05%_81.13%_51.51%_12.42%]" data-node-id="342:2166" data-name="Vector">
+          <div className="absolute inset-[-5.61%_-4%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector5} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[464.5px] w-[212px]" data-node-id="342:2167">
+          Quản lý tài khoản
+        </p>
+        <div className="absolute inset-[51.71%_81.53%_46.69%_12.66%]" data-node-id="342:2168" data-name="Vector">
+          <div className="absolute inset-[-5.05%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector6} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[511.5px] w-[212px]" data-node-id="342:2169">
+          Quản lý ca
+        </p>
+        <div className="absolute bg-[#f7f1e6] border border-[#d8c7aa] border-solid h-[60px] left-[18px] rounded-[12px] top-[853px] w-[274px]" data-node-id="342:2170" data-name="Rectangle" />
+        <div className="absolute bg-[#c67d53] left-[30px] rounded-[20px] size-[40px] top-[863px]" data-node-id="342:2171" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[35.5px] text-[14px] text-white top-[874px] whitespace-nowrap" data-node-id="342:2172">
+          THN
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[82px] text-[#1f140e] text-[14px] top-[865.5px] whitespace-nowrap" data-node-id="342:2173">
+          Trần Hoàng Nam
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[82px] text-[#4a3525] text-[12px] top-[885.5px] whitespace-nowrap" data-node-id="342:2174">
+          Quản lý
+        </p>
+        <div className="absolute border-[#d8c7aa] border-solid border-t h-[55px] left-[18px] top-[913px] w-[274px]" data-node-id="342:2175" data-name="Rectangle" />
+        <div className="absolute bg-[rgba(92,48,24,0.08)] h-[42px] left-[18px] rounded-[12px] top-[926px] w-[274px]" data-node-id="342:2176" data-name="Rectangle" />
+        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold justify-center leading-[0] left-[34px] text-[#7a2e1d] text-[15px] top-[946.5px] whitespace-nowrap" data-node-id="342:2177">
+          <p className="leading-[normal]">↪</p>
+        </div>
+        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold justify-center leading-[0] left-[58px] text-[#7a2e1d] text-[14px] top-[947px] w-[218px]" data-node-id="342:2178">
+          <p className="leading-[normal]">Đăng xuất</p>
+        </div>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[37px] leading-[normal] left-[362px] text-[#1f140e] text-[28px] top-[45px] w-[1040px]" data-node-id="261:39858">
+        Lịch sử nhập hàng
+      </p>
+      <div className="absolute bg-white border border-[#e5d6c4] border-solid h-[800px] left-[362px] rounded-[14px] top-[112px] w-[1054px]" data-node-id="261:39859" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[386px] text-[#1f140e] text-[18px] top-[132px] w-[960px]" data-node-id="261:39860">
+        Lịch sử nhập hàng
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[170px] w-[1006px]" data-node-id="261:39861" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[386px] text-[#7d6657] text-[11px] top-[185px] w-[40px]" data-node-id="261:39862">
+        STT
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[430px] text-[#7d6657] text-[11px] top-[185px] w-[165px]" data-node-id="261:39863">
+        Mã PO
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[602px] text-[#7d6657] text-[11px] top-[185px] w-[110px]" data-node-id="261:39864">
+        Ngày nhập
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[720px] text-[#7d6657] text-[11px] top-[185px] w-[170px]" data-node-id="261:39865">
+        Nhà cung cấp
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[900px] text-[#7d6657] text-[11px] top-[185px] w-[130px]" data-node-id="261:39866">
+        Tổng tiền
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1040px] text-[#7d6657] text-[11px] top-[185px] w-[145px]" data-node-id="261:39867">
+        Trạng thái thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1195px] text-[#7d6657] text-[11px] top-[185px] w-[160px]" data-node-id="261:39868">
+        Hình thức thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[220px] w-[40px]" data-node-id="261:39869">
+        1
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[220px] w-[165px]" data-node-id="261:39870">
+        PO20261105-02
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[220px] w-[110px]" data-node-id="261:39871">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[220px] w-[170px]" data-node-id="261:39872">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[220px] w-[130px]" data-node-id="261:39873">
+        2.180.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[220px] w-[145px]" data-node-id="261:39874">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[220px] w-[160px]" data-node-id="261:39875">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[243px] w-[1006px]" data-node-id="261:39876" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[249px] w-[40px]" data-node-id="261:39877">
+        2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[249px] w-[165px]" data-node-id="261:39878">
+        PO20261105-01
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[249px] w-[110px]" data-node-id="261:39879">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[249px] w-[170px]" data-node-id="261:39880">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[249px] w-[130px]" data-node-id="261:39881">
+        740.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#ab4a36] text-[11px] top-[249px] w-[145px]" data-node-id="261:39882">
+        Công nợ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[249px] w-[160px]" data-node-id="261:39883">
+        Chưa có
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[272px] w-[1006px]" data-node-id="261:39884" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[278px] w-[40px]" data-node-id="261:39885">
+        3
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[278px] w-[165px]" data-node-id="261:39886">
+        PO20261105-27
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[278px] w-[110px]" data-node-id="261:39887">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[278px] w-[170px]" data-node-id="261:39888">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[278px] w-[130px]" data-node-id="261:39889">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[278px] w-[145px]" data-node-id="261:39890">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[278px] w-[160px]" data-node-id="261:39891">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[301px] w-[1006px]" data-node-id="261:39892" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[307px] w-[40px]" data-node-id="261:39893">
+        4
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[307px] w-[165px]" data-node-id="261:39894">
+        PO20261105-26
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[307px] w-[110px]" data-node-id="261:39895">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[307px] w-[170px]" data-node-id="261:39896">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[307px] w-[130px]" data-node-id="261:39897">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#ab4a36] text-[11px] top-[307px] w-[145px]" data-node-id="261:39898">
+        Công nợ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[307px] w-[160px]" data-node-id="261:39899">
+        Chưa có
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[330px] w-[1006px]" data-node-id="261:39900" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[336px] w-[40px]" data-node-id="261:39901">
+        5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[336px] w-[165px]" data-node-id="261:39902">
+        PO20261105-25
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[336px] w-[110px]" data-node-id="261:39903">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[336px] w-[170px]" data-node-id="261:39904">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[336px] w-[130px]" data-node-id="261:39905">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[336px] w-[145px]" data-node-id="261:39906">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[336px] w-[160px]" data-node-id="261:39907">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[359px] w-[1006px]" data-node-id="261:39908" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[365px] w-[40px]" data-node-id="261:39909">
+        6
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[365px] w-[165px]" data-node-id="261:39910">
+        PO20261105-24
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[365px] w-[110px]" data-node-id="261:39911">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[365px] w-[170px]" data-node-id="261:39912">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[365px] w-[130px]" data-node-id="261:39913">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[365px] w-[145px]" data-node-id="261:39914">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[365px] w-[160px]" data-node-id="261:39915">
+        Tiền mặt
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[388px] w-[1006px]" data-node-id="261:39916" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[394px] w-[40px]" data-node-id="261:39917">
+        7
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[394px] w-[165px]" data-node-id="261:39918">
+        PO20261105-23
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[394px] w-[110px]" data-node-id="261:39919">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[394px] w-[170px]" data-node-id="261:39920">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[394px] w-[130px]" data-node-id="261:39921">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[394px] w-[145px]" data-node-id="261:39922">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[394px] w-[160px]" data-node-id="261:39923">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[417px] w-[1006px]" data-node-id="261:39924" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[423px] w-[40px]" data-node-id="261:39925">
+        8
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[423px] w-[165px]" data-node-id="261:39926">
+        PO20261105-22
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[423px] w-[110px]" data-node-id="261:39927">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[423px] w-[170px]" data-node-id="261:39928">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[423px] w-[130px]" data-node-id="261:39929">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#ab4a36] text-[11px] top-[423px] w-[145px]" data-node-id="261:39930">
+        Công nợ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[423px] w-[160px]" data-node-id="261:39931">
+        Chưa có
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[446px] w-[1006px]" data-node-id="261:39932" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[452px] w-[40px]" data-node-id="261:39933">
+        9
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[452px] w-[165px]" data-node-id="261:39934">
+        PO20261105-21
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[452px] w-[110px]" data-node-id="261:39935">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[452px] w-[170px]" data-node-id="261:39936">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[452px] w-[130px]" data-node-id="261:39937">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[452px] w-[145px]" data-node-id="261:39938">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[452px] w-[160px]" data-node-id="261:39939">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[475px] w-[1006px]" data-node-id="261:39940" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[481px] w-[40px]" data-node-id="261:39941">
+        10
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[481px] w-[165px]" data-node-id="261:39942">
+        PO20261105-20
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[481px] w-[110px]" data-node-id="261:39943">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[481px] w-[170px]" data-node-id="261:39944">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[481px] w-[130px]" data-node-id="261:39945">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[481px] w-[145px]" data-node-id="261:39946">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[481px] w-[160px]" data-node-id="261:39947">
+        Tiền mặt
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[504px] w-[1006px]" data-node-id="261:39948" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[510px] w-[40px]" data-node-id="261:39949">
+        11
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[510px] w-[165px]" data-node-id="261:39950">
+        PO20261104-19
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[510px] w-[110px]" data-node-id="261:39951">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[510px] w-[170px]" data-node-id="261:39952">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[510px] w-[130px]" data-node-id="261:39953">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[510px] w-[145px]" data-node-id="261:39954">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[510px] w-[160px]" data-node-id="261:39955">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[533px] w-[1006px]" data-node-id="261:39956" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[539px] w-[40px]" data-node-id="261:39957">
+        12
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[539px] w-[165px]" data-node-id="261:39958">
+        PO20261104-18
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[539px] w-[110px]" data-node-id="261:39959">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[539px] w-[170px]" data-node-id="261:39960">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[539px] w-[130px]" data-node-id="261:39961">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#ab4a36] text-[11px] top-[539px] w-[145px]" data-node-id="261:39962">
+        Công nợ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[539px] w-[160px]" data-node-id="261:39963">
+        Chưa có
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[562px] w-[1006px]" data-node-id="261:39964" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[568px] w-[40px]" data-node-id="261:39965">
+        13
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[568px] w-[165px]" data-node-id="261:39966">
+        PO20261104-17
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[568px] w-[110px]" data-node-id="261:39967">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[568px] w-[170px]" data-node-id="261:39968">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[568px] w-[130px]" data-node-id="261:39969">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[568px] w-[145px]" data-node-id="261:39970">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[568px] w-[160px]" data-node-id="261:39971">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[591px] w-[1006px]" data-node-id="261:39972" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[597px] w-[40px]" data-node-id="261:39973">
+        14
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[597px] w-[165px]" data-node-id="261:39974">
+        PO20261104-16
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[597px] w-[110px]" data-node-id="261:39975">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[597px] w-[170px]" data-node-id="261:39976">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[597px] w-[130px]" data-node-id="261:39977">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[597px] w-[145px]" data-node-id="261:39978">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[597px] w-[160px]" data-node-id="261:39979">
+        Tiền mặt
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[620px] w-[1006px]" data-node-id="261:39980" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[626px] w-[40px]" data-node-id="261:39981">
+        15
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[626px] w-[165px]" data-node-id="261:39982">
+        PO20261104-15
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[626px] w-[110px]" data-node-id="261:39983">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[626px] w-[170px]" data-node-id="261:39984">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[626px] w-[130px]" data-node-id="261:39985">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[626px] w-[145px]" data-node-id="261:39986">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[626px] w-[160px]" data-node-id="261:39987">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[649px] w-[1006px]" data-node-id="261:39988" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[655px] w-[40px]" data-node-id="261:39989">
+        16
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[655px] w-[165px]" data-node-id="261:39990">
+        PO20261104-14
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[655px] w-[110px]" data-node-id="261:39991">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[655px] w-[170px]" data-node-id="261:39992">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[655px] w-[130px]" data-node-id="261:39993">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#ab4a36] text-[11px] top-[655px] w-[145px]" data-node-id="261:39994">
+        Công nợ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[655px] w-[160px]" data-node-id="261:39995">
+        Chưa có
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[678px] w-[1006px]" data-node-id="261:39996" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[684px] w-[40px]" data-node-id="261:39997">
+        17
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[684px] w-[165px]" data-node-id="261:39998">
+        PO20261104-13
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[684px] w-[110px]" data-node-id="261:39999">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[684px] w-[170px]" data-node-id="261:40000">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[684px] w-[130px]" data-node-id="261:40001">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[684px] w-[145px]" data-node-id="261:40002">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[684px] w-[160px]" data-node-id="261:40003">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[707px] w-[1006px]" data-node-id="261:40004" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[713px] w-[40px]" data-node-id="261:40005">
+        18
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[713px] w-[165px]" data-node-id="261:40006">
+        PO20261104-12
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[713px] w-[110px]" data-node-id="261:40007">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[713px] w-[170px]" data-node-id="261:40008">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[713px] w-[130px]" data-node-id="261:40009">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[713px] w-[145px]" data-node-id="261:40010">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[713px] w-[160px]" data-node-id="261:40011">
+        Tiền mặt
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[736px] w-[1006px]" data-node-id="261:40012" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[742px] w-[40px]" data-node-id="261:40013">
+        19
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[742px] w-[165px]" data-node-id="261:40014">
+        PO20261104-11
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[742px] w-[110px]" data-node-id="261:40015">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[742px] w-[170px]" data-node-id="261:40016">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[742px] w-[130px]" data-node-id="261:40017">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#4a3525] text-[11px] top-[742px] w-[145px]" data-node-id="261:40018">
+        Đã thanh toán
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[742px] w-[160px]" data-node-id="261:40019">
+        Chuyển khoản
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[765px] w-[1006px]" data-node-id="261:40020" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[771px] w-[40px]" data-node-id="261:40021">
+        20
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[430px] text-[#4a3525] text-[11px] top-[771px] w-[165px]" data-node-id="261:40022">
+        PO20261104-10
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[602px] text-[#4a3525] text-[11px] top-[771px] w-[110px]" data-node-id="261:40023">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[720px] text-[#4a3525] text-[11px] top-[771px] w-[170px]" data-node-id="261:40024">
+        Minh An
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[900px] text-[#4a3525] text-[11px] top-[771px] w-[130px]" data-node-id="261:40025">
+        350.000 đ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1040px] text-[#ab4a36] text-[11px] top-[771px] w-[145px]" data-node-id="261:40026">
+        Công nợ
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1195px] text-[#4a3525] text-[11px] top-[771px] w-[160px]" data-node-id="261:40027">
+        Chưa có
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[794px] w-[1006px]" data-node-id="261:40028" data-name="Rectangle" />
+      <div className="absolute bg-[#fffdfa] border border-[#e5d6c4] border-solid h-[44px] left-[1030px] rounded-[10px] top-[848px] w-[118px]" data-node-id="261:40029" data-name="Rectangle" />
+      <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold h-[24px] justify-center leading-[0] left-[1089px] text-[#7a2e1d] text-[14px] text-center top-[870px] w-[118px]" data-node-id="261:40030">
+        <p className="leading-[normal]">Trang trước</p>
+      </div>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1189px] text-[#4a3525] text-[13px] text-center top-[861px] w-[50px]" data-node-id="261:40031">
+        1
+      </p>
+      <div className="absolute bg-[#fffdfa] border border-[#e5d6c4] border-solid h-[44px] left-[1225px] rounded-[10px] top-[848px] w-[140px]" data-node-id="261:40032" data-name="Rectangle" />
+      <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold h-[24px] justify-center leading-[0] left-[1295px] text-[#7a2e1d] text-[14px] text-center top-[870px] w-[140px]" data-node-id="261:40033">
+        <p className="leading-[normal]">Trang sau</p>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[1.5] left-[362px] text-[#7d6657] text-[11px] top-[16px] whitespace-nowrap" data-node-id="261:40034">
+        KHO / LỊCH SỬ NHẬP HÀNG
+      </p>
+    </div>
+  );
+}

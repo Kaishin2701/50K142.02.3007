@@ -1,0 +1,22 @@
+import { Router } from 'express';
+import { z } from 'zod';
+import { materialInput,importInput,countInput,type inventoryService } from './inventory.service.js';
+import { permit } from '../../middleware/auth.js';
+import { controller,param } from '../../shared/http.js';
+import { id,pageQuery } from '../../shared/validation.js';
+export function inventoryRoutes(service:ReturnType<typeof inventoryService>){const r=Router();
+ r.get('/materials',permit('Quản lý'),controller(async()=>service.list()));
+ r.post('/materials',permit('Quản lý'),controller(async req=>service.save(null,materialInput.parse(req.body)),201));
+ r.patch('/materials/:id',permit('Quản lý'),controller(async req=>service.save(param(req),materialInput.parse(req.body))));
+ r.get('/receipts',permit('Quản lý'),controller(async req=>{const v=pageQuery.parse(req.query);return service.receipts(v.limit,(v.page-1)*v.limit);}));
+ r.post('/receipts',permit('Quản lý'),controller(async req=>service.import(req.actor!,importInput.parse(req.body),id.parse(req.get('Idempotency-Key'))),201));
+ r.get('/receipts/:id',permit('Quản lý'),controller(async req=>service.receipt(param(req))));
+ r.get('/losses',permit('Quản lý'),controller(async req=>{const v=pageQuery.parse(req.query);return service.losses(v.limit,(v.page-1)*v.limit);}));
+ r.get('/counts/preview',permit('Nhân viên'),controller(async req=>service.preview(req.actor!,id.parse(req.query.ma_ca))));
+ r.post('/counts',permit('Nhân viên'),controller(async req=>service.count(req.actor!,countInput.parse(req.body)),201));
+ r.get('/close-reports',controller(async req=>service.reports(req.actor!)));
+ r.post('/close-reports',permit('Nhân viên'),controller(async req=>service.createReport(req.actor!,z.object({ma_phieu:id}).strict().parse(req.body).ma_phieu),201));
+ r.get('/close-reports/:id',controller(async req=>service.report(req.actor!,param(req))));
+ r.post('/close-reports/:id/send',permit('Nhân viên'),controller(async req=>service.send(req.actor!,param(req))));
+ r.post('/close-reports/:id/confirm',permit('Quản lý'),controller(async req=>service.confirm(req.actor!,param(req))));
+ r.post('/close-reports/:id/low-stock',permit('Nhân viên'),controller(async req=>service.lowStock(req.actor!,param(req))));return r;}

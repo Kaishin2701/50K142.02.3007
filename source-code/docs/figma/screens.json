@@ -1,0 +1,838 @@
+[
+  {
+    "id": "261:28293",
+    "name": "GD0-4-1 - Đăng nhập - Đã nhập thông tin"
+  },
+  {
+    "id": "261:28311",
+    "name": "GD0-2-1 - Đăng nhập - Chưa nhập thông tin"
+  },
+  {
+    "id": "261:28327",
+    "name": "GD0-6a1-1 - Bỏ trống tên tài khoản và mật khẩu"
+  },
+  {
+    "id": "261:28345",
+    "name": "GD0-6a1-2 - Bỏ trống tên tài khoản"
+  },
+  {
+    "id": "261:28363",
+    "name": "GD0-6a1-3 - Bỏ trống mật khẩu"
+  },
+  {
+    "id": "261:28381",
+    "name": "GD0-7a1-1 - Thông tin đăng nhập không hợp lệ"
+  },
+  {
+    "id": "261:28400",
+    "name": "GD2.4-4-1 - Danh sách tài khoản"
+  },
+  {
+    "id": "261:28508",
+    "name": "GD2.4-5a2-1 - Chi tiết tài khoản"
+  },
+  {
+    "id": "261:28635",
+    "name": "GD2.4-3a2-1 - Chưa có tài khoản"
+  },
+  {
+    "id": "261:28700",
+    "name": "GD2.4-3b2-1 - Không thể tải danh sách"
+  },
+  {
+    "id": "261:28765",
+    "name": "GD2.4-HT-1 - Không tìm thấy tài khoản (UC_2.2, UC_2.3)"
+  },
+  {
+    "id": "261:28831",
+    "name": "GD2.1-3-1 - Tạo tài khoản"
+  },
+  {
+    "id": "261:28965",
+    "name": "GD2.1-4-1 - Chọn vai trò"
+  },
+  {
+    "id": "261:29102",
+    "name": "GD2.1-6a2-1 - Thông tin bắt buộc"
+  },
+  {
+    "id": "261:29231",
+    "name": "GD2.1-6b2-1 - Mật khẩu xác nhận không khớp"
+  },
+  {
+    "id": "261:29366",
+    "name": "GD2.1-7a2-1 - Tên đăng nhập đã tồn tại"
+  },
+  {
+    "id": "261:29501",
+    "name": "GD2.1-7a2-2 - Số điện thoại đã tồn tại"
+  },
+  {
+    "id": "261:29636",
+    "name": "GD2.1-5a1-1 - Xác nhận tạo tài khoản"
+  },
+  {
+    "id": "261:29777",
+    "name": "GD2.1-9-1 - Tạo tài khoản thành công"
+  },
+  {
+    "id": "261:29901",
+    "name": "GD2.2-3-1 - Chỉnh sửa thông tin tài khoản"
+  },
+  {
+    "id": "261:30033",
+    "name": "GD2.2-4-1 - Chọn vai trò"
+  },
+  {
+    "id": "261:30168",
+    "name": "GD2.2-6a2-1 - Thông tin chỉnh sửa không hợp lệ"
+  },
+  {
+    "id": "261:30300",
+    "name": "GD2.2-7a2-1 - Tên đăng nhập trùng"
+  },
+  {
+    "id": "261:30433",
+    "name": "GD2.2-7a2-2 - Số điện thoại trùng"
+  },
+  {
+    "id": "261:30566",
+    "name": "GD2.2-5a1-1 - Xác nhận thay đổi"
+  },
+  {
+    "id": "261:30705",
+    "name": "GD2.2-9-1 - Cập nhật thành công"
+  },
+  {
+    "id": "261:30815",
+    "name": "GD2.2-8a2-1 - Cập nhật thất bại"
+  },
+  {
+    "id": "261:30926",
+    "name": "GD2.3-5-1 - Xác nhận khóa tài khoản"
+  },
+  {
+    "id": "261:31043",
+    "name": "GD2.3-4a2-1 - Xác nhận kích hoạt tài khoản"
+  },
+  {
+    "id": "261:31160",
+    "name": "GD2.3-6a2-1 - Hủy thao tác"
+  },
+  {
+    "id": "261:31268",
+    "name": "GD2.3-8-1 - Khóa tài khoản thành công"
+  },
+  {
+    "id": "261:31378",
+    "name": "GD2.3-4a5-1 - Kích hoạt tài khoản thành công"
+  },
+  {
+    "id": "261:31488",
+    "name": "GD2.3-7a2-1 - Khóa tài khoản thất bại"
+  },
+  {
+    "id": "261:31725",
+    "name": "GD3.1-2-1 - Lịch làm việc theo tuần"
+  },
+  {
+    "id": "261:31931",
+    "name": "GD3.1-3a2-1 - Xem tuần khác"
+  },
+  {
+    "id": "261:32130",
+    "name": "GD3.1-3c2-1 - Chưa có ca làm trong tuần này"
+  },
+  {
+    "id": "261:32335",
+    "name": "GD3.2-2-1 - Tạo ca diễn ra một lần"
+  },
+  {
+    "id": "261:32562",
+    "name": "GD3.2-3a2-1 - Ca lặp kết thúc theo ngày"
+  },
+  {
+    "id": "261:32798",
+    "name": "GD3.2-3a2-2 - Ca lặp kết thúc theo số tuần"
+  },
+  {
+    "id": "261:33034",
+    "name": "GD3.2-6a2-1 - Số lượng không hợp lệ"
+  },
+  {
+    "id": "261:33262",
+    "name": "GD3.2-6b2-1 - Số lượng tối đa nhỏ hơn tối thiểu"
+  },
+  {
+    "id": "261:33490",
+    "name": "GD3.2-6c2-1 - Thời gian không hợp lệ"
+  },
+  {
+    "id": "261:33718",
+    "name": "GD3.2-3a5a2-1 - Ca lặp bị trùng"
+  },
+  {
+    "id": "261:33957",
+    "name": "GD3.2-8-1 - Tạo ca làm thành công"
+  },
+  {
+    "id": "261:34165",
+    "name": "GD3.3-3-1 - Chỉnh sửa ca làm"
+  },
+  {
+    "id": "261:34388",
+    "name": "GD3.3-6-1 - 6 - Xác nhận thay đổi"
+  },
+  {
+    "id": "261:34619",
+    "name": "GD3.3-2a2-1 - Không thể chỉnh sửa ca"
+  },
+  {
+    "id": "261:34820",
+    "name": "GD3.3-8a2-1 - Số lượng không hợp lệ"
+  },
+  {
+    "id": "261:35044",
+    "name": "GD3.3-8b2-1 - Số lượng tối đa nhỏ hơn tối thiểu"
+  },
+  {
+    "id": "261:35268",
+    "name": "GD3.3-8c2-1 - Thời gian không hợp lệ"
+  },
+  {
+    "id": "261:35492",
+    "name": "GD3.3-8d2-1 - Số lượng tối đa nhỏ hơn số nhân viên được phân công"
+  },
+  {
+    "id": "261:35716",
+    "name": "GD3.3-9a2-1 - Nhân viên bị trùng lịch"
+  },
+  {
+    "id": "261:35942",
+    "name": "GD3.3-11-1 - Chỉnh sửa ca làm thành công"
+  },
+  {
+    "id": "261:36143",
+    "name": "GD3.3-7a2-1 - Không xác nhận thay đổi"
+  },
+  {
+    "id": "261:36343",
+    "name": "GD3.5-2-1 - Danh sách yêu cầu chờ xử lý"
+  },
+  {
+    "id": "261:36565",
+    "name": "GD3.5-4-1 - Đổi ca hai chiều"
+  },
+  {
+    "id": "261:36802",
+    "name": "GD3.5-3a2-1 - Nhờ nhân viên làm thay"
+  },
+  {
+    "id": "261:37035",
+    "name": "GD3.5-2a1-1 - Không có yêu cầu chờ xử lý"
+  },
+  {
+    "id": "261:37241",
+    "name": "GD3.5-9-1 - Đã chấp thuận"
+  },
+  {
+    "id": "261:37474",
+    "name": "GD3.5-7a2-1 - Bị từ chối"
+  },
+  {
+    "id": "261:37926",
+    "name": "GD5.1-7-1 - Doanh thu theo ngày"
+  },
+  {
+    "id": "261:38013",
+    "name": "GD5.1-11-1 - Doanh thu theo tháng"
+  },
+  {
+    "id": "261:38100",
+    "name": "GD5.1-11-2 - Doanh thu theo năm"
+  },
+  {
+    "id": "261:38187",
+    "name": "GD5.1-6a2-1 - Ngày hiện tại không có dữ liệu"
+  },
+  {
+    "id": "261:38276",
+    "name": "GD5.1-10a2-1 - Khoảng thời gian không có dữ liệu"
+  },
+  {
+    "id": "261:38365",
+    "name": "GD5.1-10b2-1 - Lỗi kết nối"
+  },
+  {
+    "id": "261:38457",
+    "name": "GD5.2-8-1 - Doanh thu tiền mặt"
+  },
+  {
+    "id": "261:38544",
+    "name": "GD5.2-8-2 - Doanh thu chuyển khoản"
+  },
+  {
+    "id": "261:38631",
+    "name": "GD5.2-6a2-1 - Không thể tải dữ liệu giao dịch"
+  },
+  {
+    "id": "261:38721",
+    "name": "GD5.3-4a1-1 - Xuất báo cáo Excel"
+  },
+  {
+    "id": "261:38832",
+    "name": "GD5.3-4b1-1 - Xuất báo cáo PDF"
+  },
+  {
+    "id": "261:38943",
+    "name": "GD5.3-6a2-1 - Không có dữ liệu để xuất"
+  },
+  {
+    "id": "261:39058",
+    "name": "GD5.3-8-1 - Xuất file thành công"
+  },
+  {
+    "id": "261:39479",
+    "name": "GD4.1-2-1 - Tổng hợp tồn kho - Quản lý"
+  },
+  {
+    "id": "261:39586",
+    "name": "GD4.1-3a1-1 - Không có nguyên liệu dưới mức tối thiểu"
+  },
+  {
+    "id": "261:39691",
+    "name": "GD4.1-2a1-1 - Không tải được dữ liệu"
+  },
+  {
+    "id": "261:39749",
+    "name": "GD4.1-2b1-1 - Chưa có nguyên liệu"
+  },
+  {
+    "id": "261:39806",
+    "name": "GD4.2-2-1 - Lịch sử nhập hàng - Quản lý"
+  },
+  {
+    "id": "261:40035",
+    "name": "GD4.2-4-1 - Chi tiết lần nhập đã thanh toán"
+  },
+  {
+    "id": "261:40127",
+    "name": "GD4.2-4a1-1 - Chi tiết lần nhập công nợ"
+  },
+  {
+    "id": "261:40219",
+    "name": "GD4.2-2a2-1 - Chuyển trang"
+  },
+  {
+    "id": "261:40304",
+    "name": "GD4.2-2b1-1 - Chưa có lần nhập hàng"
+  },
+  {
+    "id": "261:40360",
+    "name": "GD4.2-2c1-1 - Không tải được dữ liệu"
+  },
+  {
+    "id": "261:40418",
+    "name": "GD4.2-4b1-1 - Không tải được chi tiết"
+  },
+  {
+    "id": "261:40650",
+    "name": "GD4.3-2-1 - Lịch sử hao hụt kho"
+  },
+  {
+    "id": "261:40942",
+    "name": "GD4.3-2a1-1 - Lý do Khác"
+  },
+  {
+    "id": "261:41234",
+    "name": "GD4.3-3a2-1 - Chuyển trang"
+  },
+  {
+    "id": "261:41328",
+    "name": "GD4.3-2b1-1 - Chưa có dữ liệu hao hụt"
+  },
+  {
+    "id": "261:41384",
+    "name": "GD4.3-2c1-1 - Không tải được dữ liệu"
+  },
+  {
+    "id": "261:41443",
+    "name": "GD4.4-2-1 - Phiếu kiểm kho nháp"
+  },
+  {
+    "id": "261:41565",
+    "name": "GD4.4-4-1 - Nhập tiền và tồn thực tế"
+  },
+  {
+    "id": "261:41693",
+    "name": "GD4.4-7-1 - 7 - Tiền và tồn đều khớp"
+  },
+  {
+    "id": "261:41823",
+    "name": "GD4.4-6a1-1 - Nguyên liệu lệch vượt ngưỡng"
+  },
+  {
+    "id": "261:41956",
+    "name": "GD4.4-6a5-1 - Ghi lý do chênh lệch"
+  },
+  {
+    "id": "261:42093",
+    "name": "GD4.4-6b1-1 - Tiền thực thu không khớp"
+  },
+  {
+    "id": "261:42223",
+    "name": "GD4.4-6b2-1 - Nhập lý do chênh lệch tiền"
+  },
+  {
+    "id": "261:42354",
+    "name": "GD4.4-1a1-1 - Thiếu thông tin"
+  },
+  {
+    "id": "261:42478",
+    "name": "GD4.4-2a1-1 - Tồn thực tế không hợp lệ"
+  },
+  {
+    "id": "261:42607",
+    "name": "GD4.4-2a1-2 - Tiền thực thu không hợp lệ"
+  },
+  {
+    "id": "261:42736",
+    "name": "GD4.4-3a1-1 - Thiếu lý do chênh lệch"
+  },
+  {
+    "id": "261:42869",
+    "name": "GD4.4-3a2-1 - Thiếu ghi chú lý do Khác"
+  },
+  {
+    "id": "261:43006",
+    "name": "GD4.4-4a1-1 - Cần đối chiếu lại"
+  },
+  {
+    "id": "261:43135",
+    "name": "GD4.4-5a1-1 - Ca đã có phiếu kiểm kho"
+  },
+  {
+    "id": "261:43192",
+    "name": "GD4.4-6a1-2 - Lưu phiếu thất bại"
+  },
+  {
+    "id": "261:43325",
+    "name": "GD4.5-2-1 - Báo cáo cuối ca Nháp"
+  },
+  {
+    "id": "261:43435",
+    "name": "GD4.5-2-2 - Đã lưu phiếu kiểm kho"
+  },
+  {
+    "id": "261:43547",
+    "name": "GD4.5-4-1 - Chờ xác nhận"
+  },
+  {
+    "id": "261:43659",
+    "name": "GD4.5-3a1-1 - Gửi báo cáo thất bại"
+  },
+  {
+    "id": "261:43771",
+    "name": "GD4.5-1a1-1 - Chưa có phiếu kiểm kho"
+  },
+  {
+    "id": "261:43828",
+    "name": "GD4.5-2a1-1 - Ca đã có báo cáo"
+  },
+  {
+    "id": "261:43885",
+    "name": "GD4.5-5-1 - Quản lý tiếp nhận báo cáo"
+  },
+  {
+    "id": "261:43948",
+    "name": "GD4.5-6-1 - Quản lý kiểm tra báo cáo"
+  },
+  {
+    "id": "261:44057",
+    "name": "GD4.5-7-1 - Xác nhận báo cáo"
+  },
+  {
+    "id": "261:44175",
+    "name": "GD4.5-9-1 - Đã xác nhận báo cáo"
+  },
+  {
+    "id": "261:44288",
+    "name": "GD4.5-4a1-1 - Báo cáo đã được xác nhận"
+  },
+  {
+    "id": "261:44401",
+    "name": "GD4.5-5a2-1 - Xác nhận báo cáo thất bại"
+  },
+  {
+    "id": "261:44512",
+    "name": "GD4.5-4a3-1 - Gửi thông tin nguyên liệu cần nhập"
+  },
+  {
+    "id": "261:44624",
+    "name": "GD4.5-4a4-1 - Quản lý tiếp nhận thông tin cần nhập"
+  },
+  {
+    "id": "261:44756",
+    "name": "GD4.5-4a5-1 - Nhân viên nhận yêu cầu gửi lại"
+  },
+  {
+    "id": "261:44868",
+    "name": "GD4.5-8a1-1 - Đến kỳ báo cáo tuần"
+  },
+  {
+    "id": "261:44981",
+    "name": "GD4.5-8a2-1 - Đến kỳ báo cáo tháng"
+  },
+  {
+    "id": "261:45094",
+    "name": "GD4.5-8a3-1 - Đến kỳ báo cáo tuần và tháng"
+  },
+  {
+    "id": "261:45238",
+    "name": "GD3.4-2-1 - Phân công nhân viên"
+  },
+  {
+    "id": "261:45470",
+    "name": "GD3.4-5-1 - Chọn nhân viên"
+  },
+  {
+    "id": "261:45703",
+    "name": "GD3.4-3a2-1 - Không có nhân viên phù hợp"
+  },
+  {
+    "id": "261:45924",
+    "name": "GD3.4-7a2-1 - Chưa chọn nhân viên"
+  },
+  {
+    "id": "261:46157",
+    "name": "GD3.4-7b2-1 - Vượt số lượng tối đa"
+  },
+  {
+    "id": "261:46392",
+    "name": "GD3.4-6a2-1 - Hủy thao tác"
+  },
+  {
+    "id": "261:46591",
+    "name": "GD3.4-9-1 - Phân công nhân viên thành công"
+  },
+  {
+    "id": "261:46793",
+    "name": "GD6.1-3-1 - Lịch làm việc cá nhân"
+  },
+  {
+    "id": "261:46892",
+    "name": "GD6.1-3a2-1 - Xem tuần khác"
+  },
+  {
+    "id": "261:46986",
+    "name": "GD6.1-3b2-1 - Quay về tuần hiện tại"
+  },
+  {
+    "id": "261:47085",
+    "name": "GD6.1-3c2-1 - Chưa có lịch làm việc"
+  },
+  {
+    "id": "261:47176",
+    "name": "GD6.1-6-1 - Chi tiết ca làm"
+  },
+  {
+    "id": "261:47295",
+    "name": "GD6.2-2-1 - Đăng ký lịch rảnh hoặc ca muốn làm"
+  },
+  {
+    "id": "261:47409",
+    "name": "GD6.2-4-1 - Chọn Rảnh"
+  },
+  {
+    "id": "261:47523",
+    "name": "GD6.2-6a2-1 - Thiếu thông tin"
+  },
+  {
+    "id": "261:47636",
+    "name": "GD6.2-6b2-1 - Thời gian không hợp lệ"
+  },
+  {
+    "id": "261:47751",
+    "name": "GD6.2-5a2-1 - Hủy thao tác"
+  },
+  {
+    "id": "261:47844",
+    "name": "GD6.2-8-1 - Đăng ký thành công"
+  },
+  {
+    "id": "261:47943",
+    "name": "GD6.3-2-1 - Hủy đăng ký lịch rảnh hoặc ca muốn làm"
+  },
+  {
+    "id": "261:48039",
+    "name": "GD6.3-8a3-1 - Không thể hủy khi đã phân công, chưa chốt lịch"
+  },
+  {
+    "id": "261:48138",
+    "name": "GD6.3-10-1 - Hủy đăng ký thành công"
+  },
+  {
+    "id": "261:48233",
+    "name": "GD6.3-8a3-2 - Không thể hủy sau khi chốt lịch"
+  },
+  {
+    "id": "261:48332",
+    "name": "GD6.3-4-1 - Thông tin đăng ký"
+  },
+  {
+    "id": "261:48446",
+    "name": "GD6.3-6-1 - Xác nhận hủy đăng ký"
+  },
+  {
+    "id": "261:48568",
+    "name": "GD6.4-5-1 - Đổi ca hai chiều"
+  },
+  {
+    "id": "261:48685",
+    "name": "GD6.4-6a1-1 - Nhờ nhân viên khác làm thay"
+  },
+  {
+    "id": "261:48799",
+    "name": "GD6.4-11-1 - Nhân viên được đề nghị xem yêu cầu đổi ca"
+  },
+  {
+    "id": "261:48912",
+    "name": "GD6.4-6a6-1 - Nhân viên được đề nghị xem yêu cầu làm thay"
+  },
+  {
+    "id": "261:49023",
+    "name": "GD6.4-11a1-1 - Nhân viên được đề nghị từ chối"
+  },
+  {
+    "id": "261:49115",
+    "name": "GD6.4-13-1 - Gửi yêu cầu thành công"
+  },
+  {
+    "id": "261:49234",
+    "name": "GD6.4-9a2-1 - Ca đã bắt đầu hoặc kết thúc"
+  },
+  {
+    "id": "261:49352",
+    "name": "GD6.4-9b2-1 - Nhân viên được chọn bị trùng lịch"
+  },
+  {
+    "id": "261:49470",
+    "name": "GD6.4-9c2-1 - Ca đã có yêu cầu đang chờ xử lý"
+  },
+  {
+    "id": "261:49588",
+    "name": "GD6.4-9d2-1 - Thông tin yêu cầu chưa đầy đủ"
+  },
+  {
+    "id": "261:49703",
+    "name": "GD6.5-2-1 - Danh sách yêu cầu chờ phản hồi"
+  },
+  {
+    "id": "261:49806",
+    "name": "GD6.5-8-1 - Đã đồng ý yêu cầu"
+  },
+  {
+    "id": "261:49900",
+    "name": "GD6.5-6a3-1 - Đã từ chối yêu cầu"
+  },
+  {
+    "id": "261:49994",
+    "name": "GD6.5-4-1 - Xem yêu cầu đổi ca hai chiều"
+  },
+  {
+    "id": "261:50116",
+    "name": "GD6.5-4-2 - Xem yêu cầu làm thay"
+  },
+  {
+    "id": "261:50237",
+    "name": "GD7-3-1 - Xác nhận đăng xuất - Nhân viên"
+  },
+  {
+    "id": "261:50345",
+    "name": "GD7-3-2 - Xác nhận đăng xuất - Quản lý"
+  },
+  {
+    "id": "261:50441",
+    "name": "GD7-3a2-1 - Hủy đăng xuất"
+  },
+  {
+    "id": "261:50540",
+    "name": "GD7-5a2-1 - Đăng xuất chưa thành công"
+  },
+  {
+    "id": "261:50641",
+    "name": "GD7-8-1 - Đăng xuất thành công"
+  },
+  {
+    "id": "261:54234",
+    "name": "GD1.1-2-1 - Lịch sử - Mặc định"
+  },
+  {
+    "id": "261:54465",
+    "name": "GD1.1-5-1 - Lịch sử - Kết quả tra cứu"
+  },
+  {
+    "id": "261:54627",
+    "name": "GD1.1-7-1 - Lịch sử - Chi tiết đơn #ME-0141"
+  },
+  {
+    "id": "261:54911",
+    "name": "GD1.1-2a1-1 - Lịch sử - Chưa có đơn hàng"
+  },
+  {
+    "id": "261:55026",
+    "name": "GD1.1-5a1-1 - Lịch sử - Không có kết quả"
+  },
+  {
+    "id": "261:55141",
+    "name": "GD1.1-4a1-1 - Lỗi tra cứu - Mã đơn không hợp lệ"
+  },
+  {
+    "id": "261:55378",
+    "name": "GD1.1-4a1-2 - Lỗi tra cứu - Từ ngày sai định dạng"
+  },
+  {
+    "id": "261:55615",
+    "name": "GD1.1-4a1-3 - Lỗi tra cứu - Đến ngày sai định dạng"
+  },
+  {
+    "id": "261:55852",
+    "name": "GD1.1-4a1-4 - Lịch sử - Khoảng ngày không hợp lệ"
+  },
+  {
+    "id": "261:56089",
+    "name": "GD1.1-3-1 - Chọn phương thức thanh toán"
+  },
+  {
+    "id": "261:56325",
+    "name": "GD1.2-2-1 - Theo dõi - Đơn đang xử lý"
+  },
+  {
+    "id": "261:56437",
+    "name": "GD1.2-4-1 - Theo dõi - Kết quả bắt đầu pha chế"
+  },
+  {
+    "id": "261:56537",
+    "name": "GD1.2-6-1 - Theo dõi - Chi tiết chưa pha chế"
+  },
+  {
+    "id": "261:56700",
+    "name": "GD1.2-6-2 - Theo dõi - Chi tiết bắt đầu pha chế"
+  },
+  {
+    "id": "261:56858",
+    "name": "GD1.2-2a1-1 - Theo dõi - Không có đơn đang xử lý"
+  },
+  {
+    "id": "261:56951",
+    "name": "GD1.2-4a1-1 - Theo dõi - Không tìm thấy đơn"
+  },
+  {
+    "id": "261:57044",
+    "name": "GD1.2-5a1-1 - Theo dõi - Đơn được chọn đã bị hủy"
+  },
+  {
+    "id": "261:50660",
+    "name": "GD1.3-2-1 - Chọn món - Cà phê"
+  },
+  {
+    "id": "261:50834",
+    "name": "GD1.3-3-1 - Chọn món - Đã chọn món"
+  },
+  {
+    "id": "261:51059",
+    "name": "GD1.3-4-1 - Lập đơn - 2. Nhập món và số lượng"
+  },
+  {
+    "id": "261:51236",
+    "name": "GD1.3-6-1 - Lập đơn - 3. Đã kiểm tra đơn"
+  },
+  {
+    "id": "261:51396",
+    "name": "GD1.3-9-1 - Lập đơn - 4. Đã xác nhận, chọn thanh toán"
+  },
+  {
+    "id": "261:51558",
+    "name": "GD1.3-11-1 - Lập đơn - 5. Thanh toán QR (luồng chính)"
+  },
+  {
+    "id": "261:51717",
+    "name": "GD1.3-15-1 - QR - Ghi nhận thanh toán thành công"
+  },
+  {
+    "id": "261:51867",
+    "name": "GD1.3-16-1 - QR - Xuất hóa đơn"
+  },
+  {
+    "id": "261:52033",
+    "name": "GD1.3-19-1 - Lập đơn - 8. Bắt đầu pha chế"
+  },
+  {
+    "id": "261:52174",
+    "name": "GD1.3-21-1 - Lập đơn - 9. Hoàn tất pha chế"
+  },
+  {
+    "id": "261:52313",
+    "name": "GD1.3-2-2 - Chọn món - Mê Soda"
+  },
+  {
+    "id": "261:52465",
+    "name": "GD1.3-2-3 - Chọn món - Trà sữa"
+  },
+  {
+    "id": "261:52631",
+    "name": "GD1.3-2-4 - Chọn món - Matcha"
+  },
+  {
+    "id": "261:52784",
+    "name": "GD1.3-5a1-1 - Lập đơn - 2a. Hết tồn (nhánh thay thế)"
+  },
+  {
+    "id": "261:52969",
+    "name": "GD1.3-5a5-1 - Dừng đặt hàng - Đã giải phóng tồn, không phát sinh đơn"
+  },
+  {
+    "id": "261:53147",
+    "name": "GD1.3-10a5-1 - Lập đơn - 5a. Tiền mặt đủ/thừa (nhánh thay thế)"
+  },
+  {
+    "id": "261:53305",
+    "name": "GD1.3-10a3a1-1 - Lập đơn - 5a.3a. Tiền mặt thiếu (ngoại lệ)"
+  },
+  {
+    "id": "261:53473",
+    "name": "GD1.3-15-2 - Lập đơn - 6. Thanh toán thành công"
+  },
+  {
+    "id": "261:53624",
+    "name": "GD1.3-16-2 - Lập đơn - 7. Xuất hóa đơn giấy"
+  },
+  {
+    "id": "261:53802",
+    "name": "GD1.3-13a1-1 - QR - Khách báo thanh toán chưa thành công"
+  },
+  {
+    "id": "261:53936",
+    "name": "GD1.3-14a1-1 - QR - Đối soát chưa thành công"
+  },
+  {
+    "id": "261:54071",
+    "name": "GD1.3-11-2 - QR - Tạo mã mới sau chọn lại phương thức"
+  },
+  {
+    "id": "261:57151",
+    "name": "GD1.4-1-1 - Hủy đơn - 1. Đơn đủ điều kiện hủy"
+  },
+  {
+    "id": "261:57313",
+    "name": "GD1.4-2-1 - Hủy đơn - 2. Kết quả xóa đơn và giải phóng tồn"
+  },
+  {
+    "id": "261:57392",
+    "name": "GD1.4-1a2-1 - Hủy đơn - 1a. QR đang chờ hoặc chưa rõ kết quả"
+  },
+  {
+    "id": "261:57525",
+    "name": "GD1.4-1b1-1 - Hủy đơn - 3. Không thể hủy đơn"
+  }
+]

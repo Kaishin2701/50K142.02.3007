@@ -1,0 +1,401 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/76ce4582-2821-4a96-a678-5215c58756ee";
+const imgLogoImage = `${assetPathPrefix}/b4c0b.png`;
+const imgVector = `${assetPathPrefix}/ed483.svg`;
+const imgVector1 = `${assetPathPrefix}/97b10.svg`;
+const imgVector2 = `${assetPathPrefix}/daaae.svg`;
+const imgVector3 = `${assetPathPrefix}/9090e.svg`;
+const imgVector4 = `${assetPathPrefix}/bce45.svg`;
+const imgVector5 = `${assetPathPrefix}/c0874.svg`;
+
+export default function Gd3121LchLamVicTheoTun() {
+  return (
+    <div className="bg-[#faf5ed] relative size-full" data-node-id="261:31725" data-name="GD3.1-2-1 - Lịch làm việc theo tuần">
+      <div className="absolute bg-[#ede0c8] h-[992px] left-[16px] overflow-clip rounded-[12px] top-[16px] w-[310px]" data-node-id="261:31726" data-name="Sidebar — Quản lý">
+        <div className="absolute left-[104.5px] rounded-[10px] size-[101px] top-[36px]" data-node-id="342:824" data-name="Logo image">
+          <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[10px] size-full" src={imgLogoImage} />
+        </div>
+        <div className="absolute drop-shadow-[0px_4px_6px_rgba(198,125,83,0.25)] h-[41px] left-[18px] rounded-[12px] top-[160px] w-[274px]" data-node-id="342:825" data-name="Rectangle" />
+        <div className="absolute inset-[17.52%_81.53%_81.05%_12.66%]" data-node-id="342:826" data-name="Vector">
+          <div className="absolute inset-[-5.61%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[171.5px] w-[212px]" data-node-id="342:827">
+          Tổng quan
+        </p>
+        <div className="absolute inset-[22.33%_81.56%_76.39%_12.76%]" data-node-id="342:828" data-name="Vector">
+          <div className="absolute inset-[-6.32%_-4.55%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector1} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[218.5px] w-[192px]" data-node-id="342:829">
+          Quản lý đơn hàng
+        </p>
+        <div className="absolute inset-[22.58%_12.66%_76.71%_86.21%]" data-node-id="342:830" data-name="Vector">
+          <div className="absolute inset-[-11.43%_-32.32%_-11.43%_-22.86%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector2} />
+          </div>
+        </div>
+        <div className="absolute inset-[26.92%_81.53%_71.49%_12.66%]" data-node-id="342:832" data-name="Vector">
+          <div className="absolute inset-[-5.05%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector3} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[265.5px] w-[192px]" data-node-id="342:833">
+          Kho
+        </p>
+        <div className="absolute inset-[27.32%_12.66%_71.98%_86.21%]" data-node-id="342:834" data-name="Vector">
+          <div className="absolute inset-[-11.43%_-32.32%_-11.43%_-22.86%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector2} />
+          </div>
+        </div>
+        <div className="absolute inset-[31.73%_81.13%_66.83%_12.42%]" data-node-id="342:839" data-name="Vector">
+          <div className="absolute inset-[-5.61%_-4%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector4} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[312.5px] w-[212px]" data-node-id="342:840">
+          Quản lý tài khoản
+        </p>
+        <div className="absolute bg-[#c67d53] h-[41px] left-[18px] rounded-[12px] shadow-[0px_4px_12px_0px_rgba(198,125,83,0.25)] top-[348px] w-[274px]" data-node-id="342:841" data-name="Rectangle" />
+        <div className="absolute inset-[36.39%_81.53%_62.01%_12.66%]" data-node-id="342:842" data-name="Vector">
+          <div className="absolute inset-[-5.05%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector5} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[14px] text-white top-[359.5px] w-[212px]" data-node-id="342:843">
+          Quản lý ca
+        </p>
+        <div className="absolute bg-[#f7f1e6] border border-[#d8c7aa] border-solid h-[60px] left-[18px] rounded-[12px] top-[853px] w-[274px]" data-node-id="342:844" data-name="Rectangle" />
+        <div className="absolute bg-[#c67d53] left-[30px] rounded-[20px] size-[40px] top-[863px]" data-node-id="342:845" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[35.5px] text-[14px] text-white top-[874px] whitespace-nowrap" data-node-id="342:846">
+          THN
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[82px] text-[#1f140e] text-[14px] top-[865.5px] whitespace-nowrap" data-node-id="342:847">
+          Trần Hoàng Nam
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[82px] text-[#4a3525] text-[12px] top-[885.5px] whitespace-nowrap" data-node-id="342:848">
+          Quản lý
+        </p>
+        <div className="absolute border-[#d8c7aa] border-solid border-t h-[55px] left-[18px] top-[913px] w-[274px]" data-node-id="342:849" data-name="Rectangle" />
+        <div className="absolute bg-[rgba(92,48,24,0.08)] h-[42px] left-[18px] rounded-[12px] top-[926px] w-[274px]" data-node-id="342:850" data-name="Rectangle" />
+        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold justify-center leading-[0] left-[34px] text-[#7a2e1d] text-[15px] top-[946.5px] whitespace-nowrap" data-node-id="342:851">
+          <p className="leading-[normal]">↪</p>
+        </div>
+        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold justify-center leading-[0] left-[58px] text-[#7a2e1d] text-[14px] top-[947px] w-[218px]" data-node-id="342:852">
+          <p className="leading-[normal]">Đăng xuất</p>
+        </div>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[37px] leading-[normal] left-[362px] text-[#1f140e] text-[28px] top-[39px] w-[800px]" data-node-id="261:31777">
+        Quản lý ca
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Regular'] font-normal h-[20px] leading-[normal] left-[362px] text-[#7d6657] text-[12px] top-[80px] w-[700px]" data-node-id="261:31778">
+        Theo dõi và phân bổ ca làm theo tuần
+      </p>
+      <div className="absolute bg-white border border-[#e5d6c4] border-solid h-[52px] left-[362px] rounded-[12px] top-[112px] w-[1054px]" data-node-id="261:31779" data-name="Rectangle" />
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[36px] left-[374px] rounded-[9px] top-[120px] w-[255px]" data-node-id="261:31780" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[387px] text-[#7a2e1d] text-[20px] top-[122px] w-[24px]" data-node-id="261:31781">
+        ‹
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[503px] text-[#1f140e] text-[13px] text-center top-[130px] w-[196px]" data-node-id="261:31782">
+        02 – 08 tháng 11, 2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[597px] text-[#7a2e1d] text-[20px] top-[122px] w-[24px]" data-node-id="261:31783">
+        ›
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[650px] text-[#7a2e1d] text-[13px] top-[130px] w-[86px]" data-node-id="261:31784">
+        Hôm nay
+      </p>
+      <div className="absolute bg-[#c67d53] h-[44px] left-[1256px] rounded-[10px] top-[116px] w-[148px]" data-node-id="261:31785" data-name="Rectangle" />
+      <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold h-[24px] justify-center leading-[0] left-[1330px] text-[14px] text-center text-white top-[138px] w-[148px]" data-node-id="261:31786">
+        <p className="leading-[normal]">+ Tạo ca mới</p>
+      </div>
+      <div className="absolute bg-white border border-[#e5d6c4] border-solid h-[766px] left-[362px] rounded-[14px] top-[180px] w-[1054px]" data-node-id="261:31803" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[380px] text-[#1f140e] text-[18px] top-[198px] w-[500px]" data-node-id="261:31804">
+        Lịch làm việc
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1102px] text-[#296e4d] text-[11px] top-[202px] w-[112px]" data-node-id="261:31805">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1230px] text-[#ab4a36] text-[11px] top-[202px] w-[144px]" data-node-id="261:31806">
+        Cần bổ sung
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[378px] top-[238px] w-[1022px]" data-node-id="261:31807" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[448px] text-[#7d6657] text-[11px] text-center top-[254px] w-[140px]" data-node-id="261:31808">
+        Thứ Hai
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[448px] text-[#4a3525] text-[13px] text-center top-[272px] w-[140px]" data-node-id="261:31809">
+        02/11
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[594px] text-[#7d6657] text-[11px] text-center top-[254px] w-[140px]" data-node-id="261:31810">
+        Thứ Ba
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[594px] text-[#4a3525] text-[13px] text-center top-[272px] w-[140px]" data-node-id="261:31811">
+        03/11
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[740px] text-[#7d6657] text-[11px] text-center top-[254px] w-[140px]" data-node-id="261:31812">
+        Thứ Tư
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[740px] text-[#4a3525] text-[13px] text-center top-[272px] w-[140px]" data-node-id="261:31813">
+        04/11
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[886px] text-[#7d6657] text-[11px] text-center top-[254px] w-[140px]" data-node-id="261:31814">
+        Thứ Năm
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[886px] text-[#4a3525] text-[13px] text-center top-[272px] w-[140px]" data-node-id="261:31815">
+        05/11
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1032px] text-[#7d6657] text-[11px] text-center top-[254px] w-[140px]" data-node-id="261:31816">
+        Thứ Sáu
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1032px] text-[#4a3525] text-[13px] text-center top-[272px] w-[140px]" data-node-id="261:31817">
+        06/11
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1178px] text-[#7d6657] text-[11px] text-center top-[254px] w-[140px]" data-node-id="261:31818">
+        Thứ Bảy
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1178px] text-[#4a3525] text-[13px] text-center top-[272px] w-[140px]" data-node-id="261:31819">
+        07/11
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1324px] text-[#7d6657] text-[11px] text-center top-[254px] w-[140px]" data-node-id="261:31820">
+        Chủ Nhật
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1324px] text-[#4a3525] text-[13px] text-center top-[272px] w-[140px]" data-node-id="261:31821">
+        08/11
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[378px] rounded-[9px] top-[306px] w-[138px]" data-node-id="261:31822" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[386px] text-[#296e4d] text-[11px] top-[315px] w-[122px]" data-node-id="261:31823">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[12px] top-[343px] w-[122px]" data-node-id="261:31824">
+        07:00–12:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[371px] w-[122px]" data-node-id="261:31825" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#7d6657] text-[11px] top-[382px] w-[122px]" data-node-id="261:31826">
+        An · Bình · Lan
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[386px] rounded-[7px] top-[418px] w-[122px]" data-node-id="261:31827" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[447px] text-[#296e4d] text-[11px] text-center top-[424px] w-[122px]" data-node-id="261:31828">
+        3 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[524px] rounded-[9px] top-[306px] w-[138px]" data-node-id="261:31829" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[532px] text-[#296e4d] text-[11px] top-[315px] w-[122px]" data-node-id="261:31830">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[532px] text-[#4a3525] text-[12px] top-[343px] w-[122px]" data-node-id="261:31831">
+        07:00–12:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[532px] top-[371px] w-[122px]" data-node-id="261:31832" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[532px] text-[#7d6657] text-[11px] top-[382px] w-[122px]" data-node-id="261:31833">
+        Hà · Mai
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[532px] rounded-[7px] top-[418px] w-[122px]" data-node-id="261:31834" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[593px] text-[#296e4d] text-[11px] text-center top-[424px] w-[122px]" data-node-id="261:31835">
+        2 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcebe3] border border-[#b8332a] border-solid h-[148px] left-[670px] rounded-[9px] top-[306px] w-[138px]" data-node-id="261:31836" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[678px] text-[#ab4a36] text-[11px] top-[315px] w-[122px]" data-node-id="261:31837">
+        Cần bổ sung
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[678px] text-[#4a3525] text-[12px] top-[343px] w-[122px]" data-node-id="261:31838">
+        07:00–12:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[678px] top-[371px] w-[122px]" data-node-id="261:31839" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[678px] text-[#7d6657] text-[11px] top-[382px] w-[122px]" data-node-id="261:31840">
+        Mai
+      </p>
+      <div className="absolute bg-[#fcebe3] h-[24px] left-[678px] rounded-[7px] top-[418px] w-[122px]" data-node-id="261:31841" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[739px] text-[#ab4a36] text-[11px] text-center top-[424px] w-[122px]" data-node-id="261:31842">
+        1 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[816px] rounded-[9px] top-[306px] w-[138px]" data-node-id="261:31843" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[824px] text-[#296e4d] text-[11px] top-[315px] w-[122px]" data-node-id="261:31844">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[824px] text-[#4a3525] text-[12px] top-[343px] w-[122px]" data-node-id="261:31845">
+        07:00–12:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[824px] top-[371px] w-[122px]" data-node-id="261:31846" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[824px] text-[#7d6657] text-[11px] top-[382px] w-[122px]" data-node-id="261:31847">
+        An · Bình · Lan
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[824px] rounded-[7px] top-[418px] w-[122px]" data-node-id="261:31848" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[885px] text-[#296e4d] text-[11px] text-center top-[424px] w-[122px]" data-node-id="261:31849">
+        3 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[962px] rounded-[9px] top-[306px] w-[138px]" data-node-id="261:31850" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[970px] text-[#296e4d] text-[11px] top-[315px] w-[122px]" data-node-id="261:31851">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[970px] text-[#4a3525] text-[12px] top-[343px] w-[122px]" data-node-id="261:31852">
+        07:00–12:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[970px] top-[371px] w-[122px]" data-node-id="261:31853" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[970px] text-[#7d6657] text-[11px] top-[382px] w-[122px]" data-node-id="261:31854">
+        Hà · Mai
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[970px] rounded-[7px] top-[418px] w-[122px]" data-node-id="261:31855" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1031px] text-[#296e4d] text-[11px] text-center top-[424px] w-[122px]" data-node-id="261:31856">
+        2 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[1108px] rounded-[9px] top-[306px] w-[138px]" data-node-id="261:31857" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1116px] text-[#296e4d] text-[11px] top-[315px] w-[122px]" data-node-id="261:31858">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1116px] text-[#4a3525] text-[12px] top-[343px] w-[122px]" data-node-id="261:31859">
+        07:00–12:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[1116px] top-[371px] w-[122px]" data-node-id="261:31860" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1116px] text-[#7d6657] text-[11px] top-[382px] w-[122px]" data-node-id="261:31861">
+        An · Lan
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[1116px] rounded-[7px] top-[418px] w-[122px]" data-node-id="261:31862" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1177px] text-[#296e4d] text-[11px] text-center top-[424px] w-[122px]" data-node-id="261:31863">
+        2 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[1254px] rounded-[9px] top-[306px] w-[138px]" data-node-id="261:31864" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1262px] text-[#296e4d] text-[11px] top-[315px] w-[122px]" data-node-id="261:31865">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1262px] text-[#4a3525] text-[12px] top-[343px] w-[122px]" data-node-id="261:31866">
+        07:00–12:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[1262px] top-[371px] w-[122px]" data-node-id="261:31867" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1262px] text-[#7d6657] text-[11px] top-[382px] w-[122px]" data-node-id="261:31868">
+        An · Bình · Lan
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[1262px] rounded-[7px] top-[418px] w-[122px]" data-node-id="261:31869" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1323px] text-[#296e4d] text-[11px] text-center top-[424px] w-[122px]" data-node-id="261:31870">
+        3 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[378px] rounded-[9px] top-[470px] w-[138px]" data-node-id="261:31871" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[386px] text-[#296e4d] text-[11px] top-[479px] w-[122px]" data-node-id="261:31872">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[12px] top-[507px] w-[122px]" data-node-id="261:31873">
+        12:00–17:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[535px] w-[122px]" data-node-id="261:31874" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#7d6657] text-[11px] top-[546px] w-[122px]" data-node-id="261:31875">
+        An · Bình · Lan
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[386px] rounded-[7px] top-[582px] w-[122px]" data-node-id="261:31876" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[447px] text-[#296e4d] text-[11px] text-center top-[588px] w-[122px]" data-node-id="261:31877">
+        3 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[524px] rounded-[9px] top-[470px] w-[138px]" data-node-id="261:31878" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[532px] text-[#296e4d] text-[11px] top-[479px] w-[122px]" data-node-id="261:31879">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[532px] text-[#4a3525] text-[12px] top-[507px] w-[122px]" data-node-id="261:31880">
+        12:00–17:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[532px] top-[535px] w-[122px]" data-node-id="261:31881" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[532px] text-[#7d6657] text-[11px] top-[546px] w-[122px]" data-node-id="261:31882">
+        Hà · Mai
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[532px] rounded-[7px] top-[582px] w-[122px]" data-node-id="261:31883" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[593px] text-[#296e4d] text-[11px] text-center top-[588px] w-[122px]" data-node-id="261:31884">
+        2 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[670px] rounded-[9px] top-[470px] w-[138px]" data-node-id="261:31885" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[678px] text-[#296e4d] text-[11px] top-[479px] w-[122px]" data-node-id="261:31886">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[678px] text-[#4a3525] text-[12px] top-[507px] w-[122px]" data-node-id="261:31887">
+        12:00–17:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[678px] top-[535px] w-[122px]" data-node-id="261:31888" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[678px] text-[#7d6657] text-[11px] top-[546px] w-[122px]" data-node-id="261:31889">
+        An · Lan
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[678px] rounded-[7px] top-[582px] w-[122px]" data-node-id="261:31890" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[739px] text-[#296e4d] text-[11px] text-center top-[588px] w-[122px]" data-node-id="261:31891">
+        2 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[816px] rounded-[9px] top-[470px] w-[138px]" data-node-id="261:31892" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[824px] text-[#296e4d] text-[11px] top-[479px] w-[122px]" data-node-id="261:31893">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[824px] text-[#4a3525] text-[12px] top-[507px] w-[122px]" data-node-id="261:31894">
+        12:00–17:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[824px] top-[535px] w-[122px]" data-node-id="261:31895" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[824px] text-[#7d6657] text-[11px] top-[546px] w-[122px]" data-node-id="261:31896">
+        An · Bình · Lan
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[824px] rounded-[7px] top-[582px] w-[122px]" data-node-id="261:31897" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[885px] text-[#296e4d] text-[11px] text-center top-[588px] w-[122px]" data-node-id="261:31898">
+        3 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcebe3] border border-[#b8332a] border-solid h-[148px] left-[962px] rounded-[9px] top-[470px] w-[138px]" data-node-id="261:31899" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[970px] text-[#ab4a36] text-[11px] top-[479px] w-[122px]" data-node-id="261:31900">
+        Cần bổ sung
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[970px] text-[#4a3525] text-[12px] top-[507px] w-[122px]" data-node-id="261:31901">
+        12:00–17:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[970px] top-[535px] w-[122px]" data-node-id="261:31902" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[970px] text-[#7d6657] text-[11px] top-[546px] w-[122px]" data-node-id="261:31903">
+        Mai
+      </p>
+      <div className="absolute bg-[#fcebe3] h-[24px] left-[970px] rounded-[7px] top-[582px] w-[122px]" data-node-id="261:31904" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1031px] text-[#ab4a36] text-[11px] text-center top-[588px] w-[122px]" data-node-id="261:31905">
+        1 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[1108px] rounded-[9px] top-[470px] w-[138px]" data-node-id="261:31906" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1116px] text-[#296e4d] text-[11px] top-[479px] w-[122px]" data-node-id="261:31907">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1116px] text-[#4a3525] text-[12px] top-[507px] w-[122px]" data-node-id="261:31908">
+        12:00–17:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[1116px] top-[535px] w-[122px]" data-node-id="261:31909" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1116px] text-[#7d6657] text-[11px] top-[546px] w-[122px]" data-node-id="261:31910">
+        An · Lan
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[1116px] rounded-[7px] top-[582px] w-[122px]" data-node-id="261:31911" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1177px] text-[#296e4d] text-[11px] text-center top-[588px] w-[122px]" data-node-id="261:31912">
+        2 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[148px] left-[1254px] rounded-[9px] top-[470px] w-[138px]" data-node-id="261:31913" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1262px] text-[#296e4d] text-[11px] top-[479px] w-[122px]" data-node-id="261:31914">
+        Đủ nhân sự
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1262px] text-[#4a3525] text-[12px] top-[507px] w-[122px]" data-node-id="261:31915">
+        12:00–17:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[1262px] top-[535px] w-[122px]" data-node-id="261:31916" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1262px] text-[#7d6657] text-[11px] top-[546px] w-[122px]" data-node-id="261:31917">
+        An · Bình · Lan
+      </p>
+      <div className="absolute bg-[#e5f2e8] h-[24px] left-[1262px] rounded-[7px] top-[582px] w-[122px]" data-node-id="261:31918" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[1323px] text-[#296e4d] text-[11px] text-center top-[588px] w-[122px]" data-node-id="261:31919">
+        3 / 4 nhân viên
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[378px] top-[871px] w-[1022px]" data-node-id="261:31920" data-name="Rectangle" />
+      <div className="absolute bg-[#fffdfa] border border-[#e5d6c4] border-solid h-[44px] left-[1110px] rounded-[10px] top-[884px] w-[290px]" data-node-id="261:31921" data-name="Rectangle" />
+      <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold h-[24px] justify-center leading-[0] left-[1255px] text-[#7a2e1d] text-[14px] text-center top-[906px] w-[290px]" data-node-id="261:31922">
+        <p className="leading-[normal]">Xử lý yêu cầu đổi hoặc xoay ca</p>
+      </div>
+      <div className="absolute bg-[#fcebe3] border border-[#b8332a] border-solid h-[148px] left-[378px] rounded-[9px] top-[634px] w-[138px]" data-node-id="261:31923" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[386px] text-[#ab4a36] text-[11px] top-[643px] w-[122px]" data-node-id="261:31924">
+        Cần bổ sung
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[12px] top-[671px] w-[122px]" data-node-id="261:31925">
+        17:00–22:00
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[699px] w-[122px]" data-node-id="261:31926" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#7d6657] text-[11px] top-[710px] w-[122px]" data-node-id="261:31927">
+        Chưa phân công
+      </p>
+      <div className="absolute bg-[#fcebe3] h-[24px] left-[386px] rounded-[7px] top-[746px] w-[122px]" data-node-id="261:31928" data-name="Rectangle" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[447px] text-[#ab4a36] text-[11px] text-center top-[752px] w-[122px]" data-node-id="261:31929">
+        0 / 4 nhân viên
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[1.5] left-[362px] text-[#7d6657] text-[11px] top-[16px] whitespace-nowrap" data-node-id="261:31930">
+        QUẢN LÝ CA / LỊCH LÀM VIỆC
+      </p>
+    </div>
+  );
+}

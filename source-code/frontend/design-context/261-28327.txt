@@ -1,0 +1,72 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/c6ff405f-02ce-4f16-9b9a-3db73cf47b6b";
+const imgRectangle = `${assetPathPrefix}/58672.png`;
+const imgGd06A11BTrngTenTaiKhonVaMtKhu = `${assetPathPrefix}/a1b46.svg`;
+const imgVector = `${assetPathPrefix}/e6975.svg`;
+const imgVector1 = `${assetPathPrefix}/cd906.svg`;
+const imgVector2 = `${assetPathPrefix}/cbde3.svg`;
+const imgVector3 = `${assetPathPrefix}/b18d2.svg`;
+const imgVector4 = `${assetPathPrefix}/b0b9d.svg`;
+
+export default function Gd06A11BTrngTenTaiKhonVaMtKhu() {
+  return (
+    <div className="relative size-full" data-node-id="261:28327" data-name="GD0-6a1-1 - Bỏ trống tên tài khoản và mật khẩu">
+      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGd06A11BTrngTenTaiKhonVaMtKhu} />
+      <div className="absolute bg-[#4a3525] h-[1024px] left-0 top-0 w-[580px]" data-node-id="261:28329" data-name="Rectangle" />
+      <div className="absolute inset-[30.86%_13.19%_30.86%_53.47%]" data-node-id="261:28330" data-name="Vector">
+        <div className="absolute inset-[-0.13%_-0.1%]">
+          <img alt="" className="block max-w-none size-full" src={imgVector} />
+        </div>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold inset-[35.16%_35.07%_61.91%_56.25%] leading-[normal] text-[#1f140e] text-[24px] whitespace-nowrap" data-node-id="261:28331">
+        Đăng nhập
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold inset-[40.63%_38.13%_57.81%_56.25%] leading-[normal] text-[#4a3525] text-[13px]" data-node-id="261:28332">
+        Tên tài khoản
+      </p>
+      <div className="absolute inset-[42.58%_15.97%_53.13%_56.25%]" data-node-id="261:28333" data-name="Vector">
+        <div className="absolute inset-[-1.14%_-0.13%]">
+          <img alt="" className="block max-w-none size-full" src={imgVector1} />
+        </div>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold inset-[50.98%_39.79%_47.46%_56.25%] leading-[normal] text-[#4a3525] text-[13px]" data-node-id="261:28334">
+        Mật khẩu
+      </p>
+      <div className="absolute inset-[52.93%_15.97%_42.77%_56.25%]" data-node-id="261:28335" data-name="Vector">
+        <div className="absolute inset-[-1.14%_-0.13%]">
+          <img alt="" className="block max-w-none size-full" src={imgVector1} />
+        </div>
+      </div>
+      <div className="absolute inset-[54.75%_17.22%_44.59%_81.67%]" data-node-id="261:28336" data-name="Vector">
+        <div className="absolute inset-[-11.11%_-5.63%]">
+          <img alt="" className="block max-w-none size-full" src={imgVector2} />
+        </div>
+      </div>
+      <div className="absolute inset-[54.86%_17.62%_44.71%_82.07%]" data-node-id="261:28337" data-name="Vector">
+        <div className="absolute inset-[-17.05%]">
+          <img alt="" className="block max-w-none size-full" src={imgVector3} />
+        </div>
+      </div>
+      <div className="absolute inset-[61.13%_15.97%_34.57%_56.25%]" data-node-id="261:28338" data-name="Vector">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgVector4} />
+      </div>
+      <div className="[word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold inset-[62.11%_15.97%_35.55%_56.25%] justify-center leading-[0] text-[14px] text-center text-white" data-node-id="261:28339">
+        <p className="leading-[normal]">Đăng nhập</p>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Regular'] font-normal leading-[normal] left-[810px] text-[#b8332a] text-[12px] top-[484px] whitespace-nowrap" data-node-id="261:28340">
+        Vui lòng nhập tên tài khoản.
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Regular'] font-normal leading-[normal] left-[810px] text-[#b8332a] text-[12px] top-[590px] whitespace-nowrap" data-node-id="261:28341">
+        Vui lòng nhập mật khẩu.
+      </p>
+      <div className="absolute left-[228px] rounded-[14px] size-[124px] top-[356px]" data-node-id="261:28342" data-name="Rectangle">
+        <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[14px] size-full" src={imgRectangle} />
+      </div>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[48px] leading-[normal] left-[290px] text-[#fffdfa] text-[36px] text-center top-[510px] w-[500px]" data-node-id="261:28343">
+        Mê Cà Phê
+      </p>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Regular'] font-normal h-[28px] leading-[normal] left-[290px] text-[#ede0c8] text-[18px] text-center top-[568px] w-[500px]" data-node-id="261:28344">
+        Hệ thống quản lý
+      </p>
+    </div>
+  );
+}

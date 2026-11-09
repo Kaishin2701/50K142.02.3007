@@ -1,0 +1,13 @@
+{
+  "name": "me-ca-phe",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "setup": "npm ci --prefix backend && npm ci --prefix frontend",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend",
+    "test": "npm test --prefix backend && npm test --prefix frontend",
+    "start": "node backend/dist/server.js",
+    "local": "npm run dev:local --prefix backend -- --demo"
+  },
+  "engines": { "node": ">=24" }
+}

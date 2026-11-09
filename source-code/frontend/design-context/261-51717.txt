@@ -1,0 +1,254 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/c2a9c832-2cce-4630-b9d8-a3d9d889eb26";
+const imgRectangle = `${assetPathPrefix}/b4c0b.png`;
+const imgVector = `${assetPathPrefix}/fa371.svg`;
+const imgVector1 = `${assetPathPrefix}/a8692.svg`;
+const imgVector2 = `${assetPathPrefix}/27867.svg`;
+const imgVector3 = `${assetPathPrefix}/6c88e.svg`;
+const imgVector4 = `${assetPathPrefix}/88cae.svg`;
+const imgVector5 = `${assetPathPrefix}/eac73.svg`;
+const imgVector6 = `${assetPathPrefix}/be167.svg`;
+const imgVector7 = `${assetPathPrefix}/df0aa.svg`;
+const imgVector8 = `${assetPathPrefix}/471e8.svg`;
+
+export default function Gd13151QrGhiNhnThanhToanThanhCong() {
+  return (
+    <div className="bg-[#faf5ed] relative size-full" data-node-id="261:51717" data-name="GD1.3-15-1 - QR - Ghi nhận thanh toán thành công">
+      <div className="absolute bg-[#ede0c8] h-[992px] left-[16px] overflow-clip rounded-[12px] top-[16px] w-[310px]" data-node-id="261:51718" data-name="Điều hướng nhân viên">
+        <div className="absolute left-[104.5px] rounded-[10px] size-[101px] top-[41.5px]" data-node-id="342:5433" data-name="Rectangle">
+          <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[10px] size-full" src={imgRectangle} />
+        </div>
+        <div className="absolute bg-[#c67d53] h-[41px] left-[18px] rounded-[12px] shadow-[0px_4px_12px_0px_rgba(198,125,83,0.25)] top-[160px] w-[274px]" data-node-id="342:5434" data-name="Rectangle" />
+        <div className="absolute inset-[17.44%_81.53%_80.96%_12.66%]" data-node-id="342:5435" data-name="Vector">
+          <div className="absolute inset-[-5.05%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[14px] text-white top-[171.5px] w-[212px]" data-node-id="342:5436">
+          Bán hàng
+        </p>
+        <div className="absolute inset-[22.33%_81.56%_76.39%_12.76%]" data-node-id="342:5437" data-name="Vector">
+          <div className="absolute inset-[-6.32%_-4.55%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector1} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#4a3525] text-[14px] top-[218.5px] w-[192px]" data-node-id="342:5438">
+          Quản lý đơn hàng
+        </p>
+        <div className="absolute inset-[22.58%_12.66%_76.71%_86.21%]" data-node-id="342:5439" data-name="Vector">
+          <div className="absolute inset-[-11.43%_-32.32%_-11.43%_-22.86%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector2} />
+          </div>
+        </div>
+        <div className="absolute inset-[26.92%_81.53%_71.49%_12.66%]" data-node-id="342:5441" data-name="Vector">
+          <div className="absolute inset-[-5.05%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector3} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#4a3525] text-[14px] top-[265.5px] w-[192px]" data-node-id="342:5442">
+          Kho
+        </p>
+        <div className="absolute inset-[27.32%_12.66%_71.98%_86.21%]" data-node-id="342:5443" data-name="Vector">
+          <div className="absolute inset-[-11.43%_-32.32%_-11.43%_-22.86%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector2} />
+          </div>
+        </div>
+        <div className="absolute inset-[31.65%_81.53%_66.75%_12.66%]" data-node-id="342:5447" data-name="Vector">
+          <div className="absolute inset-[-5.05%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector4} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#4a3525] text-[14px] top-[312.5px] w-[192px]" data-node-id="342:5448">
+          Lịch làm việc của tôi
+        </p>
+        <div className="absolute inset-[32.06%_12.66%_67.24%_86.21%]" data-node-id="342:5449" data-name="Vector">
+          <div className="absolute inset-[-11.43%_-32.32%_-11.43%_-22.86%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector2} />
+          </div>
+        </div>
+        <div className="absolute bg-[#fcf7f0] h-[64px] left-[18px] rounded-[8px] top-[849px] w-[274px]" data-node-id="342:5450" data-name="Rectangle" />
+        <div className="absolute bg-[#c67d53] left-[30px] rounded-[99px] size-[38px] top-[862px]" data-node-id="342:5451" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[34.5px] text-[12px] text-white top-[872px] whitespace-nowrap" data-node-id="342:5452">
+          NMA
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[78px] text-[#4a3525] text-[13px] top-[861px] w-[202px]" data-node-id="342:5453">
+          Nguyễn Minh Anh
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[78px] text-[#7d6657] text-[12px] top-[883px] w-[202px]" data-node-id="342:5454">
+          Nhân viên
+        </p>
+        <div className="absolute border-[#d8c7aa] border-solid border-t h-[55px] left-[18px] top-[913px] w-[274px]" data-node-id="342:5455" data-name="Rectangle" />
+        <div className="absolute bg-[rgba(92,48,24,0.08)] h-[42px] left-[18px] rounded-[12px] top-[926px] w-[274px]" data-node-id="342:5456" data-name="Rectangle" />
+        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold justify-center leading-[0] left-[34px] text-[#7a2e1d] text-[15px] top-[946.5px] whitespace-nowrap" data-node-id="342:5457">
+          <p className="leading-[normal]">↪</p>
+        </div>
+        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold justify-center leading-[0] left-[58px] text-[#7a2e1d] text-[14px] top-[947px] w-[218px]" data-node-id="342:5458">
+          <p className="leading-[normal]">Đăng xuất</p>
+        </div>
+      </div>
+      <div className="absolute bg-[#faf5ed] h-[992px] left-[338px] overflow-clip rounded-[18px] top-[16px] w-[1086px]" data-node-id="261:51763" data-name="Frame">
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[15px] left-0 text-[#7d6657] text-[11px] top-[24.5px] whitespace-nowrap" data-node-id="345:1987">
+          BÁN HÀNG
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-0 text-[#1f140e] text-[28px] top-[45.5px] w-[1070px]" data-node-id="345:1988">
+          Lập đơn bán hàng
+        </p>
+        <div className="absolute bg-white border border-[#e5d6c4] border-solid h-[864px] left-0 rounded-[14px] top-[112px] w-[694px]" data-node-id="345:1989" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[20px] text-[#4a3525] text-[15px] top-[130px] w-[541px]" data-node-id="345:1990">
+          Đơn hàng
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[20px] text-[#7d6657] text-[12px] top-[157px] w-[541px]" data-node-id="345:1991">
+          Đơn đã xác nhận, không thể chỉnh sửa
+        </p>
+        <div className="absolute bg-[#fcf0e5] h-[28px] left-[561px] rounded-[99px] top-[138.5px] w-[113px]" data-node-id="345:1992" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[18px] left-[571px] text-[#7a2e1d] text-[12px] top-[143.5px] whitespace-nowrap" data-node-id="345:1993">
+          Bắt đầu pha chế
+        </p>
+        <div className="absolute border-[#e5d6c4] border-b border-solid h-[35px] left-[20px] top-[187px] w-[654px]" data-node-id="345:1994" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[1.5] left-[20px] text-[#7d6657] text-[12px] top-[195px] whitespace-nowrap" data-node-id="345:1995">
+          STT
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[1.5] left-[64px] text-[#7d6657] text-[12px] top-[195px] whitespace-nowrap" data-node-id="345:1996">
+          Tên món
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[1.5] left-[300px] text-[#7d6657] text-[12px] top-[195px] whitespace-nowrap" data-node-id="345:1997">
+          Số lượng
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[1.5] left-[408px] text-[#7d6657] text-[12px] top-[195px] whitespace-nowrap" data-node-id="345:1998">
+          Đơn giá
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[1.5] left-[505px] text-[#7d6657] text-[12px] top-[195px] whitespace-nowrap" data-node-id="345:1999">
+          Thành tiền
+        </p>
+        <div className="absolute border-[#e5d6c4] border-b border-solid h-[59px] left-[20px] top-[222px] w-[654px]" data-node-id="345:2000" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[20px] text-[#7d6657] text-[13px] top-[241px] whitespace-nowrap" data-node-id="345:2001">
+          1
+        </p>
+        <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[44px] left-[64px] rounded-[8px] top-[229px] w-[224px]" data-node-id="345:2002" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[77px] text-[#4a3525] text-[13px] top-[241px] whitespace-nowrap" data-node-id="345:2003">
+          Cà phê Muối Mê
+        </p>
+        <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[44px] left-[300px] rounded-[8px] top-[229px] w-[72px]" data-node-id="345:2004" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[332px] text-[#4a3525] text-[13px] top-[241px] whitespace-nowrap" data-node-id="345:2005">
+          2
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[413px] text-[#4a3525] text-[13px] top-[241px] whitespace-nowrap" data-node-id="345:2006">
+          29.000 đ
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[524px] text-[#4a3525] text-[13px] top-[241px] whitespace-nowrap" data-node-id="345:2007">
+          58.000 đ
+        </p>
+        <div className="absolute border-[#e5d6c4] border-b border-solid h-[59px] left-[20px] top-[281px] w-[654px]" data-node-id="345:2008" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[20px] text-[#7d6657] text-[13px] top-[300px] whitespace-nowrap" data-node-id="345:2009">
+          2
+        </p>
+        <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[44px] left-[64px] rounded-[8px] top-[288px] w-[224px]" data-node-id="345:2010" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[77px] text-[#4a3525] text-[13px] top-[300px] whitespace-nowrap" data-node-id="345:2011">
+          Bạc xỉu kem béo
+        </p>
+        <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[44px] left-[300px] rounded-[8px] top-[288px] w-[72px]" data-node-id="345:2012" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[333.5px] text-[#4a3525] text-[13px] top-[300px] whitespace-nowrap" data-node-id="345:2013">
+          1
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[413px] text-[#4a3525] text-[13px] top-[300px] whitespace-nowrap" data-node-id="345:2014">
+          29.000 đ
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[525px] text-[#4a3525] text-[13px] top-[300px] whitespace-nowrap" data-node-id="345:2015">
+          29.000 đ
+        </p>
+        <div className="absolute border-[#e5d6c4] border-b border-solid h-[59px] left-[20px] top-[340px] w-[654px]" data-node-id="345:2016" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[20px] text-[#7d6657] text-[13px] top-[359px] whitespace-nowrap" data-node-id="345:2017">
+          3
+        </p>
+        <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[44px] left-[64px] rounded-[8px] top-[347px] w-[224px]" data-node-id="345:2018" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[77px] text-[#4a3525] text-[13px] top-[359px] whitespace-nowrap" data-node-id="345:2019">
+          Trà Đào Cam Sả
+        </p>
+        <div className="absolute bg-[#fcf7f0] border border-[#e5d6c4] border-solid h-[44px] left-[300px] rounded-[8px] top-[347px] w-[72px]" data-node-id="345:2020" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[333.5px] text-[#4a3525] text-[13px] top-[359px] whitespace-nowrap" data-node-id="345:2021">
+          1
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[412px] text-[#4a3525] text-[13px] top-[359px] whitespace-nowrap" data-node-id="345:2022">
+          35.000 đ
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[524px] text-[#4a3525] text-[13px] top-[359px] whitespace-nowrap" data-node-id="345:2023">
+          35.000 đ
+        </p>
+        <div className="absolute border-[#e5d6c4] border-solid border-t h-[78px] left-[20px] top-[880px] w-[654px]" data-node-id="345:2024" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[1.5] left-[20px] text-[#7d6657] text-[13px] top-[897px] whitespace-nowrap" data-node-id="345:2025">
+          Tổng tiền
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[20px] text-[#1f140e] text-[26px] top-[919px] whitespace-nowrap" data-node-id="345:2026">
+          122.000 đ
+        </p>
+        <div className="absolute bg-[#c67d53] h-[44px] left-[557px] rounded-[10px] top-[905.5px] w-[117px]" data-node-id="345:2027" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[571px] text-[14px] text-white top-[918.5px] whitespace-nowrap" data-node-id="345:2028">
+          Xuất hóa đơn
+        </p>
+        <div className="absolute bg-white border border-[#e5d6c4] border-solid h-[864px] left-[710px] rounded-[14px] top-[112px] w-[360px]" data-node-id="345:2029" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[730px] text-[#4a3525] text-[15px] top-[130px] whitespace-nowrap" data-node-id="345:2030">
+          Xử lý đơn
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[730px] text-[#7d6657] text-[12px] top-[157px] w-[320px]" data-node-id="345:2031">
+          Thanh toán thành công
+        </p>
+        <div className="absolute bg-[#fcf7f0] h-[121px] left-[730px] rounded-[8px] top-[189px] w-[320px]" data-node-id="345:2032" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[744px] text-[#7d6657] text-[13px] top-[203px] whitespace-nowrap" data-node-id="345:2033">
+          Mã đơn
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[966px] text-[#4a3525] text-[13px] top-[203px] whitespace-nowrap" data-node-id="345:2034">
+          #ME-0143
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[744px] text-[#7d6657] text-[13px] top-[237px] whitespace-nowrap" data-node-id="345:2035">
+          Trạng thái
+        </p>
+        <div className="absolute bg-[#fcf0e5] h-[28px] left-[923px] rounded-[99px] top-[233px] w-[113px]" data-node-id="345:2036" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[18px] left-[933px] text-[#7a2e1d] text-[12px] top-[238px] whitespace-nowrap" data-node-id="345:2037">
+          Bắt đầu pha chế
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[744px] text-[#7d6657] text-[13px] top-[273.5px] whitespace-nowrap" data-node-id="345:2038">
+          Thanh toán
+        </p>
+        <div className="absolute bg-[#ede0c8] h-[25px] left-[999px] rounded-[99px] top-[271px] w-[37px]" data-node-id="345:2039" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[1009px] text-[#4a3525] text-[11px] top-[275px] whitespace-nowrap" data-node-id="345:2040">
+          QR
+        </p>
+        <div className="absolute bg-[#e5f2e8] border border-[#e5f2e8] border-solid h-[207px] left-[730px] rounded-[14px] top-[324px] w-[320px]" data-node-id="345:2041" data-name="Rectangle" />
+        <div className="absolute left-[868px] size-[44px] top-[347px]" data-node-id="345:2042" data-name="Rectangle" />
+        <div className="absolute inset-[35.35%_16.36%_60.95%_80.26%]" data-node-id="345:2043" data-name="Vector">
+          <div className="absolute inset-[-5%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector5} />
+          </div>
+        </div>
+        <div className="absolute inset-[36.83%_17.54%_62.43%_81.45%]" data-node-id="345:2044" data-name="Vector">
+          <div className="absolute inset-[-25%_-16.67%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector6} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[802px] text-[#296e4d] text-[16px] top-[399px] whitespace-nowrap" data-node-id="345:2045">
+          Thanh toán thành công
+        </p>
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[1.5] left-[890px] text-[#296e4d] text-[12px] text-center top-[431px] w-[270px]" data-node-id="345:2046">
+          Vui lòng xuất hóa đơn cho khách trước khi chuyển phiếu pha chế.
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[1.5] left-[835.5px] text-[#1f140e] text-[22px] top-[475px] whitespace-nowrap" data-node-id="345:2047">
+          122.000 đ
+        </p>
+        <div className="absolute bg-white border border-[#e5f2e8] border-solid h-[44px] left-[643px] rounded-[10px] top-[12px] w-[427px]" data-node-id="345:2048" data-name="Rectangle" />
+        <div className="absolute left-[658px] size-[18px] top-[25px]" data-node-id="345:2049" data-name="Rectangle" />
+        <div className="absolute inset-[2.67%_37.89%_95.82%_60.73%]" data-node-id="345:2050" data-name="Vector">
+          <div className="absolute inset-[-5%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector7} />
+          </div>
+        </div>
+        <div className="absolute inset-[3.28%_38.37%_96.42%_61.21%]" data-node-id="345:2051" data-name="Vector">
+          <div className="absolute inset-[-25%_-16.67%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector8} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[686px] text-[#296e4d] text-[14px] top-[25px] whitespace-nowrap" data-node-id="345:2052">
+          Đã ghi nhận thanh toán thành công cho đơn #ME-0143
+        </p>
+      </div>
+    </div>
+  );
+}

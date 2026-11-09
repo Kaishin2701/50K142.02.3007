@@ -1,0 +1,777 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/1e7033d1-ae4e-4a8c-a30c-2fe8976f4ad7";
+const imgLogoImage = `${assetPathPrefix}/b4c0b.png`;
+const imgVector = `${assetPathPrefix}/ed483.svg`;
+const imgVector1 = `${assetPathPrefix}/97b10.svg`;
+const imgVector2 = `${assetPathPrefix}/daaae.svg`;
+const imgVector3 = `${assetPathPrefix}/8bfd0.svg`;
+const imgVector4 = `${assetPathPrefix}/5424e.svg`;
+const imgVector5 = `${assetPathPrefix}/bce45.svg`;
+const imgVector6 = `${assetPathPrefix}/be514.svg`;
+
+export default function Gd4321LchSHaoHtKho() {
+  return (
+    <div className="bg-[#faf5ed] relative size-full" data-node-id="261:40650" data-name="GD4.3-2-1 - Lịch sử hao hụt kho">
+      <div className="absolute bg-[#ede0c8] h-[992px] left-[16px] overflow-clip rounded-[12px] top-[16px] w-[310px]" data-node-id="261:40651" data-name="Sidebar — Quản lý">
+        <div className="absolute left-[104.5px] rounded-[10px] size-[101px] top-[36px]" data-node-id="342:2359" data-name="Logo image">
+          <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[10px] size-full" src={imgLogoImage} />
+        </div>
+        <div className="absolute drop-shadow-[0px_4px_6px_rgba(198,125,83,0.25)] h-[41px] left-[18px] rounded-[12px] top-[160px] w-[274px]" data-node-id="342:2360" data-name="Rectangle" />
+        <div className="absolute inset-[17.52%_81.53%_81.05%_12.66%]" data-node-id="342:2361" data-name="Vector">
+          <div className="absolute inset-[-5.61%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[171.5px] w-[212px]" data-node-id="342:2362">
+          Tổng quan
+        </p>
+        <div className="absolute inset-[22.33%_81.56%_76.39%_12.76%]" data-node-id="342:2363" data-name="Vector">
+          <div className="absolute inset-[-6.32%_-4.55%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector1} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[218.5px] w-[192px]" data-node-id="342:2364">
+          Quản lý đơn hàng
+        </p>
+        <div className="absolute inset-[22.58%_12.66%_76.71%_86.21%]" data-node-id="342:2365" data-name="Vector">
+          <div className="absolute inset-[-11.43%_-32.32%_-11.43%_-22.86%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector2} />
+          </div>
+        </div>
+        <div className="absolute bg-[#c67d53] h-[41px] left-[18px] rounded-[12px] shadow-[0px_4px_12px_0px_rgba(198,125,83,0.25)] top-[254px] w-[274px]" data-node-id="342:2367" data-name="Rectangle" />
+        <div className="absolute inset-[26.92%_81.53%_71.49%_12.66%]" data-node-id="342:2368" data-name="Vector">
+          <div className="absolute inset-[-5.05%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector3} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[14px] text-white top-[265.5px] w-[192px]" data-node-id="342:2369">
+          Kho
+        </p>
+        <div className="absolute inset-[27.49%_12.1%_72.15%_85.65%]" data-node-id="342:2370" data-name="Vector">
+          <div className="absolute inset-[-22.86%_-11.43%_-32.32%_-11.43%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector4} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[74px] text-[#4a3525] text-[13px] top-[309px] w-[202px]" data-node-id="342:2371">
+          Tổng hợp tồn kho
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[74px] text-[#4a3525] text-[13px] top-[347px] w-[202px]" data-node-id="342:2372">
+          Lịch sử nhập hàng
+        </p>
+        <div className="absolute bg-[#fcf7f0] h-[32px] left-[18px] rounded-[10px] top-[377px] w-[274px]" data-node-id="342:2373" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[74px] text-[#4a3525] text-[13px] top-[385px] w-[202px]" data-node-id="342:2374">
+          Lịch sử hao hụt
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[74px] text-[#4a3525] text-[13px] top-[423px] w-[202px]" data-node-id="342:2375">
+          Duyệt báo cáo cuối ca
+        </p>
+        <div className="absolute inset-[47.05%_81.13%_51.51%_12.42%]" data-node-id="342:2376" data-name="Vector">
+          <div className="absolute inset-[-5.61%_-4%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector5} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[464.5px] w-[212px]" data-node-id="342:2377">
+          Quản lý tài khoản
+        </p>
+        <div className="absolute inset-[51.71%_81.53%_46.69%_12.66%]" data-node-id="342:2378" data-name="Vector">
+          <div className="absolute inset-[-5.05%_-4.44%]">
+            <img alt="" className="block max-w-none size-full" src={imgVector6} />
+          </div>
+        </div>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[64px] text-[#1f140e] text-[14px] top-[511.5px] w-[212px]" data-node-id="342:2379">
+          Quản lý ca
+        </p>
+        <div className="absolute bg-[#f7f1e6] border border-[#d8c7aa] border-solid h-[60px] left-[18px] rounded-[12px] top-[853px] w-[274px]" data-node-id="342:2380" data-name="Rectangle" />
+        <div className="absolute bg-[#c67d53] left-[30px] rounded-[20px] size-[40px] top-[863px]" data-node-id="342:2381" data-name="Rectangle" />
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[35.5px] text-[14px] text-white top-[874px] whitespace-nowrap" data-node-id="342:2382">
+          THN
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold leading-[normal] left-[82px] text-[#1f140e] text-[14px] top-[865.5px] whitespace-nowrap" data-node-id="342:2383">
+          Trần Hoàng Nam
+        </p>
+        <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium leading-[normal] left-[82px] text-[#4a3525] text-[12px] top-[885.5px] whitespace-nowrap" data-node-id="342:2384">
+          Quản lý
+        </p>
+        <div className="absolute border-[#d8c7aa] border-solid border-t h-[55px] left-[18px] top-[913px] w-[274px]" data-node-id="342:2385" data-name="Rectangle" />
+        <div className="absolute bg-[rgba(92,48,24,0.08)] h-[42px] left-[18px] rounded-[12px] top-[926px] w-[274px]" data-node-id="342:2386" data-name="Rectangle" />
+        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold justify-center leading-[0] left-[34px] text-[#7a2e1d] text-[15px] top-[946.5px] whitespace-nowrap" data-node-id="342:2387">
+          <p className="leading-[normal]">↪</p>
+        </div>
+        <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold justify-center leading-[0] left-[58px] text-[#7a2e1d] text-[14px] top-[947px] w-[218px]" data-node-id="342:2388">
+          <p className="leading-[normal]">Đăng xuất</p>
+        </div>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[37px] leading-[normal] left-[362px] text-[#1f140e] text-[28px] top-[45px] w-[1040px]" data-node-id="261:40702">
+        Lịch sử hao hụt kho
+      </p>
+      <div className="absolute bg-white border border-[#e5d6c4] border-solid h-[800px] left-[362px] rounded-[14px] top-[112px] w-[1054px]" data-node-id="261:40703" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[386px] text-[#1f140e] text-[18px] top-[132px] w-[960px]" data-node-id="261:40704">
+        Lịch sử hao hụt
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[170px] w-[1006px]" data-node-id="261:40705" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[386px] text-[#7d6657] text-[11px] top-[185px] w-[30px]" data-node-id="261:40706">
+        STT
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[420px] text-[#7d6657] text-[11px] top-[185px] w-[82px]" data-node-id="261:40707">
+        Ngày
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[505px] text-[#7d6657] text-[11px] top-[185px] w-[62px]" data-node-id="261:40708">
+        Ca
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[570px] text-[#7d6657] text-[11px] top-[185px] w-[110px]" data-node-id="261:40709">
+        Nguyên liệu
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[685px] text-[#7d6657] text-[11px] top-[185px] w-[55px]" data-node-id="261:40710">
+        Đơn vị tính
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[743px] text-[#7d6657] text-[11px] top-[185px] w-[92px]" data-node-id="261:40711">
+        Tồn lý thuyết
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[838px] text-[#7d6657] text-[11px] top-[185px] w-[92px]" data-node-id="261:40712">
+        Tồn thực tế
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[933px] text-[#7d6657] text-[11px] top-[185px] w-[85px]" data-node-id="261:40713">
+        Chênh lệch
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1023px] text-[#7d6657] text-[11px] top-[185px] w-[180px]" data-node-id="261:40714">
+        Lý do chênh lệch
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1210px] text-[#7d6657] text-[11px] top-[185px] w-[180px]" data-node-id="261:40715">
+        Người ghi nhận
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[225px] w-[30px]" data-node-id="261:40716">
+        1
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[225px] w-[82px]" data-node-id="261:40717">
+        06/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[225px] w-[62px]" data-node-id="261:40718">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[225px] w-[110px]" data-node-id="261:40719">
+        Cà phê hạt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[225px] w-[55px]" data-node-id="261:40720">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[225px] w-[92px]" data-node-id="261:40721">
+        5,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[225px] w-[92px]" data-node-id="261:40722">
+        3,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[225px] w-[85px]" data-node-id="261:40723">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[225px] w-[180px]" data-node-id="261:40724">
+        Hao hụt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[225px] w-[180px]" data-node-id="261:40725">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[249px] w-[1006px]" data-node-id="261:40726" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[254px] w-[30px]" data-node-id="261:40727">
+        2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[254px] w-[82px]" data-node-id="261:40728">
+        06/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[254px] w-[62px]" data-node-id="261:40729">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[254px] w-[110px]" data-node-id="261:40730">
+        Sữa tươi
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[254px] w-[55px]" data-node-id="261:40731">
+        lít
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[254px] w-[92px]" data-node-id="261:40732">
+        6
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[254px] w-[92px]" data-node-id="261:40733">
+        4
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[254px] w-[85px]" data-node-id="261:40734">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[254px] w-[180px]" data-node-id="261:40735">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[254px] w-[180px]" data-node-id="261:40736">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[278px] w-[1006px]" data-node-id="261:40737" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[283px] w-[30px]" data-node-id="261:40738">
+        3
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[283px] w-[82px]" data-node-id="261:40739">
+        06/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[283px] w-[62px]" data-node-id="261:40740">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[283px] w-[110px]" data-node-id="261:40741">
+        Đường
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[283px] w-[55px]" data-node-id="261:40742">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[283px] w-[92px]" data-node-id="261:40743">
+        10
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[283px] w-[92px]" data-node-id="261:40744">
+        10,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#4a3525] text-[11px] top-[283px] w-[85px]" data-node-id="261:40745">
+        +0,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[283px] w-[180px]" data-node-id="261:40746">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[283px] w-[180px]" data-node-id="261:40747">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[307px] w-[1006px]" data-node-id="261:40748" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[312px] w-[30px]" data-node-id="261:40749">
+        4
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[312px] w-[82px]" data-node-id="261:40750">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[312px] w-[62px]" data-node-id="261:40751">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[312px] w-[110px]" data-node-id="261:40752">
+        Cà phê hạt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[312px] w-[55px]" data-node-id="261:40753">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[312px] w-[92px]" data-node-id="261:40754">
+        5,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[312px] w-[92px]" data-node-id="261:40755">
+        3,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[312px] w-[85px]" data-node-id="261:40756">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[312px] w-[180px]" data-node-id="261:40757">
+        Hao hụt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[312px] w-[180px]" data-node-id="261:40758">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[336px] w-[1006px]" data-node-id="261:40759" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[341px] w-[30px]" data-node-id="261:40760">
+        5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[341px] w-[82px]" data-node-id="261:40761">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[341px] w-[62px]" data-node-id="261:40762">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[341px] w-[110px]" data-node-id="261:40763">
+        Sữa tươi
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[341px] w-[55px]" data-node-id="261:40764">
+        lít
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[341px] w-[92px]" data-node-id="261:40765">
+        6
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[341px] w-[92px]" data-node-id="261:40766">
+        4
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[341px] w-[85px]" data-node-id="261:40767">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[341px] w-[180px]" data-node-id="261:40768">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[341px] w-[180px]" data-node-id="261:40769">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[365px] w-[1006px]" data-node-id="261:40770" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[370px] w-[30px]" data-node-id="261:40771">
+        6
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[370px] w-[82px]" data-node-id="261:40772">
+        05/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[370px] w-[62px]" data-node-id="261:40773">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[370px] w-[110px]" data-node-id="261:40774">
+        Đường
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[370px] w-[55px]" data-node-id="261:40775">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[370px] w-[92px]" data-node-id="261:40776">
+        10
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[370px] w-[92px]" data-node-id="261:40777">
+        10,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#4a3525] text-[11px] top-[370px] w-[85px]" data-node-id="261:40778">
+        +0,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[370px] w-[180px]" data-node-id="261:40779">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[370px] w-[180px]" data-node-id="261:40780">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[394px] w-[1006px]" data-node-id="261:40781" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[399px] w-[30px]" data-node-id="261:40782">
+        7
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[399px] w-[82px]" data-node-id="261:40783">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[399px] w-[62px]" data-node-id="261:40784">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[399px] w-[110px]" data-node-id="261:40785">
+        Cà phê hạt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[399px] w-[55px]" data-node-id="261:40786">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[399px] w-[92px]" data-node-id="261:40787">
+        5,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[399px] w-[92px]" data-node-id="261:40788">
+        3,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[399px] w-[85px]" data-node-id="261:40789">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[399px] w-[180px]" data-node-id="261:40790">
+        Hao hụt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[399px] w-[180px]" data-node-id="261:40791">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[423px] w-[1006px]" data-node-id="261:40792" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[428px] w-[30px]" data-node-id="261:40793">
+        8
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[428px] w-[82px]" data-node-id="261:40794">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[428px] w-[62px]" data-node-id="261:40795">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[428px] w-[110px]" data-node-id="261:40796">
+        Sữa tươi
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[428px] w-[55px]" data-node-id="261:40797">
+        lít
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[428px] w-[92px]" data-node-id="261:40798">
+        6
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[428px] w-[92px]" data-node-id="261:40799">
+        4
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[428px] w-[85px]" data-node-id="261:40800">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[428px] w-[180px]" data-node-id="261:40801">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[428px] w-[180px]" data-node-id="261:40802">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[452px] w-[1006px]" data-node-id="261:40803" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[457px] w-[30px]" data-node-id="261:40804">
+        9
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[457px] w-[82px]" data-node-id="261:40805">
+        04/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[457px] w-[62px]" data-node-id="261:40806">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[457px] w-[110px]" data-node-id="261:40807">
+        Đường
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[457px] w-[55px]" data-node-id="261:40808">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[457px] w-[92px]" data-node-id="261:40809">
+        10
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[457px] w-[92px]" data-node-id="261:40810">
+        10,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#4a3525] text-[11px] top-[457px] w-[85px]" data-node-id="261:40811">
+        +0,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[457px] w-[180px]" data-node-id="261:40812">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[457px] w-[180px]" data-node-id="261:40813">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[481px] w-[1006px]" data-node-id="261:40814" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[486px] w-[30px]" data-node-id="261:40815">
+        10
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[486px] w-[82px]" data-node-id="261:40816">
+        03/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[486px] w-[62px]" data-node-id="261:40817">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[486px] w-[110px]" data-node-id="261:40818">
+        Cà phê hạt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[486px] w-[55px]" data-node-id="261:40819">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[486px] w-[92px]" data-node-id="261:40820">
+        5,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[486px] w-[92px]" data-node-id="261:40821">
+        3,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[486px] w-[85px]" data-node-id="261:40822">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[486px] w-[180px]" data-node-id="261:40823">
+        Hao hụt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[486px] w-[180px]" data-node-id="261:40824">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[510px] w-[1006px]" data-node-id="261:40825" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[515px] w-[30px]" data-node-id="261:40826">
+        11
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[515px] w-[82px]" data-node-id="261:40827">
+        03/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[515px] w-[62px]" data-node-id="261:40828">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[515px] w-[110px]" data-node-id="261:40829">
+        Sữa tươi
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[515px] w-[55px]" data-node-id="261:40830">
+        lít
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[515px] w-[92px]" data-node-id="261:40831">
+        6
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[515px] w-[92px]" data-node-id="261:40832">
+        4
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[515px] w-[85px]" data-node-id="261:40833">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[515px] w-[180px]" data-node-id="261:40834">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[515px] w-[180px]" data-node-id="261:40835">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[539px] w-[1006px]" data-node-id="261:40836" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[544px] w-[30px]" data-node-id="261:40837">
+        12
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[544px] w-[82px]" data-node-id="261:40838">
+        03/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[544px] w-[62px]" data-node-id="261:40839">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[544px] w-[110px]" data-node-id="261:40840">
+        Đường
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[544px] w-[55px]" data-node-id="261:40841">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[544px] w-[92px]" data-node-id="261:40842">
+        10
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[544px] w-[92px]" data-node-id="261:40843">
+        10,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#4a3525] text-[11px] top-[544px] w-[85px]" data-node-id="261:40844">
+        +0,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[544px] w-[180px]" data-node-id="261:40845">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[544px] w-[180px]" data-node-id="261:40846">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[568px] w-[1006px]" data-node-id="261:40847" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[573px] w-[30px]" data-node-id="261:40848">
+        13
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[573px] w-[82px]" data-node-id="261:40849">
+        02/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[573px] w-[62px]" data-node-id="261:40850">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[573px] w-[110px]" data-node-id="261:40851">
+        Cà phê hạt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[573px] w-[55px]" data-node-id="261:40852">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[573px] w-[92px]" data-node-id="261:40853">
+        5,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[573px] w-[92px]" data-node-id="261:40854">
+        3,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[573px] w-[85px]" data-node-id="261:40855">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[573px] w-[180px]" data-node-id="261:40856">
+        Hao hụt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[573px] w-[180px]" data-node-id="261:40857">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[597px] w-[1006px]" data-node-id="261:40858" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[602px] w-[30px]" data-node-id="261:40859">
+        14
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[602px] w-[82px]" data-node-id="261:40860">
+        02/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[602px] w-[62px]" data-node-id="261:40861">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[602px] w-[110px]" data-node-id="261:40862">
+        Sữa tươi
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[602px] w-[55px]" data-node-id="261:40863">
+        lít
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[602px] w-[92px]" data-node-id="261:40864">
+        6
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[602px] w-[92px]" data-node-id="261:40865">
+        4
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[602px] w-[85px]" data-node-id="261:40866">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[602px] w-[180px]" data-node-id="261:40867">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[602px] w-[180px]" data-node-id="261:40868">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[626px] w-[1006px]" data-node-id="261:40869" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[631px] w-[30px]" data-node-id="261:40870">
+        15
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[631px] w-[82px]" data-node-id="261:40871">
+        02/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[631px] w-[62px]" data-node-id="261:40872">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[631px] w-[110px]" data-node-id="261:40873">
+        Đường
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[631px] w-[55px]" data-node-id="261:40874">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[631px] w-[92px]" data-node-id="261:40875">
+        10
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[631px] w-[92px]" data-node-id="261:40876">
+        10,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#4a3525] text-[11px] top-[631px] w-[85px]" data-node-id="261:40877">
+        +0,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[631px] w-[180px]" data-node-id="261:40878">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[631px] w-[180px]" data-node-id="261:40879">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[655px] w-[1006px]" data-node-id="261:40880" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[660px] w-[30px]" data-node-id="261:40881">
+        16
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[660px] w-[82px]" data-node-id="261:40882">
+        01/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[660px] w-[62px]" data-node-id="261:40883">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[660px] w-[110px]" data-node-id="261:40884">
+        Cà phê hạt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[660px] w-[55px]" data-node-id="261:40885">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[660px] w-[92px]" data-node-id="261:40886">
+        5,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[660px] w-[92px]" data-node-id="261:40887">
+        3,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[660px] w-[85px]" data-node-id="261:40888">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[660px] w-[180px]" data-node-id="261:40889">
+        Hao hụt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[660px] w-[180px]" data-node-id="261:40890">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[684px] w-[1006px]" data-node-id="261:40891" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[689px] w-[30px]" data-node-id="261:40892">
+        17
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[689px] w-[82px]" data-node-id="261:40893">
+        01/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[689px] w-[62px]" data-node-id="261:40894">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[689px] w-[110px]" data-node-id="261:40895">
+        Sữa tươi
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[689px] w-[55px]" data-node-id="261:40896">
+        lít
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[689px] w-[92px]" data-node-id="261:40897">
+        6
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[689px] w-[92px]" data-node-id="261:40898">
+        4
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[689px] w-[85px]" data-node-id="261:40899">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[689px] w-[180px]" data-node-id="261:40900">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[689px] w-[180px]" data-node-id="261:40901">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[713px] w-[1006px]" data-node-id="261:40902" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[718px] w-[30px]" data-node-id="261:40903">
+        18
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[718px] w-[82px]" data-node-id="261:40904">
+        01/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[718px] w-[62px]" data-node-id="261:40905">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[718px] w-[110px]" data-node-id="261:40906">
+        Đường
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[718px] w-[55px]" data-node-id="261:40907">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[718px] w-[92px]" data-node-id="261:40908">
+        10
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[718px] w-[92px]" data-node-id="261:40909">
+        10,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#4a3525] text-[11px] top-[718px] w-[85px]" data-node-id="261:40910">
+        +0,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[718px] w-[180px]" data-node-id="261:40911">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[718px] w-[180px]" data-node-id="261:40912">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[742px] w-[1006px]" data-node-id="261:40913" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[747px] w-[30px]" data-node-id="261:40914">
+        19
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[747px] w-[82px]" data-node-id="261:40915">
+        01/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[747px] w-[62px]" data-node-id="261:40916">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[747px] w-[110px]" data-node-id="261:40917">
+        Cà phê hạt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[747px] w-[55px]" data-node-id="261:40918">
+        kg
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[747px] w-[92px]" data-node-id="261:40919">
+        5,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[747px] w-[92px]" data-node-id="261:40920">
+        3,5
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[747px] w-[85px]" data-node-id="261:40921">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[747px] w-[180px]" data-node-id="261:40922">
+        Hao hụt
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[747px] w-[180px]" data-node-id="261:40923">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[771px] w-[1006px]" data-node-id="261:40924" data-name="Rectangle" />
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[386px] text-[#4a3525] text-[11px] top-[776px] w-[30px]" data-node-id="261:40925">
+        20
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[420px] text-[#4a3525] text-[11px] top-[776px] w-[82px]" data-node-id="261:40926">
+        01/11/2026
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[505px] text-[#4a3525] text-[11px] top-[776px] w-[62px]" data-node-id="261:40927">
+        Ca sáng
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold h-[20px] leading-[normal] left-[570px] text-[#4a3525] text-[11px] top-[776px] w-[110px]" data-node-id="261:40928">
+        Sữa tươi
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[685px] text-[#4a3525] text-[11px] top-[776px] w-[55px]" data-node-id="261:40929">
+        lít
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[743px] text-[#4a3525] text-[11px] top-[776px] w-[92px]" data-node-id="261:40930">
+        6
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[838px] text-[#4a3525] text-[11px] top-[776px] w-[92px]" data-node-id="261:40931">
+        4
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[933px] text-[#b8332a] text-[11px] top-[776px] w-[85px]" data-node-id="261:40932">
+        -2
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1023px] text-[#4a3525] text-[11px] top-[776px] w-[180px]" data-node-id="261:40933">
+        Khác - Sai lệch kiểm đếm
+      </p>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:Medium'] font-medium h-[20px] leading-[normal] left-[1210px] text-[#4a3525] text-[11px] top-[776px] w-[180px]" data-node-id="261:40934">
+        Nguyễn Minh Anh
+      </p>
+      <div className="absolute bg-[#e5d6c4] h-px left-[386px] top-[800px] w-[1006px]" data-node-id="261:40935" data-name="Rectangle" />
+      <div className="absolute bg-[#fffdfa] border border-[#e5d6c4] border-solid h-[44px] left-[1030px] rounded-[10px] top-[848px] w-[118px]" data-node-id="261:40936" data-name="Rectangle" />
+      <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold h-[24px] justify-center leading-[0] left-[1089px] text-[#7a2e1d] text-[14px] text-center top-[870px] w-[118px]" data-node-id="261:40937">
+        <p className="leading-[normal]">Trang trước</p>
+      </div>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Plus_Jakarta_Sans:Bold'] font-bold h-[20px] leading-[normal] left-[1189px] text-[#4a3525] text-[13px] text-center top-[861px] w-[50px]" data-node-id="261:40938">
+        1
+      </p>
+      <div className="absolute bg-[#fffdfa] border border-[#e5d6c4] border-solid h-[44px] left-[1225px] rounded-[10px] top-[848px] w-[140px]" data-node-id="261:40939" data-name="Rectangle" />
+      <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Plus_Jakarta_Sans:Bold'] font-bold h-[24px] justify-center leading-[0] left-[1295px] text-[#7a2e1d] text-[14px] text-center top-[870px] w-[140px]" data-node-id="261:40940">
+        <p className="leading-[normal]">Trang sau</p>
+      </div>
+      <p className="[word-break:break-word] absolute font-['Plus_Jakarta_Sans:SemiBold'] font-semibold leading-[1.5] left-[362px] text-[#7d6657] text-[11px] top-[16px] whitespace-nowrap" data-node-id="261:40941">
+        KHO / LỊCH SỬ HAO HỤT
+      </p>
+    </div>
+  );
+}

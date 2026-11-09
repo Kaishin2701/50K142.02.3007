@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output and caches
+dist/
+build/
+.next/
+coverage/
+.cache/
+.npm-cache/
+*.tsbuildinfo
+.local/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db

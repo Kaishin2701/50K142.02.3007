@@ -1,0 +1,28 @@
+# On GitHub this file lives at source-code/render.yaml.
+# Select that Blueprint path when connecting the repository.
+services:
+  - type: web
+    name: me-ca-phe
+    runtime: node
+    plan: free
+    rootDir: source-code
+    buildCommand: npm ci --include=dev --prefix backend && npm ci --include=dev --prefix frontend && npm run build
+    startCommand: node backend/dist/commands/migrate.js && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PG_SSL
+        value: "true"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_ORIGINS
+        sync: false
+      - key: QR_PROVIDER
+        value: disabled
