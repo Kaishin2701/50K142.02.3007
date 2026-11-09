@@ -203,6 +203,17 @@ test('stock thresholds, discrepancy reasons, sequential closing, and immutable c
  assert.equal(detail.gio_bat_dau,'00:00:00');
  assert.equal((await inventory.reports(manager))[0].ho_ten_nguoi_lap,'employee');
 });
+test('count retries reuse the committed count and reject altered or cross-user requests',async()=>{
+ await endShift();const inventory=inventoryService(db);const key=randomUUID();
+ const payload={ma_ca:shift,tien_mat_thuc_thu:0,chuyen_khoan_thuc_thu:0,items:[{ma_nguyen_lieu:material,ton_ly_thuyet:10,ton_thuc_te:10}]};
+ const first=await inventory.count(employee,payload,key);
+ const repeated=await inventory.count(employee,payload,key);
+ assert.equal(repeated.ma_phieu,first.ma_phieu);
+ assert.equal((await db.query('SELECT * FROM phieu_kiem_kho')).rows.length,1);
+ await assert.rejects(inventory.count(employee,{...payload,tien_mat_thuc_thu:1},key),(error:any)=>error.code==='IDEMPOTENCY_CONFLICT');
+ await assert.rejects(inventory.count(colleague,payload,key),(error:any)=>error.code==='IDEMPOTENCY_CONFLICT');
+});
+
 test('late closing preserves stock movements after counting',async()=>{
  await endShift();const inventory=inventoryService(db);const count=await inventory.count(employee,{ma_ca:shift,tien_mat_thuc_thu:0,chuyen_khoan_thuc_thu:0,items:[{ma_nguyen_lieu:material,ton_ly_thuyet:10,ton_thuc_te:8,ly_do_chenh_lech:'Hao hụt'}]});
  const report=await inventory.createReport(employee,count.ma_phieu);await inventory.send(employee,report.ma_bao_cao);

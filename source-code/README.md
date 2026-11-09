@@ -23,9 +23,9 @@ Each backend module will contain routes, controllers, services, repositories, an
 
 ## Status
 
-The frontend uses React, TypeScript, Vite, and plain CSS. It includes the 209 visible screens and states from the supplied Figma design, local image/SVG assets, and local Plus Jakarta Sans fonts. Existing screens now bind authentication, accounts, menu/cart, orders, payments, schedules, inventory counts, closing reports and revenue to the API.
+The frontend uses React, TypeScript, Vite, and plain CSS. A persistent application shell hosts business pages for sales, orders, accounts, schedules, inventory and reports. Forms, dialogs and checkout phases update locally within these pages. The original 209 Figma contexts remain in frontend/design-context/ as design references. Runtime components use responsive layouts, local image assets and local Plus Jakarta Sans fonts.
 
-The backend uses Express, TypeScript, and PostgreSQL, with authentication, role checks, menu/recipes, orders/payments, shifts, inventory, closing reports, exports, and refresh events. Database migrations target Supabase PostgreSQL. SePay QR and authenticated transaction webhooks are implemented, but require your bank/service configuration. External deployment and payment testing have not been performed.
+The backend uses Express, TypeScript, and PostgreSQL, with authentication, role checks, menu/recipes, orders/payments, shifts, inventory, closing reports, exports, and refresh events. Database migrations target Supabase PostgreSQL. The application is deployed on Render with Supabase PostgreSQL. SePay QR and authenticated transaction webhooks require bank/service configuration before real payment verification.
 
 See backend/README.md for backend setup and docs/backend-api.md for the API contract.
 
@@ -41,7 +41,7 @@ npm run local
 
 Open http://127.0.0.1:3000/. Generated local credentials are stored in `backend/.local/access.json`. Local PostgreSQL data persists in `backend/.local/postgres/`; both are ignored by Git. On an empty local database, this command creates two test accounts, three fictional menu items and an employee shift for today. It never populates a remote Supabase database. To prepare another day's demo, create and assign a shift using the manager account.
 
-`npm test` runs backend business/HTTP/storage tests and frontend DOM interaction tests. Build first because the static-serving test checks the frontend build. These tests do not constitute browser visual verification of all 209 states.
+`npm test` runs backend business/HTTP/storage tests and frontend application interaction tests. Build first because the static-serving test checks the frontend build. DOM interaction tests cover persistence of the shell, local dialog operations, checkout restoration, scheduling and stock reconciliation. Browser visual review is a separate check.
 
 ## Frontend development
 

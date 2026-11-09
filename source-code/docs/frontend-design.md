@@ -1,44 +1,49 @@
-# Frontend design implementation
+# Frontend architecture and design
 
-## Design authority
+## Design references
 
-Figma: https://www.figma.com/design/OnepPW7ISkZvDXf6bsxf52/KAI---MIS?node-id=0-1
+The supplied Figma file defines the visual language and business copy. Its 209 original contexts remain in `frontend/design-context/`, with node metadata in `docs/figma/screens.json`. Local image assets and Plus Jakarta Sans fonts are used by the application. [Figma design](https://www.figma.com/design/OnepPW7ISkZvDXf6bsxf52/KAI---MIS?node-id=0-1)
 
-The Main page contains 209 visible GD screen frames across 28 sections. The hidden frame marked as outside the updated specification is excluded. The screen list and original node IDs are recorded in figma/screens.json.
+## Runtime structure
 
-All visible UI text, sample data, colors, typography, geometry, images, and SVGs come from the high-fidelity Figma design contexts. The original contexts are retained as text in frontend/design-context/. The compiler converts their styling declarations to plain CSS without installing Tailwind. Screens are grouped under frontend/src/features/.
+- `frontend/src/app/App.tsx` composes authentication, data, navigation and checkout providers.
+- `frontend/src/components/AppShell.tsx` owns the persistent sidebar, profile, mobile navigation and main content region.
+- `frontend/src/features/` contains business pages and their domain dialogs.
+- `frontend/src/components/ui.tsx` provides shared native controls, tables, dialogs, status messages and pagination.
+- `frontend/src/services/` contains the API client and business response types.
+- `frontend/src/styles/application.css` supplies responsive layouts and shared visual tokens.
 
-## Preview behavior
+Business pages are loaded by feature. The shell stays mounted when navigating between features. Forms, field errors, calendar dialogs, category selection and checkout phases update component state within the current page.
 
-- Start the frontend with `npm run dev` in frontend/.
-- The initial screen is the empty login form.
-- Authentication calls the backend and uses an HttpOnly session cookie. There is no frontend demo-password bypass. The local setup generates random credentials in `backend/.local/access.json`.
-- Original Figma frames are wrapped by `DesignRoot`; native inputs, buttons and repeated rows use their original geometry. Business data replaces Figma examples. Successful mutation screens are entered after the corresponding API succeeds.
-- In Vite development only, `?design` shows the original static reference markup for comparison. It does not provide authentication or permission bypasses for APIs.
-- Open a particular state with `http://127.0.0.1:5173/#261:28311`, replacing the node ID with one from figma/screens.json.
-- Manager calendar cards open assignment. Shift-click or right-click opens the existing edit dialog.
-- The 1440 by 1024 design canvas is preserved. Smaller viewports scale it proportionally; no separate mobile layout has been invented.
+## Navigation and state
 
-## Assets and typography
+The hash route identifies a business page, such as `#/sales`, `#/accounts` or `#/shifts`. Form submission, payment selection and dialog opening do not change the route. `legacy-routes.json` maps existing Figma-node bookmarks to the appropriate business page.
 
-Figma image and SVG assets are downloaded to frontend/public/assets/figma/. Screens use local paths. Fonts are bundled through @fontsource/plus-jakarta-sans, including Vietnamese characters and weights 400, 500, 600, and 700. Design screenshots are not used as implementation images.
+Session state is supplied by the backend through an HttpOnly cookie. Permission checks also run on the server. Session expiry clears the authenticated workspace and its in-memory data cache.
 
-## Regeneration
+Checkout state lives above the page outlet. Unchecked cart contents and pending order identifiers are stored per user in session storage. Checked orders are restored from server snapshots, including data saved by the previous frontend. Creating an order and retrying its creation use the same idempotency key.
 
-In frontend/:
+Each data resource cancels obsolete requests. Existing cached data remains visible during background refresh. SSE events trigger refreshes without replacing the page. A stock-count submission keeps its payload and idempotency key until the count and closing report are saved.
+
+## Responsive layout
+
+Layout uses normal document flow, CSS Grid and Flexbox. Desktop navigation stays visible, smaller screens use a drawer, tables become labelled rows on phones, and form fields retain readable sizes. The design is adapted from the supplied desktop references.
+
+## Design regeneration
+
+Run these commands in `frontend/` when updating saved design references.
 
 ```sh
 npm run design:compile
 npm run design:assets
-npm run build
 ```
 
-The asset manifest contains the original temporary download sources for regeneration only. They expire; refresh the Figma contexts before downloading again after expiry. Runtime source files use local assets.
+The compiler writes static snapshots under `frontend/design-context/generated/`. It does not generate runtime pages or overwrite application routing. Temporary Figma asset URLs may need refreshing before downloading assets again.
 
-## Validation and limits
+## Verification
 
-Validation completed: TypeScript and the production build pass; all 209 generated screens preserve the original context content after the intended CSS/local-path conversion; all 1,740 referenced local assets exist and are non-empty; the preview endpoint returns HTTP 200. Browser visual comparison could not be completed: the host stopped Windows browser control because URL policy enforcement is not supported for the current Coc Coc browser. Pixel-level fidelity has therefore not been verified in a rendered browser.
+Run `npm run build` and `npm test` in `frontend/`. Application interaction tests use the real application entry point and mocked API responses. They check shell and list identity, dialog submissions, cart persistence across routes, order restoration, payment errors, scheduling and stock reconciliation. Resource tests cover stale responses and background refresh.
 
-This is the frontend design preview phase. Server authentication, authorization, database changes, real payments, stock reservations, report generation, and persistence remain backend/integration work. The interface preview must not be used to record real transactions.
+These checks verify application behavior. Visual comparison on desktop, tablet and phone requires an available browser session.
 
-All project changes remain in the local Code directory, corresponding to source-code/ in the GitHub repository. No GitHub push is performed by this design task.
+To run the application interaction test against the real isolated local API, start `npm run dev:local -- --demo --qa` in `backend/` and set `ME_CAFE_LOCAL_API_BASE_URL=http://127.0.0.1:3000` when running frontend tests. This opt-in test reads the ignored QA credential file and uses only the local QA database. It exercises both roles and the full cash-sale flow through the application components.

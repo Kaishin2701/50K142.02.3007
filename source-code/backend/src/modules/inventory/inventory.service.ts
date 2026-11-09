@@ -40,7 +40,10 @@ export function inventoryService(db:Database){
   receipt:async(id:string)=>{const found=await repo.receipt(db,id);check(found,'Không tìm thấy lần nhập hàng.','NOT_FOUND',404);return {...found,items:await repo.receiptLines(db,id)};},
   losses:(limit:number,offset:number)=>repo.lossHistory(db,limit,offset),
   preview:async(actor:Actor,shift:string)=>{await forEmployee(db,actor,shift);return{ma_ca:shift,...await repo.shiftRevenue(db,shift),items:await repo.list(db,true)};},
-  count:(actor:Actor,v:z.infer<typeof countInput>)=>db.transaction(async tx=>{await lock(tx,'kho');await forEmployee(tx,actor,v.ma_ca);
+  count:(actor:Actor,v:z.infer<typeof countInput>,key?:string)=>db.transaction(async tx=>{await lock(tx,'kho');
+    const previous=await previousRequest(tx,key,actor.id,'count-stock',v);
+    if(previous)return {...await repo.count(tx,previous),items:await repo.countLines(tx,previous)};
+    await forEmployee(tx,actor,v.ma_ca);
     check(!await repo.countForShift(tx,v.ma_ca),'Ca này đã có phiếu kiểm kho.','COUNT_EXISTS');
     check(!await repo.pendingCount(tx),'Cần xác nhận báo cáo kiểm kho trước đó trước khi lập phiếu mới.','PENDING_CLOSE');
     check(!await repo.unfinished(tx,v.ma_ca),'Cần hoàn tất hoặc hủy các đơn còn xử lý của ca.','UNFINISHED_ORDERS');
@@ -56,6 +59,7 @@ export function inventoryService(db:Database){
     }
     const count=await repo.insertCount(tx,actor.id,v,revenue);
     for(const line of v.items)await repo.insertCountLine(tx,count.ma_phieu,materials.find(m=>m.ma_nguyen_lieu===line.ma_nguyen_lieu),line);
+    await rememberRequest(tx,key,actor.id,'count-stock',v,count.ma_phieu);
     return {...count,items:await repo.countLines(tx,count.ma_phieu)};
   }),
   createReport:(actor:Actor,countId:string)=>db.transaction(async tx=>{await lock(tx,'kho');const count=await repo.count(tx,countId);

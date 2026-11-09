@@ -112,7 +112,7 @@ Yêu cầu đi Chờ đồng nghiệp → Chờ xử lý → Đã chấp thuận
 | GET | /inventory/receipts/:id | QL | Chi tiết lần nhập |
 | GET | /inventory/losses | QL | Chênh lệch có lý do thuộc báo cáo đã xác nhận, page/limit |
 | GET | /inventory/counts/preview?ma_ca=UUID | NV trong ca | Lấy số liệu đối chiếu sau khi ca kết thúc |
-| POST | /inventory/counts | NV trong ca | Lưu phiếu kiểm kê cố định |
+| POST | /inventory/counts | NV trong ca | Lưu phiếu kiểm kê cố định; hỗ trợ Idempotency-Key để thử lại an toàn |
 | POST | /inventory/close-reports | NV lập phiếu | {ma_phieu:UUID}, tạo báo cáo Nháp |
 | GET | /inventory/close-reports | QL/NV | Danh sách theo quyền |
 | GET | /inventory/close-reports/:id | QL/NV lập phiếu | Chi tiết |

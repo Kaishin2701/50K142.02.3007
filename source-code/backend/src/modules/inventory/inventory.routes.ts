@@ -13,7 +13,7 @@ export function inventoryRoutes(service:ReturnType<typeof inventoryService>){con
  r.get('/receipts/:id',permit('Quản lý'),controller(async req=>service.receipt(param(req))));
  r.get('/losses',permit('Quản lý'),controller(async req=>{const v=pageQuery.parse(req.query);return service.losses(v.limit,(v.page-1)*v.limit);}));
  r.get('/counts/preview',permit('Nhân viên'),controller(async req=>service.preview(req.actor!,id.parse(req.query.ma_ca))));
- r.post('/counts',permit('Nhân viên'),controller(async req=>service.count(req.actor!,countInput.parse(req.body)),201));
+ r.post('/counts',permit('Nhân viên'),controller(async req=>service.count(req.actor!,countInput.parse(req.body),id.optional().parse(req.get('Idempotency-Key'))),201));
  r.get('/close-reports',controller(async req=>service.reports(req.actor!)));
  r.post('/close-reports',permit('Nhân viên'),controller(async req=>service.createReport(req.actor!,z.object({ma_phieu:id}).strict().parse(req.body).ma_phieu),201));
  r.get('/close-reports/:id',controller(async req=>service.report(req.actor!,param(req))));

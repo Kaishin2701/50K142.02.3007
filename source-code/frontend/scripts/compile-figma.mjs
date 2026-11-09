@@ -79,7 +79,7 @@ for (const screen of screens) {
   if (!fs.existsSync(contextPath) && fs.existsSync(oldContextPath)) fs.renameSync(oldContextPath, contextPath);
   if (!fs.existsSync(contextPath)) continue;
   let source = fs.readFileSync(contextPath, 'utf8');
-  // Only the reference code is executable; the tool's guidance stays in design-context/.
+  // Generated snapshots are visual references outside the running application.
   source = source.split('SUPER CRITICAL:')[0].trim();
   const prefix = source.match(/const assetPathPrefix = "([^"]+)";/)?.[1];
   if (prefix) {
@@ -89,21 +89,18 @@ for (const screen of screens) {
     source = source.replace(prefix, `/assets/figma/${slug}`);
   }
   source = source.replace(/className="([^"]*)"/g, (_, value) => `className="${cssClass(value)}"`);
-  source = 'import { DesignRoot } from "../../../components/DesignRoot";\n' + source;
-  source = source.replace('return (', `return (<DesignRoot screenId="${screen.id}">`);
-  source = source.replace(/\);\s*}\s*$/, '</DesignRoot>);\n}');
   const group = feature(screen.name);
-  const output = path.join(root, 'src/features', group, 'screens', `${slug}.tsx`);
+  const output = path.join(root, 'design-context/generated', group, `${slug}.tsx`);
   fs.mkdirSync(path.dirname(output), { recursive: true });
   fs.writeFileSync(output, `// Figma ${screen.id}: ${screen.name}\n// Generated from the saved high-fidelity design context; edit the compiler or interaction layer.\n${source}\n`);
-  manifest.push({ ...screen, feature: group, module: `../features/${group}/screens/${slug}.tsx` });
+  manifest.push({ ...screen, feature: group, module: `./${group}/${slug}.tsx` });
 }
 
 if (unsupported.size) throw new Error(`Unsupported Figma style tokens: ${[...unsupported].join(', ')}`);
-fs.mkdirSync(path.join(root, 'src/styles'), { recursive: true });
-fs.writeFileSync(path.join(root, 'src/styles/figma.css'),
+fs.mkdirSync(path.join(root, 'design-context/generated'), { recursive: true });
+fs.writeFileSync(path.join(root, 'design-context/generated/figma.css'),
   `/* Exact Figma declarations, converted to plain CSS. No Tailwind runtime. */\n` +
   [...rules].map(([name, value]) => `.${name}{${value}}`).join('\n') + '\n');
-fs.writeFileSync(path.join(root, 'src/app/screens.json'), JSON.stringify(manifest, null, 2) + '\n');
+fs.writeFileSync(path.join(root, 'design-context/generated/screens.json'), JSON.stringify(manifest, null, 2) + '\n');
 fs.writeFileSync(path.join(root, 'design-context/assets.json'), JSON.stringify(assets, null, 2) + '\n');
 console.log(`Compiled ${manifest.length}/${screens.length} screens, ${rules.size} CSS rules, ${assets.length} assets.`);
