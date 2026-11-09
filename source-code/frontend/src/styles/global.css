@@ -23,6 +23,8 @@ button,input,select,textarea{font:inherit;color:inherit;margin:0}button{cursor:p
 .design-input::-webkit-inner-spin-button,.design-input::-webkit-outer-spin-button{appearance:none;margin:0}
 .design-loading{position:absolute;inset:0;background:#faf5ed}
 .live-list{position:absolute;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d8c7aa transparent}
+.live-list,.live-list>div,.live-list>div>div{pointer-events:none}
+.live-list>div>div>*{pointer-events:auto}
 .live-button{padding:0;background-color:transparent;cursor:pointer}
 .live-button:focus-visible{outline:2px solid #c67d53;outline-offset:2px}
 .live-button:disabled{cursor:wait}

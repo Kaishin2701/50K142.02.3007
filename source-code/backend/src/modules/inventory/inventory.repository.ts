@@ -24,10 +24,16 @@ export const inventoryRepository={
  insertCountLine:(db:Database,id:string,material:any,line:any)=>db.query(`INSERT INTO chi_tiet_phieu_kiem_kho VALUES($1,$2,$3,$4,$5,$6,$7)`,[id,line.ma_nguyen_lieu,material.ton_ly_thuyet,line.ton_thuc_te,material.nguong_chenh_lech,line.ly_do_chenh_lech??null,line.ghi_chu??null]),
  countLines:(db:Database,id:string)=>rows(db,`SELECT c.*,n.ten_nguyen_lieu,n.don_vi_tinh,n.muc_ton_toi_thieu,c.ton_thuc_te-c.ton_ly_thuyet_luc_kiem_ke AS chenh_lech FROM chi_tiet_phieu_kiem_kho c JOIN nguyen_lieu n USING(ma_nguyen_lieu) WHERE ma_phieu=$1 ORDER BY n.ten_nguyen_lieu`,[id]),
  count:(db:Database,id:string)=>first(db,'SELECT * FROM phieu_kiem_kho WHERE ma_phieu=$1',[id]),
- report:(db:Database,id:string)=>first(db,`SELECT b.*,k.ma_nguoi_kiem_ke,k.ngay_kiem_ke,k.doanh_thu_ca_luc_doi_chieu,k.tien_mat_thuc_thu,k.chuyen_khoan_thuc_thu,k.ly_do_chenh_lech_tien FROM bao_cao_cuoi_ca b JOIN phieu_kiem_kho k USING(ma_phieu) WHERE ma_bao_cao=$1`,[id]),
+ report:(db:Database,id:string)=>first(db,`SELECT b.*,k.ma_nguoi_kiem_ke,k.ngay_kiem_ke,k.doanh_thu_ca_luc_doi_chieu,
+ k.tien_mat_thuc_thu,k.chuyen_khoan_thuc_thu,k.ly_do_chenh_lech_tien,u.ho_ten AS ho_ten_nguoi_lap,c.ngay_lam,c.gio_bat_dau,c.gio_ket_thuc,x.ho_ten AS ho_ten_nguoi_xac_nhan
+ FROM bao_cao_cuoi_ca b JOIN phieu_kiem_kho k USING(ma_phieu)
+ JOIN nguoi_dung u ON u.ma_nguoi_dung=k.ma_nguoi_kiem_ke JOIN ca_lam c ON c.ma_ca=b.ma_ca
+ LEFT JOIN nguoi_dung x ON x.ma_nguoi_dung=b.ma_nguoi_xac_nhan WHERE ma_bao_cao=$1`,[id]),
  reportForCount:(db:Database,id:string)=>first(db,'SELECT * FROM bao_cao_cuoi_ca WHERE ma_phieu=$1',[id]),
  createReport:(db:Database,count:any)=>first(db,'INSERT INTO bao_cao_cuoi_ca(ma_phieu,ma_ca) VALUES($1,$2) RETURNING *',[count.ma_phieu,count.ma_ca]),
- reports:(db:Database,user:string|null)=>rows(db,`SELECT b.*,k.ngay_kiem_ke,k.doanh_thu_ca_luc_doi_chieu,k.ma_nguoi_kiem_ke FROM bao_cao_cuoi_ca b JOIN phieu_kiem_kho k USING(ma_phieu) WHERE ($1::uuid IS NULL OR k.ma_nguoi_kiem_ke=$1) ORDER BY k.thoi_gian_kiem_ke DESC`,[user]),
+ reports:(db:Database,user:string|null)=>rows(db,`SELECT b.*,k.ngay_kiem_ke,k.doanh_thu_ca_luc_doi_chieu,k.ma_nguoi_kiem_ke,u.ho_ten AS ho_ten_nguoi_lap
+ FROM bao_cao_cuoi_ca b JOIN phieu_kiem_kho k USING(ma_phieu) JOIN nguoi_dung u ON u.ma_nguoi_dung=k.ma_nguoi_kiem_ke
+ WHERE ($1::uuid IS NULL OR k.ma_nguoi_kiem_ke=$1) ORDER BY k.thoi_gian_kiem_ke DESC`,[user]),
  sendReport:(db:Database,id:string)=>first(db,`UPDATE bao_cao_cuoi_ca SET trang_thai='Chờ xác nhận',thoi_gian_gui=now() WHERE ma_bao_cao=$1 RETURNING *`,[id]),
  confirmReport:(db:Database,id:string,user:string)=>first(db,`UPDATE bao_cao_cuoi_ca SET trang_thai='Đã xác nhận',ma_nguoi_xac_nhan=$2,thoi_gian_xac_nhan=now() WHERE ma_bao_cao=$1 RETURNING *`,[id,user]),
  applyCount:async(db:Database,line:any,report:string)=>{

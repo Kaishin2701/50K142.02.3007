@@ -24,6 +24,7 @@ function App() {
 
   useEffect(() => { document.title = `${screen.name.split(' - ').slice(1).join(' - ')} · Mê Cà Phê`; }, [screen]);
 
+  if(!live.ready)return <main className="design-loading" />;
   return <main className="design-viewport" style={{ width, height: 1024 * width / 1440 }}>
     <div className="design-canvas" style={{ transform: `scale(${width / 1440})` }}>
       <Suspense fallback={<div className="design-loading" />}>

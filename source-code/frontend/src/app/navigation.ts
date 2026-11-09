@@ -26,6 +26,7 @@ export function actionFor(label: string, screen: Screen, manager: boolean): stri
     'Quản lý kho': 'GD4.1-2-1', 'Tổng hợp tồn kho': 'GD4.1-2-1',
     'Lịch sử nhập hàng': 'GD4.2-2-1', 'Lịch sử hao hụt': 'GD4.3-2-1',
     'Kiểm kê nguyên liệu': 'GD4.4-2-1', 'Báo cáo cuối ca': 'GD4.5-2-1',
+    'Duyệt báo cáo cuối ca': 'GD4.5-5-1', 'Lập và gửi báo cáo cuối ca': 'GD4.5-2-1',
   };
   if (text === 'Đăng xuất') return manager ? 'GD7-3-2' : 'GD7-3-1';
   if (text === '×' || text === 'Đóng' || text === 'Quay lại' || text === 'Hủy' || text === 'Không') {
@@ -97,9 +98,9 @@ export function actionFor(label: string, screen: Screen, manager: boolean): stri
   if (is('GD4.2') && text === 'Công nợ') return 'GD4.2-4a1-1';
   if (text === 'Trang sau' || (text === '2' && /^GD4\.[23]/.test(name))) return is('GD4.2') ? 'GD4.2-2a2-1' : 'GD4.3-3a2-1';
   if (text === 'Trang trước' || (text === '1' && /^GD4\.[23]/.test(name))) return is('GD4.2') ? 'GD4.2-2-1' : 'GD4.3-2-1';
-  if (text === 'Ngày') return 'GD5.1-7-1';
-  if (text === 'Tháng') return 'GD5.1-11-1';
-  if (text === 'Năm') return 'GD5.1-11-2';
+  if (text === 'Ngày' && is('GD5')) return 'GD5.1-7-1';
+  if (text === 'Tháng' && is('GD5')) return 'GD5.1-11-1';
+  if (text === 'Năm' && is('GD5')) return 'GD5.1-11-2';
   if (text === 'Xem báo cáo') return is('GD5.1-11-2') ? 'GD5.1-11-2' : is('GD5.1-11-1') ? 'GD5.1-11-1' : 'GD5.1-7-1';
   if (text === 'Xuất báo cáo') return 'GD5.3-4a1-1';
   if (text === 'Excel') return 'GD5.3-4a1-1';
@@ -107,6 +108,8 @@ export function actionFor(label: string, screen: Screen, manager: boolean): stri
   if (is('GD5') && text === 'Tiền mặt') return 'GD5.2-8-1';
   if (is('GD5') && text === 'Chuyển khoản') return 'GD5.2-8-2';
   if (is('GD1')) {
+    if (text === 'Lập đơn mới') return 'GD1.3-2-1';
+    if (text === 'Theo dõi đơn hàng') return 'GD1.2-2-1';
     if (text === 'Tra cứu' || text === 'Tìm kiếm') return is('GD1.1') ? 'GD1.1-5-1' : 'GD1.2-4-1';
     if (text === '#ME-0141' || text === 'ME-0141') return 'GD1.1-7-1';
     if (text === 'Cà phê') return 'GD1.3-2-1';

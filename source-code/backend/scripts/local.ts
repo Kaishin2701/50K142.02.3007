@@ -7,7 +7,7 @@ import { hashPassword } from '../src/modules/auth/auth.service.js';
 import { usersRepository } from '../src/modules/users/users.repository.js';
 import { createApp } from '../src/app.js';
 import { httpGateway } from '../src/modules/payments/payments.service.js';
-const directory=fileURLToPath(new URL('../.local/',import.meta.url));await mkdir(directory,{recursive:true});
+const directory=fileURLToPath(new URL(process.argv.includes('--qa')?'../.local/qa/':'../.local/',import.meta.url));await mkdir(directory,{recursive:true});
 const db=await embeddedDatabase(directory+'postgres');await migrate(db,fileURLToPath(new URL('../../database/',import.meta.url)));
 const credentialFile=directory+'access.json';
 if(!(await usersRepository.managers(db)).length){

@@ -197,6 +197,11 @@ test('stock thresholds, discrepancy reasons, sequential closing, and immutable c
  const report=await inventory.createReport(employee,count.ma_phieu);await inventory.send(employee,report.ma_bao_cao);await inventory.confirm(manager,report.ma_bao_cao);await inventory.confirm(manager,report.ma_bao_cao);
  assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),9);
  assert.equal((await db.query(`SELECT * FROM bien_dong_kho WHERE loai='Kiểm kê'`)).rows.length,1);
+ const detail=await inventory.report(manager,report.ma_bao_cao);
+ assert.equal(detail.ho_ten_nguoi_lap,'employee');
+ assert.equal(detail.ho_ten_nguoi_xac_nhan,'manager');
+ assert.equal(detail.gio_bat_dau,'00:00:00');
+ assert.equal((await inventory.reports(manager))[0].ho_ten_nguoi_lap,'employee');
 });
 test('late closing preserves stock movements after counting',async()=>{
  await endShift();const inventory=inventoryService(db);const count=await inventory.count(employee,{ma_ca:shift,tien_mat_thuc_thu:0,chuyen_khoan_thuc_thu:0,items:[{ma_nguyen_lieu:material,ton_ly_thuyet:10,ton_thuc_te:8,ly_do_chenh_lech:'Hao hụt'}]});
