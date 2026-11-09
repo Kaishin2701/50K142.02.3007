@@ -69,7 +69,9 @@ export function createApp(options:Options){
    const result=await notificationRead(db,req.actor!.id,notification);
    check(result,'Không tìm thấy thông báo.','NOT_FOUND',404);return result;
  }));
- if(options.staticDir)app.use(express.static(options.staticDir,{index:'index.html',maxAge:'1h'}));
+ if(options.staticDir)app.use(express.static(options.staticDir,{index:'index.html',maxAge:'1h',setHeaders:(res,path)=>{
+   if(path.endsWith('index.html'))res.setHeader('Cache-Control','no-cache');
+ }}));
  app.use((_req,_res,next)=>next(new AppError(404,'NOT_FOUND','Không tìm thấy API.')));
  const errorHandler:ErrorRequestHandler=(error,_req,res,_next)=>{
    if(error instanceof ZodError){res.status(422).json({error:{code:'VALIDATION_ERROR',message:'Dữ liệu không hợp lệ.',details:error.issues.map(i=>({field:i.path.join('.'),message:i.message}))}});return;}

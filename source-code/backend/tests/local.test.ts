@@ -19,7 +19,9 @@ test('local PostgreSQL preserves committed data across close and reopen',async()
   assert.equal(Number((await db.query("SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ten_nguyen_lieu='Persistence test'")).rows[0].ton_ly_thuyet),7);
   const app=createApp({db,origins:[],gateway:httpGateway(),staticDir:fileURLToPath(new URL('../../frontend/dist/',import.meta.url))});
   assert.equal((await request(app).get('/api/health')).status,200);
-  assert.match((await request(app).get('/')).text,/<div id="root"><\/div>/);
+  const homepage=await request(app).get('/');
+  assert.match(homepage.text,/<div id="root"><\/div>/);
+  assert.equal(homepage.headers['cache-control'],'no-cache');
   assert.equal((await request(app).get('/api/users')).status,401);
  }finally{await db.close();await rm(directory,{recursive:true,force:true});}
 });
