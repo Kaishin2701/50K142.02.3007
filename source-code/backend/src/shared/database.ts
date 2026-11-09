@@ -1,4 +1,5 @@
 import pg from 'pg';
+import { readFileSync } from 'node:fs';
 export type Row = Record<string, any>;
 export interface Database {
   query<T extends Row = Row>(text: string, values?: unknown[]): Promise<{ rows: T[]; rowCount?: number | null }>;
@@ -6,7 +7,12 @@ export interface Database {
 }
 pg.types.setTypeParser(1082, value => value);
 export function connectDatabase(url: string, ssl: boolean): Database & { close(): Promise<void> } {
-  const pool = new pg.Pool({ connectionString: url, ssl: ssl ? { rejectUnauthorized: true } : false,
+  const hostname = new URL(url).hostname;
+  const usesSupabase = hostname.endsWith('.pooler.supabase.com') || hostname.endsWith('.supabase.co');
+  const ca = ssl && usesSupabase
+    ? readFileSync(new URL('../../assets/certificates/supabase-ca.crt', import.meta.url), 'utf8')
+    : undefined;
+  const pool = new pg.Pool({ connectionString: url, ssl: ssl ? { rejectUnauthorized: true, ca } : false,
     max: 10, connectionTimeoutMillis: 10000, statement_timeout: 15000 });
   const wrap = (client: pg.Pool | pg.PoolClient): Database => ({
     query: (text, values) => client.query(text, values),
