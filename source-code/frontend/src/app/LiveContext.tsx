@@ -1,4 +1,4 @@
-import { createContext,useContext,useEffect,useRef,useState,type ReactNode } from 'react';
+import { createContext,startTransition,useContext,useEffect,useRef,useState,type ReactNode } from 'react';
 import { api,ApiError,apiBase,download,query,type RecordData as Row } from '../services/api';
 import { actionFor,screenFor,type Screen } from './navigation';
 
@@ -40,7 +40,7 @@ function useLiveModel(){
  const [recurrence,setRecurrence]=useState('once'),[recurrenceEnd,setRecurrenceEnd]=useState('date');
  const active=useRef(true),requestKey=useRef(crypto.randomUUID()),pendingMutation=useRef(false);
  const screen=screenFor(screenId)!;const manager=user?.vai_tro==='Quản lý';
- const go=(prefix:string)=>{const target=screenFor(prefix);if(target){setError('');location.hash=target.id;setScreenId(target.id);}};
+ const go=(prefix:string)=>{const target=screenFor(prefix);if(target){setError('');location.hash=target.id;startTransition(()=>setScreenId(target.id));}};
  const refresh=()=>setVersion(v=>v+1);
  const field=(label:string,value:string)=>{
    setForm(v=>({...v,[label]:value}));setError('');
@@ -54,7 +54,7 @@ function useLiveModel(){
    if(failure.status===401){setUser(null);if(!screen.name.startsWith('GD0'))location.hash='261:28311';}
  };
  useEffect(()=>{active.current=true;api<Row>('/auth/me').then(v=>{if(active.current)setUser(v);}).catch(e=>{if(e instanceof ApiError&&e.status!==401)setError(e.message);}).finally(()=>{if(active.current)setReady(true);});
-   const route=()=>setScreenId(screenFor(decodeURIComponent(location.hash.slice(1)))?.id??'261:28311');window.addEventListener('hashchange',route);
+   const route=()=>startTransition(()=>setScreenId(screenFor(decodeURIComponent(location.hash.slice(1)))?.id??'261:28311'));window.addEventListener('hashchange',route);
    return()=>{active.current=false;window.removeEventListener('hashchange',route);};},[]);
  useEffect(()=>{if(!ready)return;if(!user&&!/^GD0|^GD7-8/.test(screen.name)){go('GD0-2-1');return;}
    if(user&&!manager&&/^GD2|^GD3|^GD5|^GD1\.1|^GD4\.[123]/.test(screen.name))go('GD1.3-2-1');

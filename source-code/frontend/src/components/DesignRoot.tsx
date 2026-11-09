@@ -2,6 +2,7 @@ import React,{Children,cloneElement,isValidElement,type ReactElement,type ReactN
 import geometry from '../app/design-geometry.json';
 import { useLive,currency,decimal,dateText,timeText,shiftText,addDays,salesCategories,today } from '../app/LiveContext';
 import { actionFor } from '../app/navigation';
+import { useCompactLayout } from '../app/useViewport';
 import type { RecordData as Row } from '../services/api';
 type E=ReactElement<Record<string,any>>;
 type Meta=[number,number,number,number,number,number,string|null,string,string];
@@ -14,7 +15,7 @@ const editableLabels=/^(Tên tài khoản|Tên đăng nhập|Họ và tên|Số 
 const actionLabels=/^(Đăng nhập|Đăng xuất|Tạo tài khoản|Chỉnh sửa|Chi tiết|Khóa|Kích hoạt|Lưu|Lưu thay đổi|Xác nhận|Xác nhận báo cáo|Gửi báo cáo|Gửi đăng ký|Gửi yêu cầu|Đồng ý|Từ chối|Phân công|Đổi hoặc xoay ca|Hủy đăng ký|Đối chiếu|Lưu phiếu kiểm kho|Gửi thông tin nguyên liệu cần nhập|Tiếp tục lập hóa đơn|Kiểm tra đơn|Xác nhận đơn|QR|Tiền mặt|Đối soát thành công|Đối soát chưa thành công|Xuất hóa đơn|Hoàn tất pha chế|Hủy đơn|Dừng đặt hàng|Thêm món|Tìm kiếm|Tra cứu|Xem|Xem báo cáo|Xuất báo cáo|Excel|PDF|Đóng|Hủy|Không|×|\+|−|-|‹|›|Trang trước|Trang sau|Hôm nay|\+ Tạo ca mới|Ca diễn ra một lần|Ca lặp lại hằng tuần|Ca lặp hằng tuần|Theo ngày|Theo số tuần|Kết thúc theo ngày|Kết thúc theo số tuần|Đổi ca hai chiều|Nhờ nhân viên khác làm thay|Rảnh|Mong muốn)$/;
 
 export function DesignRoot({children,screenId}:{children:ReactNode;screenId:string}){
- const live=useLive();if(import.meta.env.DEV&&new URLSearchParams(location.search).has('design'))return children;
+ const live=useLive();const compact=useCompactLayout();if(import.meta.env.DEV&&new URLSearchParams(location.search).has('design'))return children;
  const metas=(geometry as unknown as Record<string,Record<string,Meta>>)[screenId]??{};
  const infos:Info[]=[];
  const collect=(nodes:ReactNode)=>Children.forEach(nodes,child=>{if(!isValidElement(child))return;const element=child as E,id=element.props['data-node-id'],meta=metas[id];
@@ -88,6 +89,9 @@ export function DesignRoot({children,screenId}:{children:ReactNode;screenId:stri
    }
  }
 
+ const hasLineQuantityEditor=groups.some(group=>group.kind==='line'&&infos.some(info=>
+   group.template.has(info.id)&&info.meta[4]===638&&info.meta[2]===72&&info.meta[3]===44
+ ));
  const hiddenText=new Set<string>(),inputs=new Map<string,{label:string;content?:Info;select?:[string,string][];readOnly?:boolean}>(),buttons=new Map<string,{label:string;scope?:RecordScope}>();
  const actionText=new Set<string>();
  for(const info of labelNodes.filter(inModal)){
@@ -246,7 +250,7 @@ export function DesignRoot({children,screenId}:{children:ReactNode;screenId:stri
    if(/^GD1\.3/.test(name)&&live.payment?.qrImageUrl&&info&&el.props['data-name']==='Vector'&&meta[2]>=100&&meta[2]===meta[3])return cloneElement(el,{},<img alt="QR" src={live.payment.qrImageUrl} style={{width:'100%',height:'100%',objectFit:'contain'}}/>);
    if(scope?.kind==='count'&&info?.text&&meta[4]>=855&&meta[4]<995)return null;
    if(scope?.kind==='count'&&info?.text&&meta[4]>=1110)return null;
-   if(scope?.kind==='line'&&/^GD1\.3/.test(name)&&meta?.[4]>=638&&meta[4]<710&&meta[3]<25)return null;
+   if(scope?.kind==='line'&&/^GD1\.3/.test(name)&&meta?.[4]>=638&&meta[4]<710&&meta[3]<25&&hasLineQuantityEditor)return null;
    const original=el.props.children;
    const replaced=info?dynamicText(info,scope):undefined;
    let nextChildren=replaced!==undefined?replaceText(original,replaced):renderChildren(original,scope);
@@ -327,5 +331,93 @@ export function DesignRoot({children,screenId}:{children:ReactNode;screenId:stri
    const elements=Children.toArray(children);if(!elements.some(isValidElement))return value;
    let done=false;return elements.map((child,index)=>{if(!isValidElement(child)){if(done||!String(child).trim())return null;done=true;return value;}if(done)return null;done=true;return cloneElement(child as E,{},value);});
  }
+ function compactNode(info:Info,scope?:RecordScope):ReactNode{
+   if(hiddenText.has(info.id)||actionText.has(info.id))return null;
+   if(!leaf.includes(info)&&!inputs.has(info.id)&&!buttons.has(info.id))return null;
+   const rendered=renderNode(info.element,scope);
+   if(!isValidElement(rendered))return null;
+   const element=rendered as E;
+   const field=inputs.get(info.id);
+   const checkbox=scope?.kind==='candidate'&&info.meta[2]===20&&info.meta[3]===20;
+   const quantity=scope?.kind==='line'&&info.meta[4]===638&&info.meta[2]===72&&info.meta[3]===44;
+   const countControl=scope?.kind==='count'&&info.element.props['data-name']==='Rectangle'&&info.meta[3]>=28&&info.meta[3]<=48&&info.meta[4]>=855;
+   if(field||checkbox||quantity||countControl){
+     const label=field?.label??(checkbox?scope!.value.ho_ten:quantity?'Số lượng':info.meta[4]<995?'Tồn thực tế':'Lý do chênh lệch');
+     return <label className={'compact-control'+(checkbox?' compact-checkbox':'')} key={info.id}>
+       <span>{label}</span>{element}
+     </label>;
+   }
+   if(element.type==='button'){
+     if(scope?.kind==='candidate')return null;
+     const label=element.props['aria-label'];
+     const content=textOf(element.props.children);
+     return cloneElement(element,{key:info.id},content||label);
+   }
+   if(!leaf.includes(info)||!info.text)return null;
+   if(scope?.kind==='candidate'&&dynamicText(info,scope)===scope.value.ho_ten)return null;
+   return cloneElement(element,{key:info.id});
+ }
+ function compactGroup(group:Group):ReactNode{
+   const template=infos.filter(info=>group.template.has(info.id));
+   const headers=labelNodes.filter(info=>info.meta[4]>=group.x&&info.meta[4]<group.x+group.width&&info.meta[5]<group.y&&info.meta[5]>=group.y-90&&!actionLabels.test(info.text));
+   const table=['user','material','receipt','loss','order','line','count','countResult'].includes(group.kind);
+   return <div className="compact-list" data-live-list={group.kind} key={group.kind}>
+     {group.items.map((row,index)=>{
+       const scope={kind:group.kind,value:row,index};
+       return <article className={'compact-row compact-row-'+group.kind} key={index}>
+         {template.map(info=>{
+           const node=compactNode(info,scope);
+           if(!node)return null;
+           const center=info.meta[4]+info.meta[2]/2;
+           const header=table&&leaf.includes(info)?[...headers].sort((a,b)=>Math.abs(a.meta[4]+a.meta[2]/2-center)-Math.abs(b.meta[4]+b.meta[2]/2-center))[0]:undefined;
+           return <div className="compact-cell" key={info.id}>
+             {header&&<span className="compact-field-label">{header.text}</span>}{node}
+           </div>;
+         })}
+       </article>;
+     })}
+   </div>;
+ }
+ function compactPage():ReactNode{
+   const login=/^GD0|^GD7-8/.test(name);
+   const navLabels=[...new Set(leaf.filter(info=>info.meta[4]<326&&beforeModal(info)&&actionFor(info.text,live.screen,live.manager)&&info.text!=='Đăng xuất').map(info=>info.text))];
+   const inputLabels=new Set([...inputs.values()].map(field=>field.label));
+   const grouped=new Set(groups.flatMap(group=>[...group.nodes]));
+   const tableHeaders=new Set(groups.filter(group=>!['menu','cart','calendar','candidate','request'].includes(group.kind)).flatMap(group=>labelNodes.filter(info=>info.meta[4]>=group.x&&info.meta[4]<group.x+group.width&&info.meta[5]<group.y&&info.meta[5]>=group.y-70).map(info=>info.id)));
+   const entries:{x:number;y:number;key:string;node:ReactNode}[]=[];
+   for(const info of infos){
+     if(!inModal(info)||grouped.has(info.id)||tableHeaders.has(info.id))continue;
+     if(login?(info.meta[4]<580||info.meta[5]<250||info.meta[5]>800):info.meta[4]<330)continue;
+     if(inputLabels.has(info.text)&&!inputs.has(info.id))continue;
+     if(/^GD[36]/.test(name)&&!veil&&/^(Thứ Hai|Thứ Ba|Thứ Tư|Thứ Năm|Thứ Sáu|Thứ Bảy|Chủ Nhật|\d{2}\/\d{2})$/.test(info.text))continue;
+     if(/^GD1\.3/.test(name)&&salesCategories.includes(buttons.get(info.id)?.label??''))continue;
+     const node=compactNode(info);
+     if(node)entries.push({x:info.meta[4],y:info.meta[5],key:info.id,node});
+   }
+   const category=infos.find(info=>salesCategories.includes(buttons.get(info.id)?.label??''));
+   if(category)entries.push({x:category.meta[4],y:category.meta[5],key:'categories',node:<nav className="compact-categories" aria-label="Nhóm món">{salesCategories.map(label=><button type="button" key={label} aria-pressed={live.category===label} onClick={()=>void live.action(label)}>{label}</button>)}</nav>});
+   if(!veil)for(const group of groups)entries.push({x:group.x,y:group.y,key:'group-'+group.kind,node:compactGroup(group)});
+   else for(const group of groups.filter(group=>[...group.nodes].some(id=>inModal(infos.find(info=>info.id===id)!))))entries.push({x:group.x,y:group.y,key:'group-'+group.kind,node:compactGroup(group)});
+   // Checkout has two independent columns in the desktop design.
+   const twoColumns=/^GD1\.3/.test(name)&&!veil;
+   entries.sort((a,b)=>{
+     const columnA=twoColumns&&a.x>=1050?1:0,columnB=twoColumns&&b.x>=1050?1:0;
+     return columnA-columnB||a.y-b.y||a.x-b.x;
+   });
+   return <div className="compact-page">
+     {!login&&live.user&&<header className="compact-header">
+       <details key={screenId}>
+         <summary aria-label="Mở menu điều hướng"><strong>Mê Cà Phê</strong><span aria-hidden="true">☰</span></summary>
+         <div className="compact-profile">{live.user.ho_ten} · {live.user.vai_tro}</div>
+         <nav aria-label="Điều hướng chính">{navLabels.map(label=><button type="button" key={label} onClick={()=>void live.action(label)}>{label}</button>)}<button type="button" onClick={()=>void live.action('Đăng xuất')}>Đăng xuất</button></nav>
+       </details>
+     </header>}
+     <div className={'compact-content'+(login?' compact-login':'')}>
+       {entries.map(entry=><React.Fragment key={entry.key}>{entry.node}</React.Fragment>)}
+     </div>
+     {live.error&&<div className="compact-alert" role="alert">{live.error}</div>}
+   </div>;
+ }
+ if(compact)return compactPage();
  return <>{renderChildren(children)}{live.error&&<div className="f0690ef655e3a" role="alert" onClick={()=>live.setError('')}><p className="f8b86bf0aeba6" style={{left:14,top:16,height:'auto'}}>{live.error}</p></div>}</>;
 }

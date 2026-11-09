@@ -1,5 +1,5 @@
 import React from 'react';
-import {describe,it,expect,vi,afterEach} from 'vitest';
+import {describe,it,expect,vi,afterEach,beforeEach} from 'vitest';
 import {render,screen,waitFor,cleanup,fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {LiveProvider,useLive} from '../src/app/LiveContext';
@@ -56,8 +56,51 @@ function setup(loggedIn:boolean,hash:string,employee=false,orderOverrides:Record
  function View(){const live=useLive();const Component=views[live.screenId]??Login;return <Component/>;}
  return render(<LiveProvider><View/></LiveProvider>);
 }
+beforeEach(()=>Object.defineProperty(window,'innerWidth',{configurable:true,value:1440,writable:true}));
 afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
 describe('Figma screens with live API data',()=>{
+ it.each([375,768,1024])('supports editing and paying an order at viewport width %i',async width=>{
+   Object.defineProperty(window,'innerWidth',{configurable:true,value:width,writable:true});
+   setup(true,'261:50660',true);
+   const user=userEvent.setup();
+   await screen.findByText('Cà phê từ DB');
+   expect(document.querySelector('.compact-page')).toBeTruthy();
+   await user.click(screen.getAllByRole('button',{name:'+',exact:true})[0]);
+   await user.click(await screen.findByRole('button',{name:'Tiếp tục lập hóa đơn',exact:true}));
+   const quantity=await screen.findByRole('textbox',{name:'Số lượng Cà phê từ DB'});
+   await user.clear(quantity);await user.type(quantity,'2');
+   await user.click(screen.getByRole('button',{name:'Kiểm tra đơn',exact:true}));
+   await user.click(await screen.findByRole('button',{name:'Xác nhận đơn',exact:true}));
+   await user.click(await screen.findByRole('button',{name:'Tiền mặt',exact:true}));
+   await user.type(await screen.findByRole('textbox',{name:'Số tiền nhận được'}),'50000');
+   await user.click(screen.getByRole('button',{name:'Xác nhận số tiền',exact:true}));
+   await waitFor(()=>expect(calls.some(call=>call.url.endsWith('/payments/cash'))).toBe(true));
+   expect(calls.find(call=>call.url.endsWith('/orders/drafts'))?.body.items[0].so_luong).toBe(2);
+ });
+ it('opens mobile navigation and retains real account actions',async()=>{
+   Object.defineProperty(window,'innerWidth',{configurable:true,value:375,writable:true});
+   setup(true,'261:37926');const user=userEvent.setup();
+   await screen.findByText('70.000 đ');
+   await user.click(screen.getByLabelText('Mở menu điều hướng'));
+   await user.click(screen.getByRole('button',{name:'Quản lý tài khoản',exact:true}));
+   await screen.findByText('Người dùng từ DB');
+   expect(screen.getByRole('button',{name:'Tạo tài khoản',exact:true})).toBeTruthy();
+   expect(screen.getByRole('button',{name:'Chỉnh sửa',exact:true})).toBeTruthy();
+ });
+ it('keeps login fields usable on a narrow screen and switches layouts on resize',async()=>{
+   Object.defineProperty(window,'innerWidth',{configurable:true,value:360,writable:true});
+   setup(false,'261:28311');
+   const user=userEvent.setup();
+   await user.type(await screen.findByRole('textbox',{name:'Tên tài khoản'}),'actual_user');
+   await user.type(screen.getByLabelText('Mật khẩu',{exact:true}),'actual-password');
+   await user.click(screen.getByRole('button',{name:'Đăng nhập',exact:true}));
+   await screen.findByText('70.000 đ');
+   expect(document.querySelector('.compact-header')).toBeTruthy();
+   Object.defineProperty(window,'innerWidth',{configurable:true,value:1280,writable:true});
+   fireEvent(window,new Event('resize'));
+   await waitFor(()=>expect(document.querySelector('.compact-page')).toBeNull());
+   expect(await screen.findByText('70.000 đ')).toBeTruthy();
+ });
  it('shows stock fields in their correct columns and opens the manager closing reports',async()=>{
    setup(true,'261:39479');
    expect(await screen.findByText('Nguyên liệu từ DB')).toBeTruthy();
@@ -77,6 +120,7 @@ describe('Figma screens with live API data',()=>{
    expect(screen.queryByText(/Báo tổng tiền 122.000 đ/)).toBeNull();
    expect(screen.getByRole('button',{name:'Xác nhận đơn',exact:true})).toBeTruthy();
    expect(screen.queryByRole('textbox',{name:'Số lượng Cà phê từ DB'})).toBeNull();
+   expect(screen.getAllByText('1').length).toBeGreaterThanOrEqual(2);
    expect(calls.some(call=>call.url.endsWith('/orders/drafts'))).toBe(false);
  });
  it('keeps the completed order summary and allows starting the next order',async()=>{
