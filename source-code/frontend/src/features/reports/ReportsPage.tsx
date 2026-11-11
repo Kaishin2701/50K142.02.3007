@@ -10,7 +10,6 @@ import {
   Modal,
   PageHeader,
   Panel,
-  SelectField,
   useNotice,
 } from '../../components/ui';
 
@@ -31,13 +30,13 @@ export default function ReportsPage() {
   const [period, setPeriod] = useState<Period>('day');
   const [date, setDate] = useState(today());
   const [selectedDate, setSelectedDate] = useState(today());
-  const [method, setMethod] = useState('');
+  const [method, setMethod] = useState('Tiền mặt');
   const [exporting, setExporting] = useState(false);
   const [format, setFormat] = useState('xlsx');
   const task = useTask();
   const notice = useNotice();
   const revenue = useResource<Revenue>(
-    '/reports/revenue?' + query({ period, date: selectedDate, method }),
+    '/reports/revenue?' + query({ period, date: selectedDate }),
     { doanh_thu: '0', so_ly: '0', tien_mat: '0', chuyen_khoan: '0' },
   );
   const changePeriod = (next: Period) => {
@@ -83,7 +82,7 @@ export default function ReportsPage() {
           </Button>
         }
       />
-      <Panel title="Báo cáo doanh thu">
+      <Panel title="Báo cáo doanh thu" className="report-filter-panel">
         <form className="report-toolbar" onSubmit={showReport}>
           <div className="segmented" aria-label="Khoảng thời gian">
             {periods.map((item) => (
@@ -117,24 +116,26 @@ export default function ReportsPage() {
         </form>
         <Loading active={revenue.loading} />
         <ErrorMessage message={revenue.error} />
+      </Panel>
+      <Panel className="report-period-panel">
         <p className="muted">Khoảng thời gian đang xem</p>
         <p className="report-period">{displayDate}</p>
-        <div className="metric-grid">
-          <div className="metric">
-            <span>Tổng doanh thu</span>
-            <strong>{money(revenue.data.doanh_thu)}</strong>
-          </div>
-          <div className="metric">
-            <span>Số ly bán ra</span>
-            <strong>{revenue.data.so_ly}</strong>
-          </div>
-        </div>
       </Panel>
-      <Panel title="Doanh thu theo phương thức thanh toán">
+      <div className="metric-grid report-metrics">
+        <div className="metric">
+          <span>Tổng doanh thu</span>
+          <strong>{money(revenue.data.doanh_thu)}</strong>
+        </div>
+        <div className="metric">
+          <span>Số ly bán ra</span>
+          <strong>{revenue.data.so_ly}</strong>
+        </div>
+      </div>
+      <Panel
+        title="Doanh thu theo phương thức thanh toán"
+        className="report-payment-panel"
+      >
         <div className="segmented">
-          <Button aria-pressed={method === ''} onClick={() => setMethod('')}>
-            Tất cả
-          </Button>
           <Button
             aria-pressed={method === 'Tiền mặt'}
             onClick={() => setMethod('Tiền mặt')}
@@ -149,14 +150,14 @@ export default function ReportsPage() {
           </Button>
         </div>
         <div className="payment-summary">
-          <div>
-            <span>Tiền mặt</span>
-            <strong>{money(revenue.data.tien_mat)}</strong>
-          </div>
-          <div>
-            <span>Chuyển khoản</span>
-            <strong>{money(revenue.data.chuyen_khoan)}</strong>
-          </div>
+          <span>{method === 'Tiền mặt' ? 'Tiền mặt' : 'Chuyển khoản'}</span>
+          <strong>
+            {money(
+              method === 'Tiền mặt'
+                ? revenue.data.tien_mat
+                : revenue.data.chuyen_khoan,
+            )}
+          </strong>
         </div>
       </Panel>
       <p className="breadcrumb">TỔNG QUAN / BÁO CÁO DOANH THU</p>
@@ -165,23 +166,54 @@ export default function ReportsPage() {
           title="Xuất báo cáo"
           onClose={() => setExporting(false)}
           busy={task.pending}
+          className="export-dialog"
         >
           <div className="dialog-body">
-            <p>{displayDate}</p>
-            <SelectField
-              label="Định dạng"
-              value={format}
-              onChange={(event) => setFormat(event.target.value)}
-            >
-              <option value="xlsx">Excel</option>
-              <option value="pdf">PDF</option>
-            </SelectField>
+            <fieldset className="radio-field">
+              <legend>Định dạng tệp</legend>
+              <div className="radio-options">
+                {[
+                  ['xlsx', 'Excel'],
+                  ['pdf', 'PDF'],
+                ].map(([value, label]) => (
+                  <label key={value}>
+                    <input
+                      type="radio"
+                      name="export-format"
+                      value={value}
+                      checked={format === value}
+                      onChange={() => setFormat(value)}
+                    />
+                    {label}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <dl className="export-summary">
+              <div>
+                <dt>Khoảng thời gian báo cáo</dt>
+                <dd>{displayDate}</dd>
+              </div>
+              <div>
+                <dt>Tổng doanh thu</dt>
+                <dd>{money(revenue.data.doanh_thu)}</dd>
+              </div>
+              <div>
+                <dt>Số ly bán ra</dt>
+                <dd>{revenue.data.so_ly}</dd>
+              </div>
+              <div>
+                <dt>Tiền mặt</dt>
+                <dd>{money(revenue.data.tien_mat)}</dd>
+              </div>
+              <div>
+                <dt>Chuyển khoản</dt>
+                <dd>{money(revenue.data.chuyen_khoan)}</dd>
+              </div>
+            </dl>
             <ErrorMessage message={task.error} />
           </div>
           <footer className="dialog-actions">
-            <Button onClick={() => setExporting(false)} disabled={task.pending}>
-              Hủy
-            </Button>
             <Button
               variant="primary"
               disabled={task.pending}
@@ -189,7 +221,7 @@ export default function ReportsPage() {
                 void task.run(async () => {
                   await download(
                     '/reports/revenue/export?' +
-                      query({ period, date: selectedDate, method, format }),
+                      query({ period, date: selectedDate, format }),
                     `me-ca-phe-${selectedDate}.${format}`,
                   );
                   setExporting(false);

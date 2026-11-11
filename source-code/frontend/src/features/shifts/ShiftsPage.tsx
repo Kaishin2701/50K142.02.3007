@@ -63,21 +63,11 @@ export default function ShiftsPage() {
         title={manager ? 'Quản lý ca' : 'Lịch làm việc của tôi'}
         subtitle={manager ? 'Theo dõi và phân bổ ca làm theo tuần' : undefined}
         actions={
-          manager ? (
-            <Button
-              variant="primary"
-              onClick={() => setDialog({ kind: 'create' })}
-            >
-              + Tạo ca mới
+          !manager ? (
+            <Button onClick={() => setDialog({ kind: 'requests' })}>
+              Yêu cầu
             </Button>
-          ) : (
-            <Button
-              variant="primary"
-              onClick={() => setDialog({ kind: 'availability', date: today() })}
-            >
-              Đăng ký lịch làm việc
-            </Button>
-          )
+          ) : undefined
         }
       />
       <div className="calendar-toolbar">
@@ -99,8 +89,17 @@ export default function ShiftsPage() {
           </Button>
         </div>
         <Button onClick={() => setWeek(weekStart())}>Hôm nay</Button>
+        {manager && (
+          <Button
+            variant="primary"
+            className="create-shift-action"
+            onClick={() => setDialog({ kind: 'create' })}
+          >
+            + Tạo ca mới
+          </Button>
+        )}
       </div>
-      <Panel title="Lịch làm việc">
+      <Panel title="Lịch làm việc" className="calendar-panel">
         <div className="calendar-legend">
           <Badge>Đủ nhân sự</Badge>
           <Badge>Cần bổ sung</Badge>
@@ -211,14 +210,16 @@ export default function ShiftsPage() {
             );
           })}
         </div>
+        {manager && (
+          <div className="ui-actions calendar-footer">
+            <Button onClick={() => setDialog({ kind: 'requests' })}>
+              {manager
+                ? 'Xử lý yêu cầu đổi hoặc xoay ca'
+                : 'Yêu cầu đổi hoặc xoay ca'}
+            </Button>
+          </div>
+        )}
       </Panel>
-      <div className="ui-actions">
-        <Button onClick={() => setDialog({ kind: 'requests' })}>
-          {manager
-            ? 'Xử lý yêu cầu đổi hoặc xoay ca'
-            : 'Yêu cầu đổi hoặc xoay ca'}
-        </Button>
-      </div>
       <p className="breadcrumb">
         {manager ? 'QUẢN LÝ CA / LỊCH LÀM VIỆC' : 'LỊCH LÀM VIỆC CỦA TÔI'}
       </p>

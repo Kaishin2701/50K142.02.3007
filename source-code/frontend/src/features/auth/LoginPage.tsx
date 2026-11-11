@@ -8,6 +8,7 @@ export default function LoginPage() {
   const task = useTask();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const submit = (event: FormEvent) => {
     event.preventDefault();
     void task.run(async () => {
@@ -32,15 +33,27 @@ export default function LoginPage() {
             required
             maxLength={50}
           />
-          <Field
-            label="Mật khẩu"
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-            maxLength={128}
-          />
+          <div className="password-field">
+            <Field
+              label="Mật khẩu"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              maxLength={128}
+            />
+            <button
+              type="button"
+              className="password-toggle"
+              aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+              aria-pressed={showPassword}
+              onClick={() => setShowPassword((v) => !v)}
+            >
+              <img src="/assets/figma/261-28311/cbde3.svg" alt="" />
+              <img src="/assets/figma/261-28311/b18d2.svg" alt="" />
+            </button>
+          </div>
           <ErrorMessage message={task.error || session.error} />
           <Button variant="primary" type="submit" disabled={task.pending}>
             Đăng nhập

@@ -19,7 +19,8 @@ it.skipIf(!localBase)(
   async () => {
     const credentials = JSON.parse(
       await readFile(
-        resolve(process.cwd(), '../backend/.local/qa/access.json'),
+        process.env.ME_CAFE_LOCAL_CREDENTIAL_FILE ??
+          resolve(process.cwd(), '../backend/.local/qa/access.json'),
         'utf8',
       ),
     );

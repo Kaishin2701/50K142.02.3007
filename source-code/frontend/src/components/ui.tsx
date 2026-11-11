@@ -147,18 +147,23 @@ export function Modal({
   onClose,
   busy = false,
   wide = false,
+  className = '',
+  inline = false,
 }: {
   title: string;
   children: ReactNode;
   onClose(): void;
   busy?: boolean;
   wide?: boolean;
+  className?: string;
+  inline?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const close = useRef(onClose);
   close.current = onClose;
   useEffect(() => {
+    if (inline) return;
     const dialog = ref.current!;
     const previous = document.activeElement as HTMLElement | null;
     if (typeof dialog.showModal === 'function') dialog.showModal();
@@ -167,11 +172,26 @@ export function Modal({
       if (typeof dialog.close === 'function') dialog.close();
       previous?.focus();
     };
-  }, []);
+  }, [inline]);
+  if (inline)
+    return (
+      <section
+        className={'inline-dialog ' + className}
+        role="dialog"
+        aria-labelledby={titleId}
+      >
+        <h2 className="visually-hidden" id={titleId}>
+          {title}
+        </h2>
+        {children}
+      </section>
+    );
   return (
     <dialog
       ref={ref}
-      className={'ui-dialog' + (wide ? ' ui-dialog-wide' : '')}
+      className={
+        'ui-dialog' + (wide ? ' ui-dialog-wide' : '') + ' ' + className
+      }
       aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
@@ -216,7 +236,12 @@ export function Confirm({
   error?: string;
 }) {
   return (
-    <Modal title={title} onClose={onClose} busy={pending}>
+    <Modal
+      title={title}
+      onClose={onClose}
+      busy={pending}
+      className="confirm-dialog"
+    >
       <div className="dialog-body">
         {children}
         <ErrorMessage message={error} />
@@ -242,11 +267,13 @@ export function DataTable<T>({
   rows,
   rowKey,
   empty = 'Không có dữ liệu.',
+  rowClassName,
 }: {
   columns: Column<T>[];
   rows: T[];
   rowKey(row: T): string;
   empty?: string;
+  rowClassName?(row: T): string;
 }) {
   return (
     <div className="ui-table-scroll">
@@ -254,7 +281,7 @@ export function DataTable<T>({
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column.key} scope="col">
+              <th key={column.key} scope="col" data-column={column.key}>
                 {column.label}
               </th>
             ))}
@@ -262,9 +289,13 @@ export function DataTable<T>({
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <tr key={rowKey(row)}>
+            <tr key={rowKey(row)} className={rowClassName?.(row)}>
               {columns.map((column) => (
-                <td key={column.key} data-label={column.label}>
+                <td
+                  key={column.key}
+                  data-label={column.label}
+                  data-column={column.key}
+                >
                   {column.render(row, index)}
                 </td>
               ))}
@@ -290,7 +321,7 @@ export function Pagination({
       <Button onClick={() => onChange(page - 1)} disabled={page <= 1}>
         Trang trước
       </Button>
-      <span>Trang {page}</span>
+      <span aria-label={`Trang ${page}`}>{page}</span>
       <Button onClick={() => onChange(page + 1)} disabled={!hasMore}>
         Trang sau
       </Button>

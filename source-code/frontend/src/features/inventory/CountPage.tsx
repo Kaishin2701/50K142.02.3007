@@ -278,8 +278,12 @@ export default function CountPage() {
         </Panel>
       ) : (
         <>
-          <Panel>
-            <div className="form-grid">
+          <Panel className="count-metadata-panel">
+            <div className="metadata-grid">
+              <div>
+                <p className="muted">Mã phiếu</p>
+                <strong>{pendingCount?.countId?.slice(0, 8) ?? '—'}</strong>
+              </div>
               <SelectField
                 label="Ca"
                 value={shiftId}
@@ -302,13 +306,15 @@ export default function CountPage() {
                 <strong>{user!.ho_ten}</strong>
               </div>
             </div>
-            {selected && <p className="muted">{shiftText(selected)}</p>}
           </Panel>
-          <Panel title="Đối chiếu tiền">
-            <p>Doanh số trên hệ thống</p>
-            <strong className="amount">{money(preview.data?.doanh_thu)}</strong>
+          <Panel title="Đối chiếu tiền" className="count-money-panel">
             <fieldset disabled={task.pending || Boolean(pendingCount)}>
-              <div className="form-grid">
+              <div className="money-reconciliation-grid">
+                <Field
+                  label="Doanh số trên hệ thống"
+                  value={money(preview.data?.doanh_thu)}
+                  readOnly
+                />
                 <Field
                   label="Tiền mặt thực thu"
                   type="number"
@@ -335,8 +341,12 @@ export default function CountPage() {
                   }}
                   required
                 />
+                <Field
+                  label="Chênh lệch tiền"
+                  value={checked ? money(cashDifference) : ''}
+                  readOnly
+                />
               </div>
-              <p>Chênh lệch tiền · {checked ? money(cashDifference) : '—'}</p>
               <TextField
                 label="Lý do chênh lệch tiền"
                 value={cashReason}
@@ -347,7 +357,7 @@ export default function CountPage() {
               />
             </fieldset>
           </Panel>
-          <Panel title="Nguyên liệu">
+          <Panel title="Nguyên liệu" className="count-stock-panel">
             <fieldset disabled={task.pending || Boolean(pendingCount)}>
               <DataTable
                 rows={preview.data?.items ?? []}

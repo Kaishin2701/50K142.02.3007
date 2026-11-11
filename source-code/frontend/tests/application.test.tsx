@@ -426,7 +426,9 @@ describe('native application architecture', () => {
       }),
     );
     await user.click(
-      within(dialog).getByRole('button', {
+      within(
+        screen.getByRole('dialog', { name: 'Xác nhận tạo tài khoản' }),
+      ).getByRole('button', {
         name: 'Tạo tài khoản',
         exact: true,
       }),
@@ -606,12 +608,12 @@ describe('native application architecture', () => {
     const user = userEvent.setup();
     await user.click(
       await screen.findByRole('button', {
-        name: 'Đăng ký lịch làm việc',
+        name: `Đăng ký ngày ${today().split('-').reverse().join('/')}`,
         exact: true,
       }),
     );
     const dialog = screen.getByRole('dialog', {
-      name: 'Đăng ký lịch làm việc',
+      name: 'Đăng ký lịch rảnh hoặc ca muốn làm',
     });
     await user.clear(within(dialog).getByLabelText('Ngày', { exact: true }));
     await user.type(
@@ -728,15 +730,14 @@ describe('native application architecture', () => {
     await user.click(
       await screen.findByRole('button', { name: '+ Tạo ca mới', exact: true }),
     );
-    const dialog = screen.getByRole('dialog', { name: 'Tạo ca mới' });
+    const dialog = screen.getByRole('dialog', { name: 'Tạo ca làm' });
     await user.clear(within(dialog).getByLabelText('Ngày làm'));
     await user.type(
       within(dialog).getByLabelText('Ngày làm'),
       addDays(today(), 2),
     );
-    await user.selectOptions(
-      within(dialog).getByLabelText('Loại ca'),
-      'weekly',
+    await user.click(
+      within(dialog).getByRole('radio', { name: 'Ca lặp lại hằng tuần' }),
     );
     await user.selectOptions(
       within(dialog).getByLabelText('Kết thúc lặp'),
@@ -885,7 +886,9 @@ describe('native application architecture', () => {
     await user.click(
       await screen.findByRole('button', { name: 'Chỉnh sửa', exact: true }),
     );
-    const dialog = screen.getByRole('dialog', { name: 'Chỉnh sửa tài khoản' });
+    const dialog = screen.getByRole('dialog', {
+      name: 'Chỉnh sửa thông tin tài khoản',
+    });
     await user.clear(
       within(dialog).getByRole('textbox', { name: 'Họ và tên' }),
     );
@@ -897,7 +900,9 @@ describe('native application architecture', () => {
       within(dialog).getByRole('button', { name: 'Lưu', exact: true }),
     );
     await user.click(
-      within(dialog).getByRole('button', { name: 'Lưu', exact: true }),
+      within(
+        screen.getByRole('dialog', { name: 'Xác nhận lưu thay đổi' }),
+      ).getByRole('button', { name: 'Lưu', exact: true }),
     );
     await screen.findByText('Họ tên đã sửa');
     await user.click(screen.getByRole('button', { name: 'Khóa', exact: true }));

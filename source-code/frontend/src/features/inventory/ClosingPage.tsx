@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from '../../app/auth';
 import { useDataStore, useResource, useTask } from '../../app/data';
 import {
@@ -25,57 +25,57 @@ import {
 } from '../../components/ui';
 
 export default function ClosingPage() {
+  const { user } = useSession();
+  const manager = user!.vai_tro === 'Quản lý';
   const reports = useResource<ClosingReport[]>('/inventory/close-reports', []);
   const [selected, setSelected] = useState<string | null>(null);
+  useEffect(() => {
+    const reset = (event: Event) => {
+      if ((event as CustomEvent).detail === 'closing') setSelected(null);
+    };
+    window.addEventListener('me-page-reselect', reset);
+    return () => window.removeEventListener('me-page-reselect', reset);
+  }, []);
   return (
     <>
       <PageHeader title="Báo cáo cuối ca" />
-      <Panel>
-        <Loading active={reports.loading} />
-        <ErrorMessage message={reports.error} />
-        <DataTable
-          rows={reports.data}
-          rowKey={(report) => report.ma_bao_cao}
-          empty="Chưa có báo cáo cuối ca."
-          columns={[
-            {
-              key: 'code',
-              label: 'Mã báo cáo',
-              render: (report) => shortId(report.ma_bao_cao),
-            },
-            {
-              key: 'date',
-              label: 'Ngày',
-              render: (report) => dateText(report.ngay_kiem_ke),
-            },
-            {
-              key: 'user',
-              label: 'Người lập',
-              render: (report) => report.ho_ten_nguoi_lap,
-            },
-            {
-              key: 'status',
-              label: 'Trạng thái báo cáo',
-              render: (report) => <Badge>{report.trang_thai}</Badge>,
-            },
-            {
-              key: 'view',
-              label: 'Thao tác',
-              render: (report) => (
-                <Button onClick={() => setSelected(report.ma_bao_cao)}>
+      {!selected && (
+        <Panel className="closing-list-panel">
+          <Loading active={reports.loading} />
+          <ErrorMessage message={reports.error} />
+          {!reports.data.length && !reports.loading && (
+            <p className="ui-empty">Chưa có báo cáo cuối ca.</p>
+          )}
+          {reports.data.map((report) => (
+            <div className="closing-list-item" key={report.ma_bao_cao}>
+              <p>
+                Báo cáo cuối ca {shiftText(report)}{' '}
+                {manager && report.trang_thai === 'Chờ xác nhận'
+                  ? 'chờ xác nhận'
+                  : ''}
+              </p>
+              <div className="closing-report-row">
+                <strong>{shortId(report.ma_bao_cao)}</strong>
+                <span>{report.ho_ten_nguoi_lap}</span>
+                <Badge>{report.trang_thai}</Badge>
+                <Button
+                  variant="primary"
+                  onClick={() => setSelected(report.ma_bao_cao)}
+                >
                   Xem
                 </Button>
-              ),
-            },
-          ]}
-        />
-      </Panel>
+              </div>
+            </div>
+          ))}
+        </Panel>
+      )}
       <p className="breadcrumb">KHO / BÁO CÁO CUỐI CA</p>
       {selected && (
         <ClosingDetails
           key={selected}
           id={selected}
           onClose={() => setSelected(null)}
+          inline
         />
       )}
     </>
@@ -84,9 +84,11 @@ export default function ClosingPage() {
 export function ClosingDetails({
   id,
   onClose,
+  inline = false,
 }: {
   id: string;
   onClose(): void;
+  inline?: boolean;
 }) {
   const { user } = useSession();
   const manager = user!.vai_tro === 'Quản lý';
@@ -114,87 +116,110 @@ export function ClosingDetails({
     });
   return (
     <>
-      <Modal title="Báo cáo cuối ca" onClose={onClose} busy={task.pending} wide>
+      <Modal
+        title="Báo cáo cuối ca"
+        onClose={onClose}
+        busy={task.pending}
+        wide
+        inline={inline}
+        className="closing-detail"
+      >
         <div className="dialog-body">
           <Loading active={report.loading} />
           <ErrorMessage message={report.error || task.error} />
           {value && (
             <>
-              <dl className="detail-grid">
-                <dt>Mã báo cáo</dt>
-                <dd>{shortId(value.ma_bao_cao)}</dd>
-                <dt>Ngày</dt>
-                <dd>{dateText(value.ngay_kiem_ke)}</dd>
-                <dt>Ca</dt>
-                <dd>{shiftText(value)}</dd>
-                <dt>Người lập</dt>
-                <dd>{value.ho_ten_nguoi_lap}</dd>
-              </dl>
-              <h3>Kết quả đối chiếu tiền</h3>
-              <div className="metric-grid metric-grid-three">
-                <div className="metric">
-                  <span>Doanh thu ca</span>
-                  <strong>{money(value.doanh_thu_ca_luc_doi_chieu)}</strong>
+              <Panel className="closing-metadata-panel">
+                <dl className="metadata-grid">
+                  <div>
+                    <dt>Mã báo cáo</dt>
+                    <dd>{shortId(value.ma_bao_cao)}</dd>
+                  </div>
+                  <div>
+                    <dt>Ngày</dt>
+                    <dd>{dateText(value.ngay_kiem_ke)}</dd>
+                  </div>
+                  <div>
+                    <dt>Ca</dt>
+                    <dd>{shiftText(value)}</dd>
+                  </div>
+                  <div>
+                    <dt>Người lập</dt>
+                    <dd>{value.ho_ten_nguoi_lap}</dd>
+                  </div>
+                </dl>
+              </Panel>
+              <Panel
+                title="Kết quả đối chiếu tiền"
+                className="closing-money-panel"
+              >
+                <div className="metric-grid closing-money-grid">
+                  <div className="metric">
+                    <span>Doanh thu ca</span>
+                    <strong>{money(value.doanh_thu_ca_luc_doi_chieu)}</strong>
+                  </div>
+                  <div className="metric">
+                    <span>Tiền thực thu</span>
+                    <strong>
+                      {money(
+                        Number(value.tien_mat_thuc_thu) +
+                          Number(value.chuyen_khoan_thuc_thu),
+                      )}
+                    </strong>
+                  </div>
+                  <div className="metric">
+                    <span>Chênh lệch tiền</span>
+                    <strong>
+                      {money(
+                        Number(value.tien_mat_thuc_thu) +
+                          Number(value.chuyen_khoan_thuc_thu) -
+                          Number(value.doanh_thu_ca_luc_doi_chieu),
+                      )}
+                    </strong>
+                  </div>
+                  <div className="metric">
+                    <span>Lý do chênh lệch tiền</span>
+                    <strong>{value.ly_do_chenh_lech_tien ?? '—'}</strong>
+                  </div>
                 </div>
-                <div className="metric">
-                  <span>Tiền thực thu</span>
-                  <strong>
-                    {money(
-                      Number(value.tien_mat_thuc_thu) +
-                        Number(value.chuyen_khoan_thuc_thu),
-                    )}
-                  </strong>
-                </div>
-                <div className="metric">
-                  <span>Chênh lệch tiền</span>
-                  <strong>
-                    {money(
-                      Number(value.tien_mat_thuc_thu) +
-                        Number(value.chuyen_khoan_thuc_thu) -
-                        Number(value.doanh_thu_ca_luc_doi_chieu),
-                    )}
-                  </strong>
-                </div>
-              </div>
-              <p>
-                Lý do chênh lệch tiền · {value.ly_do_chenh_lech_tien ?? '—'}
-              </p>
-              <h3>Nguyên liệu</h3>
-              <DataTable
-                rows={value.items}
-                rowKey={(item) => item.ma_nguyen_lieu}
-                columns={[
-                  {
-                    key: 'name',
-                    label: 'Nguyên liệu',
-                    render: (item) => item.ten_nguyen_lieu,
-                  },
-                  {
-                    key: 'unit',
-                    label: 'Đơn vị tính',
-                    render: (item) => item.don_vi_tinh,
-                  },
-                  {
-                    key: 'actual',
-                    label: 'Tồn thực tế',
-                    render: (item) => numberText(item.ton_thuc_te),
-                  },
-                  {
-                    key: 'difference',
-                    label: 'Chênh lệch',
-                    render: (item) => numberText(item.chenh_lech),
-                  },
-                  {
-                    key: 'reason',
-                    label: 'Lý do chênh lệch',
-                    render: (item) =>
-                      item.ly_do_chenh_lech === 'Khác'
-                        ? `Khác - ${item.ghi_chu}`
-                        : (item.ly_do_chenh_lech ?? '—'),
-                  },
-                ]}
-              />
-              <div className="ui-actions">
+              </Panel>
+              <Panel title="Nguyên liệu" className="closing-stock-panel">
+                <DataTable
+                  rows={value.items}
+                  rowKey={(item) => item.ma_nguyen_lieu}
+                  columns={[
+                    {
+                      key: 'name',
+                      label: 'Nguyên liệu',
+                      render: (item) => item.ten_nguyen_lieu,
+                    },
+                    {
+                      key: 'unit',
+                      label: 'Đơn vị tính',
+                      render: (item) => item.don_vi_tinh,
+                    },
+                    {
+                      key: 'actual',
+                      label: 'Tồn thực tế',
+                      render: (item) => numberText(item.ton_thuc_te),
+                    },
+                    {
+                      key: 'difference',
+                      label: 'Chênh lệch',
+                      render: (item) => numberText(item.chenh_lech),
+                    },
+                    {
+                      key: 'reason',
+                      label: 'Lý do chênh lệch',
+                      render: (item) =>
+                        item.ly_do_chenh_lech === 'Khác'
+                          ? `Khác - ${item.ghi_chu}`
+                          : (item.ly_do_chenh_lech ?? '—'),
+                    },
+                  ]}
+                />
+              </Panel>
+              <div className="closing-status">
                 <span>Trạng thái báo cáo</span>
                 <Badge>{value.trang_thai}</Badge>
               </div>
@@ -210,9 +235,11 @@ export function ClosingDetails({
           )}
         </div>
         <footer className="dialog-actions">
-          <Button onClick={onClose} disabled={task.pending}>
-            Đóng
-          </Button>
+          {!inline && (
+            <Button onClick={onClose} disabled={task.pending}>
+              Đóng
+            </Button>
+          )}
           {value && !manager && value.trang_thai === 'Nháp' && (
             <Button variant="primary" disabled={task.pending} onClick={send}>
               Gửi báo cáo

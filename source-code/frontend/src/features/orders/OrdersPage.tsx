@@ -45,39 +45,48 @@ export default function OrdersPage() {
   return (
     <>
       <PageHeader
-        title={manager ? 'Lịch sử đơn hàng' : 'Theo dõi trạng thái đơn hàng'}
+        title={
+          manager ? 'Tra cứu lịch sử đơn hàng' : 'Theo dõi trạng thái đơn hàng'
+        }
       />
-      <Panel title={manager ? 'Tra cứu lịch sử đơn hàng' : 'Tra cứu đơn hàng'}>
+      <Panel className="order-filter-panel">
         <form className="filter-bar" onSubmit={submit}>
           <Field
             label="Mã đơn"
+            placeholder="Nhập mã đơn"
             value={form.code}
             onChange={(event) => field('code', event.target.value)}
             maxLength={30}
           />
-          <Field
-            label="Từ ngày"
-            type="date"
-            value={form.from}
-            max={form.to || undefined}
-            onChange={(event) => field('from', event.target.value)}
-          />
-          <Field
-            label="Đến ngày"
-            type="date"
-            value={form.to}
-            min={form.from || undefined}
-            onChange={(event) => field('to', event.target.value)}
-          />
-          <SelectField
-            label="Phương thức thanh toán"
-            value={form.method}
-            onChange={(event) => field('method', event.target.value)}
-          >
-            <option value="">Tất cả</option>
-            <option>Tiền mặt</option>
-            <option value="Chuyển khoản qua QR">Chuyển khoản</option>
-          </SelectField>
+          {manager && (
+            <Field
+              label="Từ ngày"
+              type="date"
+              value={form.from}
+              max={form.to || undefined}
+              onChange={(event) => field('from', event.target.value)}
+            />
+          )}
+          {manager && (
+            <Field
+              label="Đến ngày"
+              type="date"
+              value={form.to}
+              min={form.from || undefined}
+              onChange={(event) => field('to', event.target.value)}
+            />
+          )}
+          {manager && (
+            <SelectField
+              label="Phương thức thanh toán"
+              value={form.method}
+              onChange={(event) => field('method', event.target.value)}
+            >
+              <option value="">Tất cả</option>
+              <option>Tiền mặt</option>
+              <option value="Chuyển khoản qua QR">Chuyển khoản</option>
+            </SelectField>
+          )}
           {!manager && (
             <SelectField
               label="Trạng thái"
@@ -90,9 +99,19 @@ export default function OrdersPage() {
             </SelectField>
           )}
           <Button type="submit" variant="primary">
-            Tra cứu
+            {manager ? 'Tra cứu' : 'Tìm kiếm'}
           </Button>
         </form>
+        <p className="filter-help">
+          {manager
+            ? 'Tra cứu theo ngày lập đơn · Tính trọn ngày từ 00:00 đến 23:59 của các ngày đã chọn.'
+            : 'Theo dõi các đơn đang xử lý. Việc xem chi tiết không làm thay đổi trạng thái đơn hàng.'}
+        </p>
+      </Panel>
+      <Panel
+        title={manager ? 'Lịch sử đơn hàng' : 'Đơn đang xử lý'}
+        className="order-list-panel"
+      >
         <Loading active={orders.loading} />
         <ErrorMessage message={orders.error} />
         <DataTable
@@ -136,10 +155,14 @@ export default function OrdersPage() {
             },
             {
               key: 'view',
-              label: 'Thao tác',
+              label: '',
               render: (order) => (
-                <Button onClick={() => setDetail(order.ma_don)}>
-                  Chi tiết
+                <Button
+                  variant="quiet"
+                  aria-label={'Chi tiết đơn #' + order.ma_don_hien_thi}
+                  onClick={() => setDetail(order.ma_don)}
+                >
+                  ›
                 </Button>
               ),
             },

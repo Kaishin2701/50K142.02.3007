@@ -64,7 +64,12 @@ export function AvailabilityForm({
     });
   };
   return (
-    <Modal title="Đăng ký lịch làm việc" onClose={onClose} busy={task.pending}>
+    <Modal
+      title="Đăng ký lịch rảnh hoặc ca muốn làm"
+      onClose={onClose}
+      busy={task.pending}
+      className="availability-dialog"
+    >
       <form onSubmit={submit}>
         <div className="dialog-body">
           <div className="form-grid">
@@ -90,14 +95,22 @@ export function AvailabilityForm({
               onChange={(event) => field('end', event.target.value)}
               required
             />
-            <SelectField
-              label="Trạng thái"
-              value={form.status}
-              onChange={(event) => field('status', event.target.value)}
-            >
-              <option>Mong muốn</option>
-              <option>Rảnh</option>
-            </SelectField>
+            <fieldset className="radio-field">
+              <legend>Trạng thái</legend>
+              <div className="radio-options">
+                {['Rảnh', 'Mong muốn'].map((value) => (
+                  <label key={value}>
+                    <input
+                      type="radio"
+                      name="availability-type"
+                      checked={form.status === value}
+                      onChange={() => field('status', value)}
+                    />
+                    {value}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
           </div>
           <ErrorMessage message={task.error} />
         </div>

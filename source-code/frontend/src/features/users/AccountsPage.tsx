@@ -89,6 +89,7 @@ export default function AccountsPage() {
         },
       );
       setEditing(null);
+      setConfirming(false);
       refresh();
       notice(
         editing === 'new'
@@ -106,7 +107,7 @@ export default function AccountsPage() {
           </Button>
         }
       />
-      <Panel>
+      <Panel className="account-search-panel">
         <form
           className="filter-bar"
           onSubmit={(event) => {
@@ -124,6 +125,8 @@ export default function AccountsPage() {
           />
           <Button type="submit">Tìm kiếm</Button>
         </form>
+      </Panel>
+      <Panel title="Danh sách tài khoản" className="account-list-panel">
         <Loading active={users.loading} />
         <ErrorMessage message={users.error} />
         <DataTable
@@ -150,17 +153,12 @@ export default function AccountsPage() {
             },
             {
               key: 'actions',
-              label: 'Thao tác',
+              label: '',
               render: (user) => (
                 <div className="table-actions">
-                  <Button variant="quiet" onClick={() => setDetail(user)}>
-                    Chi tiết
-                  </Button>
-                  <Button variant="quiet" onClick={() => openEditor(user)}>
-                    Chỉnh sửa
-                  </Button>
+                  <Button onClick={() => setDetail(user)}>Chi tiết</Button>
+                  <Button onClick={() => openEditor(user)}>Chỉnh sửa</Button>
                   <Button
-                    variant="quiet"
                     onClick={() => {
                       task.setError('');
                       setStatus(user);
@@ -182,12 +180,17 @@ export default function AccountsPage() {
       <p className="breadcrumb">QUẢN LÝ TÀI KHOẢN</p>
       {editing && (
         <Modal
-          title={editing === 'new' ? 'Tạo tài khoản' : 'Chỉnh sửa tài khoản'}
+          title={
+            editing === 'new'
+              ? 'Tạo tài khoản'
+              : 'Chỉnh sửa thông tin tài khoản'
+          }
           onClose={() => setEditing(null)}
           busy={task.pending}
+          className="account-form-dialog"
         >
           <form onSubmit={submit}>
-            <div className="dialog-body" hidden={confirming}>
+            <div className="dialog-body">
               <div className="form-grid">
                 <Field
                   label="Tên đăng nhập"
@@ -252,51 +255,32 @@ export default function AccountsPage() {
                 )}
               </div>
             </div>
-            {confirming && (
-              <div className="dialog-body">
-                <p>
-                  {editing === 'new'
-                    ? 'Xác nhận tạo tài khoản'
-                    : 'Xác nhận lưu thay đổi'}
-                </p>
-                <dl className="detail-grid">
-                  <dt>Tên đăng nhập</dt>
-                  <dd>{form.ten_dang_nhap}</dd>
-                  <dt>Họ và tên</dt>
-                  <dd>{form.ho_ten}</dd>
-                  <dt>Vai trò</dt>
-                  <dd>{form.vai_tro}</dd>
-                </dl>
-              </div>
-            )}
             <div className="dialog-error">
               <ErrorMessage message={task.error} />
             </div>
             <footer className="dialog-actions">
-              <Button
-                onClick={() =>
-                  confirming ? setConfirming(false) : setEditing(null)
-                }
-                disabled={task.pending}
-              >
-                {confirming ? 'Quay lại' : 'Hủy'}
+              <Button variant="primary" type="submit" disabled={task.pending}>
+                {editing === 'new' ? 'Tạo tài khoản' : 'Lưu'}
               </Button>
-              {confirming ? (
-                <Button
-                  variant="primary"
-                  onClick={save}
-                  disabled={task.pending}
-                >
-                  {editing === 'new' ? 'Tạo tài khoản' : 'Lưu'}
-                </Button>
-              ) : (
-                <Button variant="primary" type="submit">
-                  {editing === 'new' ? 'Tạo tài khoản' : 'Lưu'}
-                </Button>
-              )}
             </footer>
           </form>
         </Modal>
+      )}
+      {editing && confirming && (
+        <Confirm
+          title={
+            editing === 'new'
+              ? 'Xác nhận tạo tài khoản'
+              : 'Xác nhận lưu thay đổi'
+          }
+          confirmLabel={editing === 'new' ? 'Tạo tài khoản' : 'Lưu'}
+          onClose={() => setConfirming(false)}
+          onConfirm={save}
+          pending={task.pending}
+          error={task.error}
+        >
+          {null}
+        </Confirm>
       )}
       {detail && (
         <Modal title="Chi tiết tài khoản" onClose={() => setDetail(null)}>

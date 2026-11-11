@@ -33,7 +33,7 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
       ? 'Tổng hợp tồn kho'
       : mode === 'receipts'
         ? 'Lịch sử nhập hàng'
-        : 'Lịch sử hao hụt';
+        : 'Lịch sử hao hụt kho';
   const columns: Column<RecordData>[] =
     mode === 'stock'
       ? [
@@ -83,7 +83,7 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
             },
             {
               key: 'code',
-              label: 'Mã nhập hàng',
+              label: 'Mã PO',
               render: (row) => (
                 <Button variant="quiet" onClick={() => setReceipt(row.ma_po)}>
                   {shortId(row.ma_po)}
@@ -115,24 +115,22 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
               label: 'Hình thức thanh toán',
               render: (row) => row.hinh_thuc_thanh_toan ?? 'Chưa có',
             },
-            {
-              key: 'view',
-              label: 'Thao tác',
-              render: (row) => (
-                <Button onClick={() => setReceipt(row.ma_po)}>Chi tiết</Button>
-              ),
-            },
           ]
         : [
             {
+              key: 'index',
+              label: 'STT',
+              render: (_row, index) => (page - 1) * 20 + index + 1,
+            },
+            {
               key: 'date',
-              label: 'Ngày kiểm kê',
+              label: 'Ngày',
               render: (row) => dateText(row.ngay_kiem_ke),
             },
             { key: 'shift', label: 'Ca', render: (row) => shortId(row.ma_ca) },
             {
               key: 'name',
-              label: 'Tên nguyên liệu',
+              label: 'Nguyên liệu',
               render: (row) => row.ten_nguyen_lieu,
             },
             {
@@ -172,19 +170,39 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
   return (
     <>
       <PageHeader title={title} />
-      <Panel>
-        {mode === 'stock' && (
-          <p className="muted">
-            Có{' '}
-            {result.data.filter((row) => row.trang_thai === 'Sắp hết').length}{' '}
-            nguyên liệu dưới mức tồn tối thiểu
-          </p>
-        )}
+      {mode === 'stock' && (
+        <p
+          className={
+            'stock-alert' +
+            (result.data.some((row) => row.trang_thai === 'Sắp hết')
+              ? ' is-low'
+              : '')
+          }
+        >
+          Có {result.data.filter((row) => row.trang_thai === 'Sắp hết').length}{' '}
+          nguyên liệu dưới mức tồn tối thiểu
+        </p>
+      )}
+      <Panel
+        title={
+          mode === 'stock'
+            ? undefined
+            : mode === 'receipts'
+              ? 'Lịch sử nhập hàng'
+              : 'Lịch sử hao hụt'
+        }
+        className={'inventory-list-panel inventory-' + mode}
+      >
         <Loading active={result.loading} />
         <ErrorMessage message={result.error} />
         <DataTable
           columns={columns}
           rows={result.data}
+          rowClassName={(row) =>
+            mode === 'stock' && row.trang_thai === 'Sắp hết'
+              ? 'low-stock-row'
+              : ''
+          }
           rowKey={(row) =>
             mode === 'stock'
               ? row.ma_nguyen_lieu

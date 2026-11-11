@@ -5,6 +5,7 @@ import { api } from '../../services/api';
 import type { Shift } from '../../services/models';
 import {
   Button,
+  Confirm,
   ErrorMessage,
   Field,
   Modal,
@@ -73,131 +74,135 @@ export function ShiftForm({
     else save();
   };
   return (
-    <Modal
-      title={shift ? 'Chỉnh sửa ca làm' : 'Tạo ca mới'}
-      onClose={onClose}
-      busy={task.pending}
-    >
-      <form onSubmit={submit}>
-        <div className="dialog-body" hidden={confirming}>
-          <div className="form-grid">
-            <Field
-              label="Ngày làm"
-              type="date"
-              min={today()}
-              value={form.date}
-              onChange={(event) => field('date', event.target.value)}
-              required
-            />
-            <Field
-              label="Giờ bắt đầu"
-              type="time"
-              value={form.start}
-              onChange={(event) => field('start', event.target.value)}
-              required
-            />
-            <Field
-              label="Giờ kết thúc"
-              type="time"
-              value={form.end}
-              onChange={(event) => field('end', event.target.value)}
-              required
-            />
-            <Field
-              label="Số lượng nhân viên tối thiểu"
-              type="number"
-              min={1}
-              max={100}
-              step={1}
-              value={form.min}
-              onChange={(event) => field('min', event.target.value)}
-              required
-            />
-            <Field
-              label="Số lượng nhân viên tối đa"
-              type="number"
-              min={1}
-              max={100}
-              step={1}
-              value={form.max}
-              onChange={(event) => field('max', event.target.value)}
-              required
-            />
-            {!shift && (
-              <SelectField
-                label="Loại ca"
-                value={form.recurrence}
-                onChange={(event) => field('recurrence', event.target.value)}
-              >
-                <option value="once">Ca diễn ra một lần</option>
-                <option value="weekly">Ca lặp lại hằng tuần</option>
-              </SelectField>
-            )}
-            {!shift && form.recurrence === 'weekly' && (
-              <>
-                <SelectField
-                  label="Kết thúc lặp"
-                  value={form.endType}
-                  onChange={(event) => field('endType', event.target.value)}
-                >
-                  <option value="date">Theo ngày</option>
-                  <option value="weeks">Theo số tuần</option>
-                </SelectField>
-                {form.endType === 'date' ? (
-                  <Field
-                    label="Ngày kết thúc"
-                    type="date"
-                    min={form.date}
-                    value={form.endDate}
-                    onChange={(event) => field('endDate', event.target.value)}
-                    required
-                  />
-                ) : (
-                  <Field
-                    label="Số tuần"
-                    type="number"
-                    min={1}
-                    max={52}
-                    step={1}
-                    value={form.weeks}
-                    onChange={(event) => field('weeks', event.target.value)}
-                    required
-                  />
-                )}
-              </>
-            )}
-          </div>
-        </div>
-        {confirming && (
+    <>
+      <Modal
+        title={shift ? 'Chỉnh sửa ca làm' : 'Tạo ca làm'}
+        onClose={onClose}
+        busy={task.pending}
+        className="shift-form-dialog"
+      >
+        <form onSubmit={submit}>
           <div className="dialog-body">
-            <p>Xác nhận lưu thay đổi ca làm?</p>
-            <p>
-              {form.date.split('-').reverse().join('/')} · {form.start}–
-              {form.end}
-            </p>
+            {!shift && (
+              <fieldset className="radio-field">
+                <legend>Loại ca</legend>
+                <div className="radio-options">
+                  {[
+                    ['once', 'Ca diễn ra một lần'],
+                    ['weekly', 'Ca lặp lại hằng tuần'],
+                  ].map(([value, label]) => (
+                    <label key={value}>
+                      <input
+                        type="radio"
+                        name="recurrence"
+                        checked={form.recurrence === value}
+                        onChange={() => field('recurrence', value)}
+                      />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+            <div className="form-grid">
+              <Field
+                label="Ngày làm"
+                type="date"
+                min={today()}
+                value={form.date}
+                onChange={(event) => field('date', event.target.value)}
+                required
+              />
+              <Field
+                label="Giờ bắt đầu"
+                type="time"
+                value={form.start}
+                onChange={(event) => field('start', event.target.value)}
+                required
+              />
+              <Field
+                label="Giờ kết thúc"
+                type="time"
+                value={form.end}
+                onChange={(event) => field('end', event.target.value)}
+                required
+              />
+              <Field
+                label="Số lượng nhân viên tối thiểu"
+                type="number"
+                min={1}
+                max={100}
+                step={1}
+                value={form.min}
+                onChange={(event) => field('min', event.target.value)}
+                required
+              />
+              <Field
+                label="Số lượng nhân viên tối đa"
+                type="number"
+                min={1}
+                max={100}
+                step={1}
+                value={form.max}
+                onChange={(event) => field('max', event.target.value)}
+                required
+              />
+              {!shift && form.recurrence === 'weekly' && (
+                <>
+                  <SelectField
+                    label="Kết thúc lặp"
+                    value={form.endType}
+                    onChange={(event) => field('endType', event.target.value)}
+                  >
+                    <option value="date">Theo ngày</option>
+                    <option value="weeks">Theo số tuần</option>
+                  </SelectField>
+                  {form.endType === 'date' ? (
+                    <Field
+                      label="Ngày kết thúc"
+                      type="date"
+                      min={form.date}
+                      value={form.endDate}
+                      onChange={(event) => field('endDate', event.target.value)}
+                      required
+                    />
+                  ) : (
+                    <Field
+                      label="Số tuần"
+                      type="number"
+                      min={1}
+                      max={52}
+                      step={1}
+                      value={form.weeks}
+                      onChange={(event) => field('weeks', event.target.value)}
+                      required
+                    />
+                  )}
+                </>
+              )}
+            </div>
           </div>
-        )}
-        <div className="dialog-error">
-          <ErrorMessage message={task.error} />
-        </div>
-        <footer className="dialog-actions">
-          <Button
-            disabled={task.pending}
-            onClick={() => (confirming ? setConfirming(false) : onClose())}
-          >
-            {confirming ? 'Quay lại' : 'Hủy'}
-          </Button>
-          {confirming ? (
-            <Button variant="primary" disabled={task.pending} onClick={save}>
-              Xác nhận
-            </Button>
-          ) : (
+          <div className="dialog-error">
+            <ErrorMessage message={task.error} />
+          </div>
+          <footer className="dialog-actions">
             <Button variant="primary" type="submit" disabled={task.pending}>
               Lưu
             </Button>
-          )}
-        </footer>
-      </form>
-    </Modal>
+          </footer>
+        </form>
+      </Modal>
+      {confirming && (
+        <Confirm
+          title="Chỉnh sửa ca làm"
+          onClose={() => setConfirming(false)}
+          onConfirm={save}
+          pending={task.pending}
+          error={task.error}
+        >
+          Xác nhận thay đổi
+        </Confirm>
+      )}
+    </>
   );
 }
