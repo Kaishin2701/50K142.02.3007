@@ -31,6 +31,7 @@ export type Payment = {
   tien_thua?: Numeric;
   ma_tham_chieu_qr?: string;
   qrImageUrl?: string;
+  autoConfirm?: boolean;
 };
 export type Order = {
   ma_don: string;

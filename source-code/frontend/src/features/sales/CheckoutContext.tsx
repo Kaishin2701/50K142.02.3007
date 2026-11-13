@@ -137,6 +137,45 @@ function useCheckoutModel() {
       });
     return () => controller.abort();
   }, [stored.orderId, version, task.pending]);
+  useEffect(() => {
+    if (
+      !stored.orderId ||
+      !payment?.autoConfirm ||
+      payment.trang_thai !== 'Chờ xác nhận' ||
+      order?.da_thanh_toan ||
+      task.pending
+    )
+      return;
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const found = await api<Order>(`/orders/${stored.orderId}`, {
+          signal: controller.signal,
+        });
+        if (controller.signal.aborted) return;
+        storeOrder(found);
+        if (found.da_thanh_toan) {
+          refresh();
+          return;
+        }
+      } catch {
+        // SSE remains the primary channel; transient polling failures are retried.
+      }
+      if (!controller.signal.aborted) timer = setTimeout(poll, 5000);
+    };
+    timer = setTimeout(poll, 5000);
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [
+    stored.orderId,
+    payment?.autoConfirm,
+    payment?.trang_thai,
+    order?.da_thanh_toan,
+    task.pending,
+  ]);
   const changeCart = (next: CartLine[]) => {
     if (stored.orderId || order || task.pending) return;
     task.setError('');

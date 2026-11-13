@@ -54,6 +54,7 @@ let order: any;
 let calls: { path: string; method: string; body: any; key?: string }[];
 let errors: Map<string, { status: number; message: string }>;
 let savedCount: any;
+let qrEnabled: boolean;
 
 function response(data: unknown, status = 200) {
   return new Response(
@@ -231,8 +232,22 @@ function installApi() {
         order.payments = [payment];
         return response(payment);
       }
-      if (path === '/payments/qr')
-        return response('Chưa cấu hình cổng thanh toán QR.', 503);
+      if (path === '/payments/qr') {
+        if (!qrEnabled)
+          return response('Chưa cấu hình cổng thanh toán QR.', 503);
+        const payment = {
+          ma_giao_dich: crypto.randomUUID(),
+          ma_don: order.ma_don,
+          phuong_thuc: 'Chuyển khoản qua QR',
+          trang_thai: 'Chờ xác nhận',
+          so_tien_thanh_toan: order.tong_tien,
+          ma_tham_chieu_qr: 'ME' + 'a'.repeat(32),
+          qrImageUrl: 'https://vietqr.app/img?acc=0123456789&bank=MBBank',
+          autoConfirm: true,
+        };
+        order.payments = [payment];
+        return response(payment);
+      }
       if (path === '/inventory/materials') return response([material]);
       if (path === '/inventory/receipts' || path === '/inventory/losses')
         return response([]);
@@ -305,6 +320,7 @@ beforeEach(() => {
   calls = [];
   errors = new Map();
   savedCount = null;
+  qrEnabled = false;
   material.ton_ly_thuyet = 10;
   shifts = [
     {
@@ -575,6 +591,41 @@ describe('native application architecture', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(location.hash).toBe('#/sales');
   });
+  it('reflects automatic QR success from server refresh without clicking reconciliation', async () => {
+    qrEnabled = true;
+    const user = await startSale();
+    await checkSale(user);
+    const main = screen.getByRole('main');
+    await user.click(screen.getByRole('button', { name: 'QR', exact: true }));
+    await screen.findByText('Đang chờ ngân hàng xác nhận thanh toán…');
+    expect(order.da_thanh_toan).toBe(false);
+    order.da_thanh_toan = true;
+    order.payments[0].trang_thai = 'Thành công';
+    window.dispatchEvent(new Event('me-data-changed'));
+    await screen.findByRole('button', { name: 'Xuất hóa đơn' });
+    expect(screen.queryByRole('dialog', { name: 'Thanh toán QR' })).toBeNull();
+    expect(
+      calls.filter((call) => call.path.endsWith('/reconcile')),
+    ).toHaveLength(0);
+    expect(screen.getByRole('main')).toBe(main);
+  });
+  it('polls pending automatic QR if the realtime notification is missed', async () => {
+    qrEnabled = true;
+    const user = await startSale();
+    await checkSale(user);
+    await user.click(screen.getByRole('button', { name: 'QR', exact: true }));
+    await screen.findByText('Đang chờ ngân hàng xác nhận thanh toán…');
+    order.da_thanh_toan = true;
+    order.payments[0].trang_thai = 'Thành công';
+    await screen.findByRole(
+      'button',
+      { name: 'Xuất hóa đơn' },
+      { timeout: 8000 },
+    );
+    expect(
+      calls.filter((call) => call.path.endsWith('/reconcile')),
+    ).toHaveLength(0);
+  }, 12000);
   it('assigns employees without replacing the weekly calendar', async () => {
     location.hash = '/shifts';
     render(<App />);

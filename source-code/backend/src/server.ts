@@ -9,7 +9,7 @@ async function main(){
  catch(error){await db.close();throw error;}
  const app=createApp({db,origins:env.FRONTEND_ORIGINS.split(',').map(v=>v.trim()),secureCookies:env.NODE_ENV==='production',
    sessionHours:env.SESSION_HOURS,gateway:env.QR_PROVIDER==='sepay'?sepayGateway(env.SEPAY_BANK,env.SEPAY_ACCOUNT_NUMBER):httpGateway(env.QR_PROVIDER==='http'?env.QR_GATEWAY_URL:undefined,env.QR_GATEWAY_TOKEN),
-   webhookSecret:env.QR_WEBHOOK_SECRET,pdfFontPath:env.PDF_FONT_PATH,logErrors:true,trustProxy:env.TRUST_PROXY,staticDir:fileURLToPath(new URL('../../frontend/dist/',import.meta.url)),
+   webhookSecret:env.QR_WEBHOOK_SECRET,autoConfirmQr:env.QR_AUTO_CONFIRM,pdfFontPath:env.PDF_FONT_PATH,logErrors:true,trustProxy:env.TRUST_PROXY,staticDir:fileURLToPath(new URL('../../frontend/dist/',import.meta.url)),
    sepay:env.QR_PROVIDER==='sepay'&&env.SEPAY_WEBHOOK_API_KEY&&env.SEPAY_ACCOUNT_NUMBER?{secret:env.SEPAY_WEBHOOK_API_KEY,account:env.SEPAY_ACCOUNT_NUMBER}:undefined});
  const server=app.listen(env.PORT,env.HOST,()=>console.log(`Me Ca Phe API: http://${env.HOST}:${env.PORT}/api`));
  const stop=()=>{server.close(()=>{void db.close().then(()=>process.exit(0));});setTimeout(()=>process.exit(1),10000).unref();};

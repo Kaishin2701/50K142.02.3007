@@ -10,6 +10,7 @@ const schema = z.object({
  PDF_FONT_PATH: z.string().optional(),
  TRUST_PROXY:z.coerce.number().int().min(0).max(3).default(0),
  QR_PROVIDER:z.enum(['disabled','http','sepay']).default('disabled'),
+ QR_AUTO_CONFIRM:z.enum(['true','false']).default('false').transform(v=>v==='true'),
  SEPAY_BANK:z.string().optional(),SEPAY_ACCOUNT_NUMBER:z.string().optional(),SEPAY_WEBHOOK_API_KEY:z.string().optional(),
 });
 export function loadEnv() { return schema.parse(process.env); }

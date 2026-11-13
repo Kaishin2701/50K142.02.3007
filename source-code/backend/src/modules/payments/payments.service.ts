@@ -21,7 +21,7 @@ export function httpGateway(url?:string,token?:string):Gateway{return{create:asy
  return z.object({qrContent:text(10000),expiresAt:z.iso.datetime().optional()}).parse(await response.json());
 }};}
 export const webhookInput=z.object({eventId:text(150),paymentId:id,orderCode:text(30),reference:text(150),amount:money,status:z.enum(['success','pending','failed'])}).strict();
-export function paymentsService(db:Database,gateway:Gateway,secret?:string){
+export function paymentsService(db:Database,gateway:Gateway,secret?:string,autoConfirmQr=false){
  const finalize=async(tx:Database,payment:any,received:unknown)=>{
    const existing=await repo.successful(tx,payment.ma_don);
    if(existing){check(existing.ma_giao_dich===payment.ma_giao_dich,'Đơn hàng đã có giao dịch thành công.','ALREADY_PAID');return existing;}
@@ -29,6 +29,20 @@ export function paymentsService(db:Database,gateway:Gateway,secret?:string){
    const order=await ordersRepository.get(tx,payment.ma_don);
    await notifyManagers(tx,'THANH_TOAN','Có đơn hàng đã thanh toán.',{ma_don:payment.ma_don});
    await notifyShift(tx,order.ma_ca,'THANH_TOAN','Đơn hàng đã thanh toán.',{ma_don:payment.ma_don});return result;
+ };
+ const confirmIncomingQr=async(tx:Database,payment:any,amount:number)=>{
+   const order=await ordersRepository.get(tx,payment.ma_don);
+   const shift=order?await ordersRepository.shift(tx,order.ma_ca,order.ma_nhan_vien_lap):null;
+   // Ambiguous, late, or additional transfers stay recorded for review. They
+   // must not consume stock or overwrite a cash/previous successful payment.
+   if(!order?.da_xac_nhan||order.da_thanh_toan||payment.trang_thai!=='Chờ xác nhận'
+     ||amount<=0||amount!==Number(payment.so_tien_thanh_toan)||amount!==Number(order.tong_tien)
+     ||!shift?.dang_dien_ra||shift.da_kiem_ke){
+     await notifyManagers(tx,'QR_CAN_KIEM_TRA','Giao dịch QR cần kiểm tra số tiền hoặc trạng thái đơn/ca.',{ma_don:payment.ma_don,ma_giao_dich:payment.ma_giao_dich,so_tien:amount});
+     return false;
+   }
+   await finalize(tx,payment,amount);
+   return true;
  };
  return{
   cash:(actor:Actor,orderId:string,received:number)=>db.transaction(async tx=>{await lock(tx,'kho');const order=await accessibleOrder(tx,orderId,actor);
@@ -48,7 +62,7 @@ export function paymentsService(db:Database,gateway:Gateway,secret?:string){
     return db.transaction(async tx=>{await lock(tx,'kho');const current=await accessibleOrder(tx,orderId,actor);
       check(!current.da_thanh_toan,'Đơn hàng đã thanh toán.','ALREADY_PAID');
       const shift=await ordersRepository.shift(tx,current.ma_ca,actor.id);check(shift?.dang_dien_ra&&!shift.da_kiem_ke,'Ca làm đã kết thúc.');
-      return {...await repo.create(tx,paymentId,orderId,'Chuyển khoản qua QR',current.tong_tien,reference),...qr};
+      return {...await repo.create(tx,paymentId,orderId,'Chuyển khoản qua QR',current.tong_tien,reference),...qr,autoConfirm:autoConfirmQr};
     });
   },
   webhook:async(raw:Buffer,signature?:string)=>{
@@ -62,13 +76,17 @@ export function paymentsService(db:Database,gateway:Gateway,secret?:string){
       const payment=await repo.get(tx,v.paymentId);check(payment&&payment.phuong_thuc==='Chuyển khoản qua QR','Không tìm thấy giao dịch QR.','NOT_FOUND',404);
       const order=await ordersRepository.get(tx,payment.ma_don);
       check(order.ma_don_hien_thi===v.orderCode&&payment.ma_tham_chieu_qr===v.reference,'Giao dịch không khớp đơn hàng.','PAYMENT_MISMATCH',422);
-      await repo.storeEvent(tx,v,hash);return {received:true,duplicate:false};
+      await repo.storeEvent(tx,v,hash);
+      if(autoConfirmQr&&v.status==='success')await confirmIncomingQr(tx,payment,v.amount);
+      return {received:true,duplicate:false};
     });
   },
   sepayWebhook:async(raw:Buffer,authorization:string|undefined,config:{secret:string;account:string})=>{
     const expected=Buffer.from('Apikey '+config.secret),actual=Buffer.from(authorization??'');
     check(config.secret&&expected.length===actual.length&&timingSafeEqual(expected,actual),'Thông tin xác thực SePay không hợp lệ.','INVALID_SIGNATURE',401);
-    const v=z.object({id:z.union([z.string().min(1).max(100),z.number().int().positive()]),accountNumber:text(50),transferType:z.enum(['in','out']),transferAmount:money,content:z.string().max(2000),code:z.string().nullable().optional()}).passthrough().parse(JSON.parse(raw.toString('utf8')));
+    const v=z.object({id:z.union([z.string().min(1).max(100),z.number().int().nonnegative()]),accountNumber:text(50),transferType:z.enum(['in','out']),transferAmount:money,content:z.string().max(2000),code:z.string().nullable().optional()}).passthrough().parse(JSON.parse(raw.toString('utf8')));
+    // SePay's dashboard connectivity check uses a mock id of zero.
+    if(v.id===0||v.id==='0')return {success:true};
     if(v.transferType!=='in'||v.accountNumber!==config.account)return {success:true};
     const reference=(`${v.code??''} ${v.content}`).match(/ME[a-f0-9]{32}/i)?.[0]??'';
     return db.transaction(async tx=>{await lock(tx,'kho');const payment=reference?await repo.byReference(tx,reference):null;
@@ -76,8 +94,9 @@ export function paymentsService(db:Database,gateway:Gateway,secret?:string){
       const hash=createHash('sha256').update(JSON.stringify(event)).digest('hex');const old=await repo.event(tx,event.eventId);
       if(old){check(old.noi_dung_bam===hash,'Mã giao dịch SePay đã được ghi nhận với nội dung khác.','EVENT_CONFLICT');return {success:true};}
       await repo.storeEvent(tx,event,hash);
-      if(payment)await notifyShift(tx,payment.ma_ca,'QR_DA_NHAN','Đã nhận dữ liệu giao dịch QR. Vui lòng đối soát.',{ma_don:payment.ma_don,ma_giao_dich:payment.ma_giao_dich});
-      else await notifyManagers(tx,'QR_CAN_KIEM_TRA','Có giao dịch chuyển khoản chưa khớp đơn hàng, cần kiểm tra.',{ma_su_kien:event.eventId,so_tien:v.transferAmount,tham_chieu:reference});
+      const automatic=payment&&autoConfirmQr?await confirmIncomingQr(tx,payment,v.transferAmount):false;
+      if(payment&&!automatic)await notifyShift(tx,payment.ma_ca,'QR_DA_NHAN','Đã nhận dữ liệu giao dịch QR. Vui lòng đối soát.',{ma_don:payment.ma_don,ma_giao_dich:payment.ma_giao_dich});
+      if(!payment)await notifyManagers(tx,'QR_CAN_KIEM_TRA','Có giao dịch chuyển khoản chưa khớp đơn hàng, cần kiểm tra.',{ma_su_kien:event.eventId,so_tien:v.transferAmount,tham_chieu:reference});
       return {success:true};
     });
   },

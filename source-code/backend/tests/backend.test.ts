@@ -58,6 +58,7 @@ test('SePay verifies account and authentication, deduplicates events, and requir
  const incoming={id:1001,accountNumber:'0123456789',transferType:'in',transferAmount:20000,content:payment.ma_tham_chieu_qr.toUpperCase(),code:null};
  assert.equal((await request(configured).post('/api/payments/sepay/webhook').send(incoming)).status,401);
  const send=(payload:any)=>request(configured).post('/api/payments/sepay/webhook').set('Authorization','Apikey '+secret).send(payload);
+ assert.equal((await send({...incoming,id:0})).status,200);
  assert.equal((await send({...incoming,accountNumber:'another-account'})).status,200);
  assert.equal((await db.query('SELECT * FROM su_kien_thanh_toan')).rows.length,0);
  assert.deepEqual((await send(incoming)).body,{success:true});assert.deepEqual((await send(incoming)).body,{success:true});
@@ -70,6 +71,77 @@ test('SePay verifies account and authentication, deduplicates events, and requir
  assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),8);
  assert.equal((await db.query("SELECT * FROM giao_dich_thanh_toan WHERE trang_thai='Thành công'")).rows.length,1);
 });
+test('automatic SePay accepts only an authenticated exact incoming transfer and consumes stock once',async()=>{
+ const service=paymentsService(db,sepayGateway('MBBank','0123456789'),undefined,true);
+ const order=await ordersService(db).create(employee,items(2),true);
+ const payment=await service.qr(employee,order.ma_don);assert.equal(payment.autoConfirm,true);
+ const configured=createApp({db,origins:[origin],gateway,autoConfirmQr:true,sepay:{secret,account:'0123456789'}});
+ const incoming={id:2100,accountNumber:'0123456789',transferType:'in',transferAmount:50000,content:payment.ma_tham_chieu_qr.toUpperCase(),code:null};
+ const send=(payload:any)=>request(configured).post('/api/payments/sepay/webhook').set('Authorization','Apikey '+secret).send(payload);
+ assert.equal((await send({...incoming,id:0})).status,200);
+ assert.equal((await request(configured).post('/api/payments/sepay/webhook').send(incoming)).status,401);
+ for(const payload of [{...incoming,accountNumber:'wrong-account'},{...incoming,transferType:'out'},
+   {...incoming,id:2101,transferAmount:20000},{...incoming,id:2102,transferAmount:60000}])assert.equal((await send(payload)).status,200);
+ assert.equal((await ordersService(db).get(employee,order.ma_don)).da_thanh_toan,false);
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),10);
+ assert.deepEqual((await send(incoming)).body,{success:true});assert.deepEqual((await send(incoming)).body,{success:true});
+ assert.equal((await ordersService(db).get(employee,order.ma_don)).da_thanh_toan,true);
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),8);
+ assert.equal((await db.query("SELECT * FROM giao_dich_thanh_toan WHERE trang_thai='Thành công'")).rows.length,1);
+ assert.equal((await send({...incoming,id:2103})).status,200);
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),8);
+ assert.equal((await send({...incoming,transferAmount:50001})).status,409);
+ assert.ok((await one("SELECT count(*)::int AS count FROM thong_bao WHERE loai='QR_CAN_KIEM_TRA'")).count>=3);
+});
+
+test('automatic QR records late and cancelled-order transfers without changing stock',async()=>{
+ const service=paymentsService(db,gateway,undefined,true);
+ const orders=ordersService(db);const cancelled=await orders.create(employee,items(),true);
+ const cancelledPayment=await service.qr(employee,cancelled.ma_don);await orders.cancel(employee,cancelled.ma_don);
+ const late=await orders.create(employee,items(),true);const latePayment=await service.qr(employee,late.ma_don);
+ await endShift();
+ for(const [i,payment] of [cancelledPayment,latePayment].entries()){
+  assert.deepEqual(await service.sepayWebhook(Buffer.from(JSON.stringify({id:2200+i,accountNumber:'0123456789',transferType:'in',transferAmount:25000,content:payment.ma_tham_chieu_qr})), 'Apikey '+secret,{secret,account:'0123456789'}),{success:true});
+ }
+ assert.equal((await db.query("SELECT * FROM giao_dich_thanh_toan WHERE trang_thai='Thành công'")).rows.length,0);
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),10);
+ assert.equal((await db.query('SELECT * FROM su_kien_thanh_toan')).rows.length,2);
+});
+
+test('automatic QR cannot replace cash settlement with a later bank transfer',async()=>{
+ const service=paymentsService(db,gateway,undefined,true);const order=await ordersService(db).create(employee,items(),true);
+ const payment=await service.qr(employee,order.ma_don);await service.cash(employee,order.ma_don,25000);
+ await service.sepayWebhook(Buffer.from(JSON.stringify({id:2300,accountNumber:'0123456789',transferType:'in',transferAmount:25000,content:payment.ma_tham_chieu_qr})), 'Apikey '+secret,{secret,account:'0123456789'});
+ const paid=await one("SELECT * FROM giao_dich_thanh_toan WHERE trang_thai='Thành công'");assert.equal(paid.phuong_thuc,'Tiền mặt');
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),9);
+});
+
+test('signed generic webhook can auto-confirm without employee reconciliation',async()=>{
+ const service=paymentsService(db,gateway,secret,true);const order=await ordersService(db).create(employee,items(),true);
+ const payment=await service.qr(employee,order.ma_don);
+ const raw=Buffer.from(JSON.stringify({eventId:'automatic-gateway-1',paymentId:payment.ma_giao_dich,orderCode:order.ma_don_hien_thi,reference:payment.ma_tham_chieu_qr,amount:25000,status:'success'}));
+ const signature=createHmac('sha256',secret).update(raw).digest('hex');
+ await service.webhook(raw,signature);await service.webhook(raw,signature);
+ assert.equal((await ordersService(db).get(employee,order.ma_don)).da_thanh_toan,true);
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),9);
+});
+
+test('automatic QR rolls back event and settlement together if stock consumption fails',async()=>{
+ const service=paymentsService(db,gateway,undefined,true);const order=await ordersService(db).create(employee,items(),true);
+ const payment=await service.qr(employee,order.ma_don);
+ await db.query('UPDATE nguyen_lieu SET ton_ly_thuyet=0 WHERE ma_nguyen_lieu=$1',[material]);
+ const raw=Buffer.from(JSON.stringify({id:2400,accountNumber:'0123456789',transferType:'in',transferAmount:25000,content:payment.ma_tham_chieu_qr}));
+ const receive=()=>service.sepayWebhook(raw,'Apikey '+secret,{secret,account:'0123456789'});
+ await assert.rejects(receive);
+ assert.equal((await db.query('SELECT * FROM su_kien_thanh_toan')).rows.length,0);
+ assert.equal((await ordersService(db).get(employee,order.ma_don)).da_thanh_toan,false);
+ assert.equal((await db.query("SELECT * FROM bien_dong_kho WHERE loai='Bán hàng'")).rows.length,0);
+ await db.query('UPDATE nguyen_lieu SET ton_ly_thuyet=10 WHERE ma_nguyen_lieu=$1',[material]);
+ await receive();await receive();
+ assert.equal((await ordersService(db).get(employee,order.ma_don)).da_thanh_toan,true);
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),9);
+});
+
 test('HTTP authentication, role boundaries, CSRF and immediate account locking',async()=>{
  assert.equal((await request(app).get('/api/users')).status,401);
  assert.equal((await request(app).get('/api/auth/me').set('Cookie','me_session=j%3A%7B%22bad%22%3Atrue%7D')).status,401);

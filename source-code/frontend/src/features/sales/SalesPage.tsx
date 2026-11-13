@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useResource } from '../../app/data';
 import { addDays, money, shiftTime, weekStart } from '../../app/format';
 import { useRouter } from '../../app/router';
@@ -61,6 +61,9 @@ export default function SalesPage() {
   const completed = order?.trang_thai_pha_che === 'Hoàn tất pha chế';
   const immutable = checkout.held || Boolean(order);
   const paid = order?.da_thanh_toan;
+  useEffect(() => {
+    if (paid) setQrOpen(false);
+  }, [paid]);
   const items = menu.data.filter(
     (item) =>
       item.danh_muc === category &&
@@ -531,7 +534,7 @@ export default function SalesPage() {
               </form>
             </Modal>
           )}
-          {qrOpen && (
+          {qrOpen && !paid && (
             <Modal
               inline
               className="payment-inline"
@@ -545,6 +548,9 @@ export default function SalesPage() {
                   <img src={checkout.payment.qrImageUrl} alt="QR thanh toán" />
                 )}
                 <p>{checkout.payment?.ma_tham_chieu_qr}</p>
+                {checkout.payment?.autoConfirm && (
+                  <p role="status">Đang chờ ngân hàng xác nhận thanh toán…</p>
+                )}
                 <ErrorMessage message={checkout.task.error} />
               </div>
               <footer className="dialog-actions">

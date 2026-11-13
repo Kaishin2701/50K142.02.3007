@@ -33,6 +33,7 @@ Set these server-only environment values:
 
 ```dotenv
 QR_PROVIDER=sepay
+QR_AUTO_CONFIRM=true
 SEPAY_BANK=<bank short code supported by vietqr.app>
 SEPAY_ACCOUNT_NUMBER=<receiving bank account number>
 SEPAY_WEBHOOK_API_KEY=<private webhook authentication key>
@@ -40,7 +41,13 @@ SEPAY_WEBHOOK_API_KEY=<private webhook authentication key>
 
 Create the webhook in SePay with URL `https://<actual-app-host>/api/payments/sepay/webhook`, JSON body and API-key authentication. SePay must send `Authorization: Apikey <SEPAY_WEBHOOK_API_KEY>`. Use the same key in the service configuration.
 
-The QR contains an alphanumeric `ME` reference unique to the payment, the receiving account and the order amount. Preserve that full reference in the transfer content. The backend matches references case-insensitively, verifies the configured receiving account, ignores outgoing transfers and deduplicates transaction IDs. The endpoint responds with exactly `{"success":true}` after accepting a valid event. Webhook receipt alone does not complete payment: the employee's existing reconciliation action verifies successful receipt and sufficient funds before stock/revenue is updated.
+The QR contains an alphanumeric `ME` reference unique to the payment, the receiving account and the order amount. Preserve that full reference in the transfer content. The backend matches references case-insensitively, verifies the configured receiving account, ignores outgoing transfers and deduplicates transaction IDs. The endpoint responds with exactly `{"success":true}` after accepting a valid event.
+
+With `QR_AUTO_CONFIRM=true`, an authenticated incoming transfer automatically settles a pending QR payment only when the amount exactly matches the order and the order is confirmed, unpaid and in a running, uncounted shift. Event storage, settlement, stock consumption and notifications share one transaction. Additional transfers, mismatched amounts and late transfers remain recorded for manager review. A cancelled order's unmatched transfer is also recorded for review. A cash settlement cannot be overwritten by a subsequent bank transfer.
+
+The checkout updates from SSE notifications and polls the authorized order endpoint every five seconds while waiting for an automatic QR payment. Successful payment closes the QR section and enables invoice export without an employee clicking reconciliation. The existing reconciliation button remains a manual fallback. With `QR_AUTO_CONFIRM=false` (the default), an employee must still reconcile an authenticated transfer before settlement.
+
+The SePay API access token used to inspect linked bank accounts is separate from the webhook authentication key. Do not put either secret in frontend code or Git. The webhook integration does not require the API access token at runtime.
 
 Before live use, verify invalid authorization is rejected, wrong account/outgoing transfers are ignored, short payments cannot reconcile, retries cannot charge stock twice and unmatched transfers appear in manager notifications. A second distinct short transfer is not automatically summed; reconcile such payments with the bank/provider manually.
 

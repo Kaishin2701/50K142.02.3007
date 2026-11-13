@@ -27,7 +27,7 @@ import { reportsRoutes } from './modules/reports/reports.routes.js';
 import { pageQuery } from './shared/validation.js';
 import { notificationList,notificationRead } from './shared/notifications.js';
 import { eventStream } from './shared/events.js';
-export type Options={db:Database;origins:string[];secureCookies?:boolean;sessionHours?:number;gateway:Gateway;webhookSecret?:string;pdfFontPath?:string;logErrors?:boolean;staticDir?:string;trustProxy?:number;sepay?:{secret:string;account:string}};
+export type Options={db:Database;origins:string[];secureCookies?:boolean;sessionHours?:number;gateway:Gateway;webhookSecret?:string;autoConfirmQr?:boolean;pdfFontPath?:string;logErrors?:boolean;staticDir?:string;trustProxy?:number;sepay?:{secret:string;account:string}};
 export function createApp(options:Options){
  const {db}=options;const app=express();const hours=options.sessionHours??12;
  app.disable('x-powered-by');if(options.trustProxy)app.set('trust proxy',options.trustProxy);
@@ -35,7 +35,7 @@ export function createApp(options:Options){
  app.use(cors({origin:(origin,done)=>done(null,!origin||options.origins.includes(origin)),credentials:true}));
  app.use('/api',(_req,res,next)=>{res.setHeader('Cache-Control','no-store');next();});
  app.use(rateLimit({windowMs:60000,limit:300,standardHeaders:true,legacyHeaders:false,message:{error:{code:'RATE_LIMIT',message:'Quá nhiều yêu cầu. Vui lòng thử lại sau.'}}}));
- const payments=paymentsService(db,options.gateway,options.webhookSecret);
+ const payments=paymentsService(db,options.gateway,options.webhookSecret,options.autoConfirmQr);
  app.post('/api/payments/sepay/webhook',express.raw({type:'application/json',limit:'128kb'}),controller(async(req,res)=>{
    check(options.sepay,'Chưa cấu hình SePay.','PAYMENT_NOT_CONFIGURED',503);check(Buffer.isBuffer(req.body),'Yêu cầu webhook phải là application/json.','INVALID_WEBHOOK',400);
    await payments.sepayWebhook(req.body,req.get('Authorization'),options.sepay);res.json({success:true});
