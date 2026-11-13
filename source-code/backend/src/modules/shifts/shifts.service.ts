@@ -8,7 +8,7 @@ import { shiftsRepository as repo } from './shifts.repository.js';
 export const shiftFields=z.object({ngay_lam:date,gio_bat_dau:time,gio_ket_thuc:time,so_nhan_vien_toi_thieu:z.number().int().min(1).max(100),so_nhan_vien_toi_da:z.number().int().min(1).max(100)}).strict();
 export const shiftInput=shiftFields.extend({lap:z.object({ngay_ket_thuc:date.optional(),so_tuan:z.number().int().min(1).max(52).optional()}).strict().refine(v=>Boolean(v.ngay_ket_thuc)!==Boolean(v.so_tuan)).optional()})
  .refine(v=>v.gio_bat_dau<v.gio_ket_thuc&&v.so_nhan_vien_toi_da>=v.so_nhan_vien_toi_thieu,{message:'Thời gian hoặc số lượng nhân viên không hợp lệ.'});
-export const availabilityInput=z.object({ngay:date,gio_bat_dau:time,gio_ket_thuc:time,loai_dang_ky:z.enum(['Rảnh','Mong muốn'])}).strict().refine(v=>v.gio_bat_dau<v.gio_ket_thuc);
+export const availabilityInput=z.object({ngay:date,gio_bat_dau:time,gio_ket_thuc:z.union([time,z.literal('24:00')]),loai_dang_ky:z.enum(['Rảnh','Mong muốn'])}).strict().refine(v=>v.gio_bat_dau<v.gio_ket_thuc);
 export const changeInput=z.object({ma_ca:id,loai_yeu_cau:z.enum(['Đổi ca hai chiều','Nhờ nhân viên khác làm thay']),ma_nhan_vien_duoc_de_nghi:id,ma_ca_cua_dong_nghiep:id.optional(),ly_do:text(500)}).strict()
  .refine(v=>v.loai_yeu_cau==='Đổi ca hai chiều'?Boolean(v.ma_ca_cua_dong_nghiep)&&v.ma_ca!==v.ma_ca_cua_dong_nghiep:!v.ma_ca_cua_dong_nghiep);
 const addDays=(date:string,days:number)=>{const d=new Date(`${date}T00:00:00Z`);d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10);};

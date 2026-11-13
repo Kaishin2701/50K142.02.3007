@@ -90,11 +90,22 @@ export function AvailabilityForm({
             />
             <Field
               label="Giờ kết thúc"
-              type="time"
+              type={form.end === '24:00' ? 'text' : 'time'}
+              readOnly={form.end === '24:00'}
               value={form.end}
               onChange={(event) => field('end', event.target.value)}
               required
             />
+            <label className="end-of-day-option">
+              <input
+                type="checkbox"
+                checked={form.end === '24:00'}
+                onChange={(event) =>
+                  field('end', event.target.checked ? '24:00' : '23:59')
+                }
+              />
+              Đến hết ngày (24:00)
+            </label>
             <fieldset className="radio-field">
               <legend>Trạng thái</legend>
               <div className="radio-options">
@@ -128,9 +139,11 @@ export function AvailabilityForm({
 }
 export function RegistrationDetails({
   registration,
+  visibleRange,
   onClose,
 }: {
   registration: Registration;
+  visibleRange?: { start: string; end: string };
   onClose(): void;
 }) {
   const [canceling, setCanceling] = useState(false);
@@ -149,12 +162,21 @@ export function RegistrationDetails({
             <dt>Ngày</dt>
             <dd>{dateText(registration.ngay)}</dd>
             <dt>Giờ bắt đầu</dt>
-            <dd>{timeText(registration.gio_bat_dau)}</dd>
+            <dd>{visibleRange?.start ?? timeText(registration.gio_bat_dau)}</dd>
             <dt>Giờ kết thúc</dt>
-            <dd>{timeText(registration.gio_ket_thuc)}</dd>
+            <dd>{visibleRange?.end ?? timeText(registration.gio_ket_thuc)}</dd>
             <dt>Trạng thái</dt>
             <dd>{registration.loai_dang_ky}</dd>
           </dl>
+          {visibleRange &&
+            (visibleRange.start !== timeText(registration.gio_bat_dau) ||
+              visibleRange.end !== timeText(registration.gio_ket_thuc)) && (
+              <p className="muted">
+                Đăng ký gốc: {timeText(registration.gio_bat_dau)}–
+                {timeText(registration.gio_ket_thuc)}. Lịch chỉ hiển thị các
+                khung giờ còn trống.
+              </p>
+            )}
           <ErrorMessage message={task.error} />
         </div>
         <footer className="dialog-actions">

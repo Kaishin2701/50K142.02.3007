@@ -28,12 +28,18 @@ import {
   RegistrationDetails,
 } from './EmployeeShiftDialogs';
 import { RequestsDialog } from './RequestsDialog';
+import {
+  calendarTime,
+  remainingAvailability,
+  type AvailabilitySlot,
+} from './availability';
+import { useCalendarClock } from './useCalendarClock';
 
 type Dialog =
   | { kind: 'create'; date?: string }
   | { kind: 'edit' | 'assignment' | 'shift'; shift: Shift }
   | { kind: 'availability'; date: string }
-  | { kind: 'registration'; registration: Registration }
+  | { kind: 'registration'; registration: Registration; slot: AvailabilitySlot }
   | { kind: 'requests' }
   | null;
 const weekdays = [
@@ -49,6 +55,7 @@ const weekdays = [
 export default function ShiftsPage() {
   const { user } = useSession();
   const manager = user!.vai_tro === 'Quản lý';
+  const now = useCalendarClock();
   const [week, setWeek] = useState(weekStart);
   const [dialog, setDialog] = useState<Dialog>(null);
   const calendar = useResource<CalendarData>(
@@ -56,6 +63,23 @@ export default function ShiftsPage() {
     { shifts: [], registrations: [] },
   );
   const days = Array.from({ length: 7 }, (_, index) => addDays(week, index));
+  const availability = manager
+    ? []
+    : remainingAvailability(
+        calendar.data.registrations,
+        calendar.data.shifts,
+        now,
+      );
+  const selectedRegistration = dialog?.kind === 'registration' ? dialog : null;
+  const selectedAvailability = selectedRegistration
+    ? availability.find(
+        (slot) =>
+          slot.registration.ma_dang_ky ===
+            selectedRegistration.registration.ma_dang_ky &&
+          slot.start < selectedRegistration.slot.end &&
+          slot.end > selectedRegistration.slot.start,
+      )
+    : undefined;
   const close = () => setDialog(null);
   return (
     <>
@@ -115,13 +139,28 @@ export default function ShiftsPage() {
         <div className="calendar-grid">
           {days.map((date, index) => {
             const shifts = calendar.data.shifts.filter(
-              (shift) => dateKey(shift.ngay_lam) === date,
+              (shift) =>
+                dateKey(shift.ngay_lam) === date &&
+                (manager ||
+                  calendarTime(shift.ngay_lam, shift.gio_ket_thuc) > now),
             );
             const registrations = manager
               ? []
-              : calendar.data.registrations.filter(
-                  (registration) => dateKey(registration.ngay) === date,
+              : availability.filter(
+                  (slot) => dateKey(slot.registration.ngay) === date,
                 );
+            const cards = [
+              ...shifts.map((shift) => ({
+                kind: 'shift' as const,
+                shift,
+                start: calendarTime(shift.ngay_lam, shift.gio_bat_dau),
+              })),
+              ...registrations.map((slot) => ({
+                kind: 'registration' as const,
+                slot,
+                start: slot.start,
+              })),
+            ].sort((a, b) => a.start - b.start);
             return (
               <section
                 className={
@@ -143,65 +182,76 @@ export default function ShiftsPage() {
                   )}
                 </header>
                 <div className="calendar-cards">
-                  {shifts.map((shift) => (
-                    <article
-                      className="shift-card"
-                      data-short={shift.thieu_nhan_vien}
-                      key={shift.ma_ca}
-                    >
+                  {cards.map((card) => {
+                    if (card.kind === 'shift') {
+                      const shift = card.shift;
+                      return (
+                        <article
+                          className="shift-card"
+                          data-short={shift.thieu_nhan_vien}
+                          key={shift.ma_ca}
+                        >
+                          <button
+                            className="shift-card-main"
+                            aria-label={shiftText(shift)}
+                            onClick={() =>
+                              setDialog({
+                                kind: manager ? 'assignment' : 'shift',
+                                shift,
+                              })
+                            }
+                          >
+                            <Badge>
+                              {shift.thieu_nhan_vien
+                                ? 'Cần bổ sung'
+                                : 'Đủ nhân sự'}
+                            </Badge>
+                            <strong>
+                              {timeText(shift.gio_bat_dau)}–
+                              {timeText(shift.gio_ket_thuc)}
+                            </strong>
+                            <span>
+                              {shift.nhan_vien.length} /{' '}
+                              {shift.so_nhan_vien_toi_da} nhân viên
+                            </span>
+                            <small>
+                              {shift.nhan_vien
+                                .map((person) => person.ho_ten)
+                                .join(' · ') || '—'}
+                            </small>
+                          </button>
+                          {manager && shiftTime(shift) > now && (
+                            <Button
+                              variant="quiet"
+                              onClick={() => setDialog({ kind: 'edit', shift })}
+                            >
+                              Chỉnh sửa
+                            </Button>
+                          )}
+                        </article>
+                      );
+                    }
+                    const slot = card.slot;
+                    return (
                       <button
-                        className="shift-card-main"
-                        aria-label={shiftText(shift)}
+                        type="button"
+                        className="registration-card"
+                        key={`${slot.registration.ma_dang_ky}:${slot.end}`}
                         onClick={() =>
                           setDialog({
-                            kind: manager ? 'assignment' : 'shift',
-                            shift,
+                            kind: 'registration',
+                            registration: slot.registration,
+                            slot,
                           })
                         }
                       >
-                        <Badge>
-                          {shift.thieu_nhan_vien ? 'Cần bổ sung' : 'Đủ nhân sự'}
-                        </Badge>
+                        <Badge>{slot.registration.loai_dang_ky}</Badge>
                         <strong>
-                          {timeText(shift.gio_bat_dau)}–
-                          {timeText(shift.gio_ket_thuc)}
+                          {slot.startTime}–{slot.endTime}
                         </strong>
-                        <span>
-                          {shift.nhan_vien.length} / {shift.so_nhan_vien_toi_da}{' '}
-                          nhân viên
-                        </span>
-                        <small>
-                          {shift.nhan_vien
-                            .map((person) => person.ho_ten)
-                            .join(' · ') || '—'}
-                        </small>
                       </button>
-                      {manager && shiftTime(shift) > Date.now() && (
-                        <Button
-                          variant="quiet"
-                          onClick={() => setDialog({ kind: 'edit', shift })}
-                        >
-                          Chỉnh sửa
-                        </Button>
-                      )}
-                    </article>
-                  ))}
-                  {registrations.map((registration) => (
-                    <button
-                      type="button"
-                      className="registration-card"
-                      key={registration.ma_dang_ky}
-                      onClick={() =>
-                        setDialog({ kind: 'registration', registration })
-                      }
-                    >
-                      <Badge>{registration.loai_dang_ky}</Badge>
-                      <strong>
-                        {timeText(registration.gio_bat_dau)}–
-                        {timeText(registration.gio_ket_thuc)}
-                      </strong>
-                    </button>
-                  ))}
+                    );
+                  })}
                   {!shifts.length && !registrations.length && (
                     <span className="calendar-empty">—</span>
                   )}
@@ -235,15 +285,19 @@ export default function ShiftsPage() {
       {dialog?.kind === 'availability' && (
         <AvailabilityForm date={dialog.date} onClose={close} />
       )}
-      {dialog?.kind === 'registration' && (
+      {dialog?.kind === 'registration' && selectedAvailability && (
         <RegistrationDetails
           registration={dialog.registration}
+          visibleRange={{
+            start: selectedAvailability.startTime,
+            end: selectedAvailability.endTime,
+          }}
           onClose={close}
         />
       )}
-      {dialog?.kind === 'shift' && (
-        <EmployeeShiftDetails shift={dialog.shift} onClose={close} />
-      )}
+      {dialog?.kind === 'shift' &&
+        calendarTime(dialog.shift.ngay_lam, dialog.shift.gio_ket_thuc) >
+          now && <EmployeeShiftDetails shift={dialog.shift} onClose={close} />}
       {dialog?.kind === 'requests' && <RequestsDialog onClose={close} />}
     </>
   );

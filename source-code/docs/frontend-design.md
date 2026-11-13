@@ -31,6 +31,8 @@ Layout uses normal document flow, CSS Grid and Flexbox. Desktop navigation stays
 
 Horizontal scrolling is prohibited for the page and nested content. Data tables use their own container width: below 840px they become labelled records, including tables inside dialogs and the sales column. Menu categories wrap onto new lines. Calendar columns adapt to their panel width. Long content wraps, flex/grid children can shrink, and dialog actions wrap. Root overflow containment and vertical-only list/dialog scrolling provide a final boundary; they do not replace content reflow.
 
+The employee calendar hides ended shifts and derives remaining availability from the original registrations. It removes elapsed time and every assigned interval, keeps each remaining fragment only when it lasts at least two hours, and sorts assigned shifts and availability fragments together by start time. Fragment boundaries round inward to whole minutes to prevent displayed overlap with second-precision assignments. The clock updates at each minute boundary and when the window regains focus or visibility. Original registration records remain available for subsequent manager assignments; manager shift history remains visible. Availability may end at `24:00`, represented as midnight of the following day.
+
 ## Local Figma alignment (2026-11-11)
 
 The local revision restores the supplied sidebar icons, typography, colors, panel spacing and table treatments. Report filters, account forms, scheduling, inventory counts and closing reports follow the corresponding Figma compositions. Cash and QR payment controls appear inside the sales processing column. Shared navigation, cached resources and checkout state remain mounted across interactions.

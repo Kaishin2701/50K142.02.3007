@@ -684,6 +684,120 @@ describe('native application architecture', () => {
     );
     expect(location.hash).toBe('#/schedule');
   });
+  it('renders remaining employee availability chronologically and recomputes it with time and assignments', async () => {
+    activeUser = employee;
+    location.hash = '/schedule';
+    vi.mocked(Date.now).mockReturnValue(Date.parse('2026-11-09T05:00:00Z'));
+    const template = shifts[0];
+    shifts = [
+      { ...template, gio_bat_dau: '06:00', gio_ket_thuc: '12:00' },
+      {
+        ...template,
+        ma_ca: '44444444-4444-4444-8444-444444444447',
+        gio_bat_dau: '14:00',
+        gio_ket_thuc: '18:00',
+      },
+    ];
+    registrations = [
+      {
+        ma_dang_ky: 'registration-full-day',
+        ngay: today(),
+        gio_bat_dau: '00:00',
+        gio_ket_thuc: '24:00',
+        loai_dang_ky: 'Rảnh',
+      },
+      {
+        ma_dang_ky: 'registration-past',
+        ngay: addDays(today(), -1),
+        gio_bat_dau: '00:00',
+        gio_ket_thuc: '24:00',
+        loai_dang_ky: 'Mong muốn',
+      },
+    ];
+    render(<App />);
+    await screen.findByRole('button', { name: /14:00–18:00/ });
+    const cards = () =>
+      Array.from(
+        document.querySelectorAll(
+          '.calendar-cards > button, .calendar-cards > article',
+        ),
+      );
+    expect(
+      cards().map((card) => card.querySelector('strong')?.textContent),
+    ).toEqual(['12:00–14:00', '14:00–18:00', '18:00–24:00']);
+    const user = userEvent.setup();
+    await user.click(cards()[0]);
+    const detail = screen.getByRole('dialog', {
+      name: 'Chi tiết đăng ký lịch làm việc',
+    });
+    expect(within(detail).getByText('12:00')).toBeTruthy();
+    expect(within(detail).getByText('14:00')).toBeTruthy();
+    await user.click(
+      within(detail)
+        .getAllByRole('button', { name: 'Đóng', exact: true })
+        .at(-1)!,
+    );
+    vi.mocked(Date.now).mockReturnValue(Date.parse('2026-11-09T05:01:00Z'));
+    window.dispatchEvent(new Event('focus'));
+    await waitFor(() =>
+      expect(
+        cards().map((card) => card.querySelector('strong')?.textContent),
+      ).toEqual(['14:00–18:00', '18:00–24:00']),
+    );
+    shifts.push({
+      ...template,
+      ma_ca: '44444444-4444-4444-8444-444444444448',
+      gio_bat_dau: '18:00',
+      gio_ket_thuc: '22:00',
+    });
+    window.dispatchEvent(new Event('me-data-changed'));
+    await waitFor(() =>
+      expect(
+        cards().map((card) => card.querySelector('strong')?.textContent),
+      ).toEqual(['14:00–18:00', '18:00–22:00', '22:00–24:00']),
+    );
+    expect(registrations[0].gio_bat_dau).toBe('00:00');
+  });
+  it('retains ended shifts on the manager calendar', async () => {
+    location.hash = '/shifts';
+    shifts = [{ ...shifts[0], gio_bat_dau: '06:00', gio_ket_thuc: '12:00' }];
+    render(<App />);
+    expect(
+      await screen.findByRole('button', { name: /06:00–12:00/ }),
+    ).toBeTruthy();
+  });
+  it('can register availability ending at 24:00', async () => {
+    activeUser = employee;
+    location.hash = '/schedule';
+    render(<App />);
+    const user = userEvent.setup();
+    await user.click(
+      await screen.findByRole('button', {
+        name: `Đăng ký ngày ${addDays(today(), 1).split('-').reverse().join('/')}`,
+        exact: true,
+      }),
+    );
+    const dialog = screen.getByRole('dialog', {
+      name: 'Đăng ký lịch rảnh hoặc ca muốn làm',
+    });
+    await user.click(
+      within(dialog).getByRole('checkbox', { name: 'Đến hết ngày (24:00)' }),
+    );
+    expect(
+      (within(dialog).getByLabelText('Giờ kết thúc') as HTMLInputElement).value,
+    ).toBe('24:00');
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Gửi đăng ký' }),
+    );
+    await waitFor(() =>
+      expect(
+        calls.find(
+          (call) =>
+            call.method === 'POST' && call.path === '/shifts/availability',
+        )?.body.gio_ket_thuc,
+      ).toBe('24:00'),
+    );
+  });
   it('invalidates reconciliation when money changes and saves a real closing report', async () => {
     material.ton_ly_thuyet = 10.2;
     activeUser = employee;

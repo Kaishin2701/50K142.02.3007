@@ -13,7 +13,7 @@ import { usersService } from '../src/modules/users/users.service.js';
 import { ordersService } from '../src/modules/orders/orders.service.js';
 import { paymentsService,sepayGateway,type Gateway } from '../src/modules/payments/payments.service.js';
 import { inventoryService } from '../src/modules/inventory/inventory.service.js';
-import { shiftsService } from '../src/modules/shifts/shifts.service.js';
+import { availabilityInput,shiftsService } from '../src/modules/shifts/shifts.service.js';
 import { reportsService } from '../src/modules/reports/reports.service.js';
 import { createApp } from '../src/app.js';
 
@@ -232,6 +232,23 @@ test('pending or underpaid QR events do not count as paid',async()=>{
  await assert.rejects(payments.reconcile(employee,qr.ma_giao_dich),(e:any)=>e.code==='PAYMENT_UNCONFIRMED');
  assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),10);
 });
+test('availability can end at midnight without accepting invalid start or end times',async()=>{
+ const payload={ngay:'2099-02-02',gio_bat_dau:'00:00',gio_ket_thuc:'24:00',loai_dang_ky:'Mong muốn'};
+ const saved=await shiftsService(db).register(employee,availabilityInput.parse(payload));
+ assert.equal(saved.gio_bat_dau,'00:00:00');assert.equal(saved.gio_ket_thuc,'24:00:00');
+ const scheduling=shiftsService(db);
+ for(const [start,end] of [['06:00','12:00'],['14:00','18:00']]){
+  const assigned=(await scheduling.create({ngay_lam:payload.ngay,gio_bat_dau:start,gio_ket_thuc:end,so_nhan_vien_toi_thieu:1,so_nhan_vien_toi_da:2}))[0];
+  await scheduling.assign(assigned.ma_ca,[employee.id]);
+ }
+ const calendar=await scheduling.calendar(employee,payload.ngay,payload.ngay);
+ assert.equal(calendar.shifts.length,2);assert.equal(calendar.registrations.length,1);
+ assert.equal(calendar.registrations[0].gio_ket_thuc,'24:00:00');
+ assert.equal(availabilityInput.safeParse({...payload,gio_bat_dau:'24:00'}).success,false);
+ assert.equal(availabilityInput.safeParse({...payload,gio_ket_thuc:'24:01'}).success,false);
+ assert.equal(availabilityInput.safeParse({...payload,gio_ket_thuc:'00:00'}).success,false);
+});
+
 test('recurring shift creation is atomic when a later date overlaps',async()=>{
  const service=shiftsService(db);const day='2099-02-02';
  await service.create({ngay_lam:'2099-02-09',gio_bat_dau:'07:00',gio_ket_thuc:'12:00',so_nhan_vien_toi_thieu:1,so_nhan_vien_toi_da:2});
