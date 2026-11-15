@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "dev:local": "tsx scripts/local.ts",
+    "dev:local:demo": "tsx scripts/local.ts --demo-menu --demo-qr",
+    "local:credentials": "tsx scripts/local-credentials.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "migrate": "tsx scripts/migrate.ts",
@@ -23,6 +25,7 @@
     "helmet": "^8.3.0",
     "pdfkit": "^0.20.2",
     "pg": "^8.23.1",
+    "qrcode": "^1.5.4",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -33,7 +36,11 @@
     "@types/node": "^26.6.6",
     "@types/pdfkit": "^0.17.7",
     "@types/pg": "^8.23.1",
+    "@types/pngjs": "^6.0.5",
+    "@types/qrcode": "^1.5.6",
     "@types/supertest": "^7.2.1",
+    "jsqr": "^1.4.0",
+    "pngjs": "^7.0.0",
     "supertest": "^7.3.2",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"

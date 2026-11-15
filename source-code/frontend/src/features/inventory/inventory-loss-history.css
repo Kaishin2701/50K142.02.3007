@@ -1,0 +1,210 @@
+.inventory-loss-page {
+  min-width: 0;
+  margin-right: 4px;
+  margin-left: 4px;
+}
+
+.inventory-loss-breadcrumb {
+  margin-top: -24px;
+  margin-bottom: 11px;
+}
+
+.inventory-loss-page .page-header {
+  margin-bottom: 29px;
+}
+
+.inventory-loss-page .page-header h1 {
+  font-size: 28px;
+  line-height: 1.4;
+}
+
+.inventory-loss-state {
+  min-height: 208px;
+  padding: 28px 23px;
+}
+
+.inventory-loss-state > p:not(.ui-loading) {
+  color: var(--muted);
+}
+
+.inventory-loss-error > p {
+  margin-bottom: 0;
+  color: #c6281d !important;
+}
+
+.inventory-loss-retry.ui-button {
+  width: 140px;
+  min-height: 44px;
+  margin-top: 46px;
+  border-color: var(--accent);
+}
+
+.inventory-loss-list-panel {
+  display: flex;
+  min-height: 800px;
+  flex-direction: column;
+  padding: 18px 24px;
+}
+
+.inventory-loss-list-panel > h2 {
+  margin-bottom: 7px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 18px;
+}
+
+.inventory-loss-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.inventory-loss-table {
+  width: 100%;
+  min-width: 960px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.inventory-loss-table th {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.35;
+  vertical-align: top;
+}
+
+.inventory-loss-table th:nth-child(5),
+.inventory-loss-table td:nth-child(5) {
+  padding-right: 0;
+  padding-left: 6px;
+}
+
+.inventory-loss-table th:nth-child(5) {
+  white-space: nowrap;
+}
+
+.inventory-loss-table th:nth-child(1) {
+  width: 2.5%;
+}
+
+.inventory-loss-table th:nth-child(2) {
+  width: 8.5%;
+}
+
+.inventory-loss-table th:nth-child(3) {
+  width: 6.5%;
+}
+
+.inventory-loss-table th:nth-child(4) {
+  width: 11.5%;
+}
+
+.inventory-loss-table th:nth-child(5) {
+  width: 5.5%;
+}
+
+.inventory-loss-table th:nth-child(6) {
+  width: 9.5%;
+}
+
+.inventory-loss-table th:nth-child(7) {
+  width: 9.5%;
+}
+
+.inventory-loss-table th:nth-child(8) {
+  width: 9%;
+}
+
+.inventory-loss-table th:nth-child(9) {
+  width: 18.5%;
+}
+
+.inventory-loss-table th:nth-child(10) {
+  width: 19%;
+}
+
+.inventory-loss-table th:first-child,
+.inventory-loss-table td:first-child {
+  padding-left: 0;
+}
+
+.inventory-loss-table td {
+  height: 29px;
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.inventory-loss-table td:nth-child(3) {
+  overflow: hidden;
+  padding-inline: 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inventory-loss-table td.is-negative {
+  color: #c6281d;
+}
+
+.inventory-loss-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: auto;
+  margin-right: 26px;
+  padding-top: 24px;
+}
+
+.inventory-loss-pagination > span {
+  min-width: 49px;
+  text-align: center;
+}
+
+.inventory-loss-pagination .ui-button {
+  min-height: 44px;
+  border-color: var(--border);
+  background: #fffdfa;
+  color: #883b2b;
+}
+
+.inventory-loss-pagination .ui-button:first-child {
+  min-width: 118px;
+}
+
+.inventory-loss-pagination .ui-button:last-child {
+  min-width: 140px;
+}
+
+@media (max-width: 900px) {
+  .inventory-loss-list-panel {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .inventory-loss-breadcrumb {
+    margin-top: 0;
+  }
+
+  .inventory-loss-page .page-header h1 {
+    font-size: 24px;
+  }
+
+  .inventory-loss-list-panel {
+    padding: 18px;
+  }
+
+  .inventory-loss-table {
+    min-width: 960px;
+  }
+
+  .inventory-loss-pagination {
+    gap: 8px;
+    margin-right: 0;
+  }
+}

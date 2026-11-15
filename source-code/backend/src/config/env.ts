@@ -9,8 +9,7 @@ const schema = z.object({
  QR_GATEWAY_URL: z.string().optional(), QR_GATEWAY_TOKEN: z.string().optional(), QR_WEBHOOK_SECRET: z.string().optional(),
  PDF_FONT_PATH: z.string().optional(),
  TRUST_PROXY:z.coerce.number().int().min(0).max(3).default(0),
- QR_PROVIDER:z.enum(['disabled','http','sepay']).default('disabled'),
- QR_AUTO_CONFIRM:z.enum(['true','false']).default('false').transform(v=>v==='true'),
- SEPAY_BANK:z.string().optional(),SEPAY_ACCOUNT_NUMBER:z.string().optional(),SEPAY_WEBHOOK_API_KEY:z.string().optional(),
+ QR_PROVIDER:z.enum(['disabled','http','sepay','demo','demo-vietqr']).default('disabled'),
+ SEPAY_BANK:z.string().optional(),SEPAY_ACCOUNT_NUMBER:z.string().optional(),SEPAY_ACCOUNT_NAME:z.string().optional(),SEPAY_WEBHOOK_API_KEY:z.string().optional(),
 });
 export function loadEnv() { return schema.parse(process.env); }

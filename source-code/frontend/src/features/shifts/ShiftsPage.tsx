@@ -11,13 +11,13 @@ import {
   today,
   weekStart,
 } from '../../app/format';
+import './employee-calendar.css';
 import type { CalendarData, Registration, Shift } from '../../services/models';
 import {
   Badge,
   Button,
   ErrorMessage,
   Loading,
-  PageHeader,
   Panel,
 } from '../../components/ui';
 import { ShiftForm } from './ShiftForm';
@@ -28,18 +28,12 @@ import {
   RegistrationDetails,
 } from './EmployeeShiftDialogs';
 import { RequestsDialog } from './RequestsDialog';
-import {
-  calendarTime,
-  remainingAvailability,
-  type AvailabilitySlot,
-} from './availability';
-import { useCalendarClock } from './useCalendarClock';
 
 type Dialog =
   | { kind: 'create'; date?: string }
   | { kind: 'edit' | 'assignment' | 'shift'; shift: Shift }
   | { kind: 'availability'; date: string }
-  | { kind: 'registration'; registration: Registration; slot: AvailabilitySlot }
+  | { kind: 'registration'; registration: Registration }
   | { kind: 'requests' }
   | null;
 const weekdays = [
@@ -52,227 +46,306 @@ const weekdays = [
   'Chủ Nhật',
 ];
 
+/** Nhãn tuần theo Figma: "02 – 08 tháng 11, 2026" */
+function weekRangeLabel(start: string) {
+  const end = addDays(start, 6);
+  const [startYear, startMonth, startDay] = start.split('-');
+  const [endYear, endMonth, endDay] = end.split('-');
+  if (startYear === endYear && startMonth === endMonth) {
+    return `${startDay} – ${endDay} tháng ${Number(startMonth)}, ${startYear}`;
+  }
+  if (startYear === endYear) {
+    return `${startDay}/${startMonth} – ${endDay}/${endMonth}, ${startYear}`;
+  }
+  return `${startDay}/${startMonth}/${startYear} – ${endDay}/${endMonth}/${endYear}`;
+}
+
 export default function ShiftsPage() {
   const { user } = useSession();
   const manager = user!.vai_tro === 'Quản lý';
-  const now = useCalendarClock();
   const [week, setWeek] = useState(weekStart);
   const [dialog, setDialog] = useState<Dialog>(null);
+  const [registrationError, setRegistrationError] = useState('');
   const calendar = useResource<CalendarData>(
     `/shifts?from=${week}&to=${addDays(week, 6)}`,
     { shifts: [], registrations: [] },
   );
   const days = Array.from({ length: 7 }, (_, index) => addDays(week, index));
-  const availability = manager
-    ? []
-    : remainingAvailability(
-        calendar.data.registrations,
-        calendar.data.shifts,
-        now,
-      );
-  const selectedRegistration = dialog?.kind === 'registration' ? dialog : null;
-  const selectedAvailability = selectedRegistration
-    ? availability.find(
-        (slot) =>
-          slot.registration.ma_dang_ky ===
-            selectedRegistration.registration.ma_dang_ky &&
-          slot.start < selectedRegistration.slot.end &&
-          slot.end > selectedRegistration.slot.start,
-      )
-    : undefined;
   const close = () => setDialog(null);
+  const hasAnyShift = calendar.data.shifts.length > 0;
+  const showEmptyWeek = manager
+    ? !calendar.loading && !calendar.error && !hasAnyShift
+    : !calendar.loading &&
+      !calendar.error &&
+      !hasAnyShift &&
+      calendar.data.registrations.length === 0;
+
   return (
-    <>
-      <PageHeader
-        title={manager ? 'Quản lý ca' : 'Lịch làm việc của tôi'}
-        subtitle={manager ? 'Theo dõi và phân bổ ca làm theo tuần' : undefined}
-        actions={
-          !manager ? (
-            <Button onClick={() => setDialog({ kind: 'requests' })}>
-              Yêu cầu
-            </Button>
-          ) : undefined
-        }
-      />
-      <div className="calendar-toolbar">
-        <div className="week-controls">
-          <Button
-            aria-label="Tuần trước"
-            onClick={() => setWeek((previous) => addDays(previous, -7))}
-          >
-            ‹
-          </Button>
-          <strong>
-            {dateText(week)} – {dateText(addDays(week, 6))}
-          </strong>
-          <Button
-            aria-label="Tuần sau"
-            onClick={() => setWeek((previous) => addDays(previous, 7))}
-          >
-            ›
-          </Button>
+    <div
+      className={
+        manager ? 'shifts-page is-manager' : 'shifts-page is-employee'
+      }
+    >
+      {manager ? (
+        <div className="shifts-top">
+          <p className="shifts-breadcrumb">QUẢN LÝ CA / LỊCH LÀM VIỆC</p>
+          <h1 className="shifts-title">Quản lý ca</h1>
+          <p className="shifts-subtitle">
+            Theo dõi và phân bổ ca làm theo tuần
+          </p>
         </div>
-        <Button onClick={() => setWeek(weekStart())}>Hôm nay</Button>
+      ) : (
+        <header className="employee-calendar-heading">
+          <div>
+            <p className="employee-calendar-eyebrow">
+              LỊCH LÀM VIỆC CỦA TÔI
+            </p>
+            <h1>Lịch làm việc của tôi</h1>
+          </div>
+          <Button
+            variant="secondary"
+            className="employee-calendar-requests"
+            aria-label="Yêu cầu đổi hoặc xoay ca"
+            onClick={() => setDialog({ kind: 'requests' })}
+          >
+            Yêu cầu
+          </Button>
+        </header>
+      )}
+      {!manager && registrationError && (
+        <div className="registration-cancel-error" role="alert">
+          <span>{registrationError}</span>
+          <button
+            type="button"
+            aria-label="Đóng thông báo lỗi"
+            onClick={() => setRegistrationError('')}
+          >
+            ×
+          </button>
+        </div>
+      )}
+      <div className="calendar-toolbar">
+        <div className="calendar-toolbar-main">
+          <div className="week-nav-pill">
+            <Button
+              aria-label="Tuần trước"
+              variant="quiet"
+              className="week-nav-arrow"
+              onClick={() => setWeek((previous) => addDays(previous, -7))}
+            >
+              ‹
+            </Button>
+            <span className="week-nav-label">{weekRangeLabel(week)}</span>
+            <Button
+              aria-label="Tuần sau"
+              variant="quiet"
+              className="week-nav-arrow"
+              onClick={() => setWeek((previous) => addDays(previous, 7))}
+            >
+              ›
+            </Button>
+          </div>
+          <Button onClick={() => setWeek(weekStart())}>Hôm nay</Button>
+        </div>
         {manager && (
           <Button
             variant="primary"
-            className="create-shift-action"
+            className="shifts-create-btn"
             onClick={() => setDialog({ kind: 'create' })}
           >
             + Tạo ca mới
           </Button>
         )}
       </div>
-      <Panel title="Lịch làm việc" className="calendar-panel">
-        <div className="calendar-legend">
-          <Badge>Đủ nhân sự</Badge>
-          <Badge>Cần bổ sung</Badge>
-          {!manager && (
-            <>
-              <Badge>Mong muốn</Badge>
-              <Badge>Rảnh</Badge>
-            </>
-          )}
-        </div>
+      <Panel className="shifts-panel">
+        {manager && (
+          <div className="shifts-panel-header">
+            <h2 className="shifts-panel-title">Lịch làm việc</h2>
+            <div
+              className="calendar-legend"
+              aria-label="Chú giải trạng thái ca"
+            >
+              <span className="calendar-legend-item is-full">Đủ nhân sự</span>
+              <span className="calendar-legend-item is-short">Cần bổ sung</span>
+            </div>
+          </div>
+        )}
         <Loading active={calendar.loading} />
         <ErrorMessage message={calendar.error} />
-        <div className="calendar-grid">
-          {days.map((date, index) => {
-            const shifts = calendar.data.shifts.filter(
-              (shift) =>
-                dateKey(shift.ngay_lam) === date &&
-                (manager ||
-                  calendarTime(shift.ngay_lam, shift.gio_ket_thuc) > now),
-            );
-            const registrations = manager
-              ? []
-              : availability.filter(
-                  (slot) => dateKey(slot.registration.ngay) === date,
-                );
-            const cards = [
-              ...shifts.map((shift) => ({
-                kind: 'shift' as const,
-                shift,
-                start: calendarTime(shift.ngay_lam, shift.gio_bat_dau),
-              })),
-              ...registrations.map((slot) => ({
-                kind: 'registration' as const,
-                slot,
-                start: slot.start,
-              })),
-            ].sort((a, b) => a.start - b.start);
-            return (
-              <section
-                className={
-                  'calendar-day' + (date === today() ? ' is-today' : '')
-                }
-                key={date}
-              >
-                <header>
-                  <strong>{weekdays[index]}</strong>
-                  <span>{dateText(date).slice(0, 5)}</span>
-                  {!manager && date >= today() && (
-                    <Button
-                      variant="quiet"
-                      aria-label={`Đăng ký ngày ${dateText(date)}`}
-                      onClick={() => setDialog({ kind: 'availability', date })}
-                    >
-                      +
-                    </Button>
-                  )}
-                </header>
-                <div className="calendar-cards">
-                  {cards.map((card) => {
-                    if (card.kind === 'shift') {
-                      const shift = card.shift;
-                      return (
-                        <article
-                          className="shift-card"
-                          data-short={shift.thieu_nhan_vien}
-                          key={shift.ma_ca}
-                        >
-                          <button
-                            className="shift-card-main"
-                            aria-label={shiftText(shift)}
-                            onClick={() =>
-                              setDialog({
-                                kind: manager ? 'assignment' : 'shift',
-                                shift,
-                              })
-                            }
-                          >
-                            <Badge>
-                              {shift.thieu_nhan_vien
-                                ? 'Cần bổ sung'
-                                : 'Đủ nhân sự'}
-                            </Badge>
-                            <strong>
-                              {timeText(shift.gio_bat_dau)}–
-                              {timeText(shift.gio_ket_thuc)}
-                            </strong>
-                            <span>
-                              {shift.nhan_vien.length} /{' '}
-                              {shift.so_nhan_vien_toi_da} nhân viên
-                            </span>
-                            <small>
-                              {shift.nhan_vien
-                                .map((person) => person.ho_ten)
-                                .join(' · ') || '—'}
-                            </small>
-                          </button>
-                          {manager && shiftTime(shift) > now && (
-                            <Button
-                              variant="quiet"
-                              onClick={() => setDialog({ kind: 'edit', shift })}
-                            >
-                              Chỉnh sửa
-                            </Button>
-                          )}
-                        </article>
-                      );
-                    }
-                    const slot = card.slot;
-                    return (
-                      <button
-                        type="button"
-                        className="registration-card"
-                        key={`${slot.registration.ma_dang_ky}:${slot.end}`}
+        <div
+          className={
+            'calendar-body' + (showEmptyWeek ? ' is-empty-week' : '')
+          }
+        >
+          <div className="calendar-grid">
+            {days.map((date, index) => {
+              const shifts = calendar.data.shifts.filter(
+                (shift) => dateKey(shift.ngay_lam) === date,
+              );
+              const registrations = manager
+                ? []
+                : calendar.data.registrations.filter(
+                    (registration) => dateKey(registration.ngay) === date,
+                  );
+              return (
+                <section
+                  className={
+                    'calendar-day' + (date === today() ? ' is-today' : '')
+                  }
+                  key={date}
+                >
+                  <header>
+                    <span className="calendar-day-weekday">
+                      {weekdays[index]}
+                    </span>
+                    <strong className="calendar-day-date">
+                      {dateText(date).slice(0, 5)}
+                    </strong>
+                    {!manager && (
+                      <Button
+                        variant="quiet"
+                        className="employee-calendar-add-button"
+                        aria-label={
+                          index === 0
+                            ? 'Đăng ký lịch làm việc'
+                            : `Đăng ký lịch làm việc ngày ${dateText(date)}`
+                        }
+                        aria-description={`Ngày ${dateText(date)}`}
                         onClick={() =>
-                          setDialog({
-                            kind: 'registration',
-                            registration: slot.registration,
-                            slot,
-                          })
+                          setDialog({ kind: 'availability', date })
                         }
                       >
-                        <Badge>{slot.registration.loai_dang_ky}</Badge>
-                        <strong>
-                          {slot.startTime}–{slot.endTime}
-                        </strong>
-                      </button>
-                    );
-                  })}
-                  {!shifts.length && !registrations.length && (
-                    <span className="calendar-empty">—</span>
+                        <span aria-hidden="true" />
+                      </Button>
+                    )}
+                  </header>
+                  {!showEmptyWeek && (
+                    <div className="calendar-cards">
+                      {shifts.map((shift) => {
+                        const countLabel = `${shift.nhan_vien.length} / ${shift.so_nhan_vien_toi_da} nhân viên`;
+                        return (
+                          <article
+                            className={
+                              'shift-card' +
+                              (manager
+                                ? ' is-manager'
+                                : ' employee-shift-card')
+                            }
+                            data-short={shift.thieu_nhan_vien}
+                            key={shift.ma_ca}
+                          >
+                            <button
+                              className="shift-card-main"
+                              aria-label={shiftText(shift)}
+                              onClick={() =>
+                                setDialog({
+                                  kind: manager ? 'assignment' : 'shift',
+                                  shift,
+                                })
+                              }
+                            >
+                              {manager && (
+                                <Badge>
+                                  {shift.thieu_nhan_vien
+                                    ? 'Cần bổ sung'
+                                    : 'Đủ nhân sự'}
+                                </Badge>
+                              )}
+                              <strong className="shift-time">
+                                {timeText(shift.gio_bat_dau)}–
+                                {timeText(shift.gio_ket_thuc)}
+                              </strong>
+                              {manager && (
+                                <small className="shift-names">
+                                  {shift.nhan_vien.length > 0
+                                    ? shift.nhan_vien
+                                        .map((person) => person.ho_ten)
+                                        .join(' · ')
+                                    : 'Chưa phân công'}
+                                </small>
+                              )}
+                            </button>
+                            {manager && (
+                              <div className="shift-card-meta">
+                                <span className="shift-count-pill">
+                                  {countLabel}
+                                </span>
+                              </div>
+                            )}
+                            {manager && shiftTime(shift) > Date.now() && (
+                              <Button
+                                variant="quiet"
+                                onClick={() =>
+                                  setDialog({ kind: 'edit', shift })
+                                }
+                              >
+                                Chỉnh sửa
+                              </Button>
+                            )}
+                          </article>
+                        );
+                      })}
+                      {registrations.map((registration) => (
+                        <button
+                          type="button"
+                          className={
+                            'registration-card' +
+                            (manager ? '' : ' employee-registration-card')
+                          }
+                          key={registration.ma_dang_ky}
+                          onClick={() => {
+                            setRegistrationError('');
+                            setDialog({
+                              kind: 'registration',
+                              registration,
+                            });
+                          }}
+                        >
+                          <strong>
+                            {timeText(registration.gio_bat_dau)}–
+                            {timeText(registration.gio_ket_thuc)}
+                          </strong>
+                          <span
+                            className={
+                              'employee-registration-status' +
+                              (registration.loai_dang_ky === 'Rảnh'
+                                ? ' is-available'
+                                : registration.loai_dang_ky === 'Mong muốn'
+                                  ? ' is-wanted'
+                                  : '')
+                            }
+                          >
+                            {registration.loai_dang_ky}
+                          </span>
+                          {registration.da_phan_cong && (
+                            <small className="employee-registration-assignment">
+                              Đã phân công
+                            </small>
+                          )}
+                        </button>
+                      ))}
+                    </div>
                   )}
-                </div>
-              </section>
-            );
-          })}
+                </section>
+              );
+            })}
+          </div>
+          {showEmptyWeek && (
+            <p className="calendar-week-empty">
+              {manager
+                ? 'Chưa có ca làm trong tuần này'
+                : 'Chưa có lịch làm việc hoặc đăng ký trong tuần này'}
+            </p>
+          )}
         </div>
         {manager && (
-          <div className="ui-actions calendar-footer">
+          <div className="shifts-panel-footer">
             <Button onClick={() => setDialog({ kind: 'requests' })}>
-              {manager
-                ? 'Xử lý yêu cầu đổi hoặc xoay ca'
-                : 'Yêu cầu đổi hoặc xoay ca'}
+              Xử lý yêu cầu đổi hoặc xoay ca
             </Button>
           </div>
         )}
       </Panel>
-      <p className="breadcrumb">
-        {manager ? 'QUẢN LÝ CA / LỊCH LÀM VIỆC' : 'LỊCH LÀM VIỆC CỦA TÔI'}
-      </p>
       {dialog?.kind === 'create' && (
         <ShiftForm date={dialog.date} onClose={close} />
       )}
@@ -285,20 +358,17 @@ export default function ShiftsPage() {
       {dialog?.kind === 'availability' && (
         <AvailabilityForm date={dialog.date} onClose={close} />
       )}
-      {dialog?.kind === 'registration' && selectedAvailability && (
+      {dialog?.kind === 'registration' && (
         <RegistrationDetails
           registration={dialog.registration}
-          visibleRange={{
-            start: selectedAvailability.startTime,
-            end: selectedAvailability.endTime,
-          }}
           onClose={close}
+          onError={setRegistrationError}
         />
       )}
-      {dialog?.kind === 'shift' &&
-        calendarTime(dialog.shift.ngay_lam, dialog.shift.gio_ket_thuc) >
-          now && <EmployeeShiftDetails shift={dialog.shift} onClose={close} />}
+      {dialog?.kind === 'shift' && (
+        <EmployeeShiftDetails shift={dialog.shift} onClose={close} />
+      )}
       {dialog?.kind === 'requests' && <RequestsDialog onClose={close} />}
-    </>
+    </div>
   );
 }

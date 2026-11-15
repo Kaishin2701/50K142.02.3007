@@ -4,6 +4,12 @@ export const usersRepository = {
  list: (db:Database,search:string,limit:number,offset:number) => rows(db,`SELECT ${publicColumns},count(*) OVER()::int AS total
    FROM nguoi_dung WHERE ten_dang_nhap ILIKE $1 OR ho_ten ILIKE $1 OR so_dien_thoai ILIKE $1 ORDER BY tao_luc,ma_nguoi_dung LIMIT $2 OFFSET $3`, [`%${search}%`,limit,offset]),
  get: (db:Database,id:string) => first(db,`SELECT ${publicColumns} FROM nguoi_dung WHERE ma_nguoi_dung=$1`,[id]),
+ forwardPendingCounts: (db:Database,user:string) => rows(db,`INSERT INTO bao_cao_cuoi_ca(ma_phieu,ma_ca,trang_thai,thoi_gian_gui)
+   SELECT k.ma_phieu,k.ma_ca,'Chờ xác nhận',now() FROM phieu_kiem_kho k
+   LEFT JOIN bao_cao_cuoi_ca b USING(ma_phieu)
+   WHERE k.ma_nguoi_kiem_ke=$1 AND (b.ma_bao_cao IS NULL OR b.trang_thai='Nháp')
+   ON CONFLICT(ma_phieu) DO UPDATE SET trang_thai='Chờ xác nhận',thoi_gian_gui=EXCLUDED.thoi_gian_gui
+   WHERE bao_cao_cuoi_ca.trang_thai='Nháp' RETURNING ma_bao_cao`,[user]),
  managers: (db:Database) => rows(db,`SELECT ma_nguoi_dung FROM nguoi_dung WHERE vai_tro='Quản lý' AND trang_thai='Đang hoạt động'`),
  create: (db:Database,v:any) => first(db,`INSERT INTO nguoi_dung(ten_dang_nhap,mat_khau_bam,ho_ten,so_dien_thoai,vai_tro)
    VALUES($1,$2,$3,$4,$5) RETURNING ${publicColumns}`, [v.ten_dang_nhap,v.mat_khau_bam,v.ho_ten,v.so_dien_thoai,v.vai_tro]),

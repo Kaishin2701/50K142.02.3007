@@ -4,9 +4,11 @@ import { check } from '../../shared/errors.js';
 import { id,distinct,date,pageQuery } from '../../shared/validation.js';
 import type { Actor } from '../auth/auth.service.js';
 import { ordersRepository as repo } from './orders.repository.js';
+import { paymentsRepository } from '../payments/payments.repository.js';
 import { renderPdf } from '../../shared/pdf.js';
 import { notifyShift } from '../../shared/notifications.js';
 import { previousRequest,rememberRequest } from '../../shared/idempotency.js';
+import { store } from '../../config/store.js';
 export const orderInput=z.object({ma_ca:id,items:z.array(z.object({ma_mon:id,so_luong:z.number().int().min(1).max(1000)}).strict()).min(1).max(100).refine(v=>distinct(v,i=>i.ma_mon))}).strict();
 export const orderQuery=pageQuery.extend({code:z.string().max(30).optional(),from:date.optional(),to:date.optional(),
  method:z.enum(['Tiền mặt','Chuyển khoản qua QR']).optional(),status:z.enum(['Chưa pha chế','Bắt đầu pha chế']).optional()})
@@ -20,12 +22,19 @@ export async function accessibleOrder(db:Database,id:string,actor:Actor){
  }
  return order;
 }
+// Call only within a transaction holding the inventory lock. Ended drafts cannot be confirmed.
+export async function discardEndedDrafts(tx:Database){
+ const removed=await repo.removeExpiredDrafts(tx);
+ for(const shift of new Set(removed.map(order=>order.ma_ca)))
+   await notifyShift(tx,shift,'DON_HANG','Đơn nháp chưa xác nhận đã được hủy do ca làm kết thúc.',{ma_ca:shift});
+}
 export function ordersService(db:Database,fontPath?:string){return{
  create:(actor:Actor,v:z.infer<typeof orderInput>,confirm:boolean,key?:string)=>db.transaction(async tx=>{
    await lock(tx,'kho');const old=await previousRequest(tx,key,actor.id,'create-order',{v,confirm});
    if(old){const result=await repo.get(tx,old);check(result,'Đơn của yêu cầu trước đã bị hủy. Hãy dùng khóa mới cho đơn mới.','ORIGINAL_ORDER_REMOVED');return result;}
    const shift=await repo.shift(tx,v.ma_ca,actor.id);
    check(shift?.dang_dien_ra&&shift.duoc_phan_cong&&!shift.da_kiem_ke,'Bạn cần được phân công vào ca đang diễn ra.','INVALID_SHIFT');
+   await discardEndedDrafts(tx);
    const menu=await repo.menu(tx,v.items.map(i=>i.ma_mon));
    check(menu.length===v.items.length,'Một hoặc nhiều món không thể phục vụ.','UNAVAILABLE_MENU');
    check((await repo.recipeCount(tx,v.items.map(i=>i.ma_mon))).length===v.items.length,'Món chưa được khai báo định mức nguyên liệu.','MISSING_RECIPE');
@@ -43,9 +52,13 @@ export function ordersService(db:Database,fontPath?:string){return{
    if(order.da_xac_nhan)return order;const shift=await repo.shift(tx,order.ma_ca,actor.id);
    check(shift?.dang_dien_ra&&!shift.da_kiem_ke,'Ca làm đã kết thúc.');const result=await repo.confirm(tx,id);await notifyShift(tx,order.ma_ca,'DON_HANG','Có đơn hàng mới.',{ma_don:id});return result;}),
  get:async(actor:Actor,id:string)=>{const order=await accessibleOrder(db,id,actor);return {...order,items:await repo.lines(db,id),payments:await repo.payments(db,id)};},
- list:(v:z.infer<typeof orderQuery>,history:boolean)=>repo.list(db,v,history),
+ list:(actor:Actor,v:z.infer<typeof orderQuery>,history:boolean)=>{
+   check(!history||actor.role==='Quản lý','Lịch sử đơn hàng chỉ dành cho quản lý.','FORBIDDEN',403);
+   return repo.list(db,v,history,actor.role==='Nhân viên'?actor.id:null);
+ },
  cancel:(actor:Actor,id:string)=>db.transaction(async tx=>{await lock(tx,'kho');const order=await accessibleOrder(tx,id,actor);
    check(!order.da_thanh_toan&&order.trang_thai_pha_che==='Chưa pha chế','Đơn hàng không thể hủy do đã thanh toán thành công hoặc đã bắt đầu pha chế.','CANNOT_CANCEL');
+   check(!await paymentsRepository.receivedQrFunds(tx,id),'Đơn đã nhận tiền chuyển khoản. Cần xử lý đối soát, không thể hủy.','CANNOT_CANCEL');
    await repo.remove(tx,id);await notifyShift(tx,order.ma_ca,'DON_HANG','Đơn hàng đã được hủy.',{ma_don:id});return {ma_don:id,da_huy:true};}),
  phase:(actor:Actor,id:string,phase:'Bắt đầu pha chế'|'Hoàn tất pha chế')=>db.transaction(async tx=>{await lock(tx,'kho');const order=await accessibleOrder(tx,id,actor);
    check(order.da_thanh_toan,'Đơn hàng chưa thanh toán thành công.','UNPAID_ORDER');
@@ -57,7 +70,7 @@ export function ordersService(db:Database,fontPath?:string){return{
    check(payment,'Không tìm thấy giao dịch thanh toán thành công.','PAYMENT_NOT_FOUND');
    const format=(value:unknown)=>new Intl.NumberFormat('vi-VN').format(BigInt(String(value)))+' đ';
    return renderPdf(doc=>{
-     doc.fontSize(20).text('Mê Cà Phê');doc.fontSize(11).text('106 Trần Cao Vân, Đà Nẵng');doc.moveDown();
+     doc.fontSize(20).text(store.name);doc.fontSize(11).text(store.address);doc.text(`Hotline: ${store.hotline}`);doc.moveDown();
      doc.fontSize(16).text('Hóa đơn bán hàng');doc.fontSize(11).text(`Mã đơn: ${order.ma_don_hien_thi}`);
      doc.text(`Ngày: ${new Date(order.thoi_gian_lap).toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh'})}`);doc.moveDown();
      for(const line of lines)doc.text(`${line.ten_mon_luc_lap} × ${line.so_luong} | ${format(line.don_gia_luc_lap)} | ${format(line.thanh_tien)}`);

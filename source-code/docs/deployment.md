@@ -33,21 +33,19 @@ Set these server-only environment values:
 
 ```dotenv
 QR_PROVIDER=sepay
-QR_AUTO_CONFIRM=true
-SEPAY_BANK=<bank short code supported by vietqr.app>
-SEPAY_ACCOUNT_NUMBER=<receiving bank account number>
+SEPAY_BANK=970422
+SEPAY_ACCOUNT_NUMBER=0333101167
+SEPAY_ACCOUNT_NAME=NGUYEN THANH SANG
 SEPAY_WEBHOOK_API_KEY=<private webhook authentication key>
 ```
 
+For `npm run local:demo`, the local/QA runner uses the three bank values above to render a VietQR image, but keeps reconciliation simulated and does not require `SEPAY_WEBHOOK_API_KEY`. The QR points to the configured bank account and can initiate a real transfer. In QA, decode or scan the QR and inspect the account, amount, and reference, then stop before confirming or sending money; an image loading successfully does not by itself prove it contains a QR. Clicking the demo reconciliation button only marks the application order paid.
+
 Create the webhook in SePay with URL `https://<actual-app-host>/api/payments/sepay/webhook`, JSON body and API-key authentication. SePay must send `Authorization: Apikey <SEPAY_WEBHOOK_API_KEY>`. Use the same key in the service configuration.
 
-The QR contains an alphanumeric `ME` reference unique to the payment, the receiving account and the order amount. Preserve that full reference in the transfer content. The backend matches references case-insensitively, verifies the configured receiving account, ignores outgoing transfers and deduplicates transaction IDs. The endpoint responds with exactly `{"success":true}` after accepting a valid event.
+The backend creates the VietQR Quick Link image with the order's server-calculated total and unique `ma_tham_chieu_qr` in `addInfo`. New simulated references use `DEMO` followed by an alphanumeric UUID; previously saved `DEMO-...` references remain recognized as simulated. Preserve the full reference in the transfer content. The backend matches references case-insensitively, verifies the configured receiving account, ignores outgoing transfers and deduplicates transaction IDs. The endpoint responds with exactly `{"success":true}` after accepting a valid event. Webhook receipt alone does not complete payment: the employee's existing reconciliation action verifies successful receipt, matching reference and sufficient funds before stock/revenue is updated.
 
-With `QR_AUTO_CONFIRM=true`, an authenticated incoming transfer automatically settles a pending QR payment only when the amount exactly matches the order and the order is confirmed, unpaid and in a running, uncounted shift. Event storage, settlement, stock consumption and notifications share one transaction. Additional transfers, mismatched amounts and late transfers remain recorded for manager review. A cancelled order's unmatched transfer is also recorded for review. A cash settlement cannot be overwritten by a subsequent bank transfer.
-
-The checkout updates from SSE notifications and polls the authorized order endpoint every five seconds while waiting for an automatic QR payment. Successful payment closes the QR section and enables invoice export without an employee clicking reconciliation. The existing reconciliation button remains a manual fallback. With `QR_AUTO_CONFIRM=false` (the default), an employee must still reconcile an authenticated transfer before settlement.
-
-The SePay API access token used to inspect linked bank accounts is separate from the webhook authentication key. Do not put either secret in frontend code or Git. The webhook integration does not require the API access token at runtime.
+For real webhook delivery and reconciliation, configure `QR_PROVIDER=sepay`, the three public VietQR account values above, and a private `SEPAY_WEBHOOK_API_KEY` in the backend environment; then configure the matching webhook URL and API-key authentication in SePay. Keep credentials and webhook keys only in backend environment settings, never in the frontend or Git. Do not mark an order paid based on QR generation, scanning, or a customer claim. The transaction cannot be tested end-to-end until the provider webhook and a real/test bank transfer are configured.
 
 Before live use, verify invalid authorization is rejected, wrong account/outgoing transfers are ignored, short payments cannot reconcile, retries cannot charge stock twice and unmatched transfers appear in manager notifications. A second distinct short transfer is not automatically summed; reconcile such payments with the bank/provider manually.
 

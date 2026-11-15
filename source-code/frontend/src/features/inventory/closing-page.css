@@ -1,0 +1,344 @@
+.closing-page {
+  width: min(100%, 1220px);
+  min-width: 0;
+  max-width: 1440px;
+  overflow: hidden;
+}
+
+@media (min-width: 901px) {
+  .app-main:has(> .closing-page) {
+    margin-left: calc(var(--sidebar-width) + 32px);
+    padding: 20px 24px 24px 20px;
+  }
+}
+
+.closing-page > .breadcrumb {
+  margin: 0 0 8px;
+}
+
+.closing-page > .page-header {
+  margin-bottom: 28px;
+}
+
+.closing-page > .page-header h1 {
+  font-size: 28px;
+  line-height: 1.4;
+}
+
+.closing-page > .ui-panel {
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.closing-empty-panel {
+  min-height: 208px;
+  padding: 28px 24px;
+}
+
+.closing-empty-panel p {
+  color: #b8332a;
+  font-size: 14px;
+}
+
+.closing-list-panel {
+  padding: 24px;
+}
+
+.closing-list-description {
+  margin: 0 0 28px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.closing-report-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1.1fr) minmax(160px, 1fr) minmax(125px, 0.8fr) 160px;
+  align-items: center;
+  gap: 20px;
+  min-height: 92px;
+  padding: 18px 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fcf7f0;
+}
+
+.closing-report-row + .closing-report-row {
+  margin-top: 12px;
+}
+
+.closing-report-row > div,
+.closing-report-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.closing-report-id > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.closing-report-row > .closing-report-author {
+  font-weight: 500;
+}
+
+.closing-report-row strong,
+.closing-report-field strong,
+.closing-status-fields strong {
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.closing-field-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.closing-report-row > .ui-button {
+  width: 100%;
+  min-height: 44px;
+}
+
+.closing-report-row .ui-badge {
+  width: 100%;
+  justify-content: center;
+}
+
+.closing-page .ui-badge[data-value='Nháp'],
+.closing-page .ui-badge[data-value='Chờ xác nhận'] {
+  background: #fcebe3;
+  color: #b8332a;
+}
+
+.closing-page .ui-badge[data-value='Đã xác nhận'] {
+  background: #e5f2e8;
+  color: #296e4d;
+}
+
+.closing-page .closing-difference-negative {
+  color: #d32f2f;
+}
+
+.closing-error-toast {
+  position: fixed;
+  z-index: 1000;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  width: min(550px, calc(100vw - 32px));
+  min-height: 50px;
+  padding: 12px 16px;
+  border: 1px solid #d03b2e;
+  border-radius: 10px;
+  background: #fcebe3;
+  color: #8f241d;
+  font-size: 13px;
+}
+
+.closing-report-information {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: 22px;
+  min-height: 100px;
+  padding: 18px 24px;
+}
+
+.closing-money-panel {
+  padding: 14px 24px 66px;
+}
+
+.closing-money-panel > h2,
+.closing-materials-panel > h2 {
+  margin-bottom: 18px;
+  font-size: 16px;
+}
+
+.closing-money-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px 24px;
+}
+
+.closing-materials-panel {
+  padding: 14px 24px 50px;
+}
+
+.closing-materials-panel > h2 {
+  margin-bottom: 2px;
+}
+
+.closing-materials-panel .ui-table th {
+  padding: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.closing-materials-panel .ui-table td {
+  padding: 14.5px 8px;
+  border-bottom-color: var(--border);
+}
+
+.closing-materials-panel .ui-table th:first-child,
+.closing-materials-panel .ui-table td:first-child {
+  padding-left: 0;
+}
+
+.closing-materials-panel .ui-table th:last-child,
+.closing-materials-panel .ui-table td:last-child {
+  padding-right: 0;
+}
+
+.closing-status-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 30px;
+  padding: 2px 24px 8px;
+}
+
+.closing-status-fields {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(170px, 1fr) minmax(190px, 1.2fr);
+  align-items: start;
+  gap: 18px 28px;
+}
+
+.closing-status-fields > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.closing-status-fields .ui-badge {
+  width: 160px;
+  max-width: 100%;
+  min-height: 28px;
+  justify-content: center;
+}
+
+.closing-status-actions > .ui-button {
+  justify-self: end;
+  width: 200px;
+  min-height: 44px;
+}
+
+.closing-status-actions > .closing-low-stock-action {
+  width: min(284px, 100%);
+  min-height: 44px;
+  padding: 9px 12px;
+  font-size: 13px;
+}
+
+@media (max-width: 1100px) {
+  .closing-report-row {
+    grid-template-columns: minmax(110px, 1.1fr) minmax(140px, 1fr) minmax(115px, 0.8fr) 120px;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .closing-status-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .closing-page > .page-header h1 {
+    font-size: 23px;
+  }
+}
+
+@media (max-width: 640px) {
+  .closing-list-panel {
+    padding: 0;
+  }
+
+  .closing-page > .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .closing-page > .page-header .ui-actions {
+    width: 100%;
+  }
+
+  .closing-page > .page-header .ui-button {
+    width: 100%;
+  }
+
+  .closing-empty-panel {
+    min-height: 170px;
+    padding: 20px 16px;
+  }
+
+  .closing-report-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .closing-report-row > .ui-badge {
+    grid-column: 1 / -1;
+  }
+
+  .closing-report-row > .ui-button {
+    grid-column: 1 / -1;
+  }
+
+  .closing-report-information {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 14px;
+    min-height: 0;
+    padding: 18px 16px;
+  }
+
+  .closing-money-panel,
+  .closing-materials-panel {
+    padding: 16px;
+  }
+
+  .closing-money-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 14px;
+  }
+
+  .closing-status-actions {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+    padding: 2px 0 8px;
+  }
+
+  .closing-status-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .closing-status-fields > div {
+    width: 100%;
+  }
+
+  .closing-status-fields .ui-badge {
+    width: 100%;
+  }
+
+  .closing-status-actions > .ui-button {
+    flex-basis: auto;
+    width: 100%;
+  }
+}

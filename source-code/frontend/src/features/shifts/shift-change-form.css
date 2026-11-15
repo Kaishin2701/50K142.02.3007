@@ -1,0 +1,200 @@
+.employee-shift-details-modal:has(+ .shift-change-form-modal[open])::backdrop {
+  background: transparent;
+}
+
+.shift-change-form-modal {
+  width: min(760px, calc(100% - 32px));
+  max-height: calc(100dvh - 48px);
+  border-radius: 20px;
+  background: #fffdfa;
+}
+
+.shift-change-form-modal .dialog-surface {
+  display: flex;
+  min-height: 732px;
+  flex-direction: column;
+}
+
+.shift-change-form-modal .dialog-header {
+  padding: 30px 31px 16px;
+  border-bottom: 0;
+}
+
+.shift-change-form-modal .dialog-header h2 {
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.shift-change-form-modal .dialog-header > .ui-button {
+  min-height: 32px;
+  padding: 4px;
+  color: #8f351f;
+}
+
+.shift-change-form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.shift-change-form-body {
+  flex: 1;
+  gap: 0;
+  padding: 0 31px 20px;
+}
+
+.shift-change-form-body .ui-field {
+  gap: 4px;
+  font-weight: 400;
+}
+
+.shift-change-form-body .ui-field > span,
+.shift-change-types legend {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.shift-change-form-body .ui-field input,
+.shift-change-form-body .ui-field select,
+.shift-change-form-body .ui-field textarea {
+  min-height: 44px;
+  padding: 10px 13px;
+  border-radius: 10px;
+  background: #faf6f0;
+}
+
+.shift-change-form-body .shift-change-source input {
+  color: #33251b;
+}
+
+.shift-change-types {
+  min-width: 0;
+  margin: 18px 0 28px;
+}
+
+.shift-change-types legend {
+  margin-bottom: 10px;
+}
+
+.shift-change-type-options {
+  display: grid;
+  grid-template-columns: 278px minmax(0, 1fr);
+  gap: 0;
+}
+
+.shift-change-type-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.shift-change-type-options input {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  appearance: none;
+  border: 1px solid #c67d53;
+  border-radius: 50%;
+  background: #fffdfa;
+}
+
+.shift-change-type-options input:checked {
+  border: 0;
+  background: #c67d53;
+  box-shadow: inset 0 0 0 4px #fffdfa;
+}
+
+.shift-change-type-options input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.shift-change-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.shift-change-form-body .ui-field textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+
+.shift-change-form-body > .ui-loading {
+  padding: 10px 0 0;
+}
+
+.shift-change-form-body > .ui-error {
+  padding: 0;
+  margin: 18px 0 0;
+  border: 0;
+  background: transparent;
+  color: #d34235;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.shift-change-form .dialog-actions {
+  padding: 16px 31px 30px;
+  border-top: 0;
+}
+
+.shift-change-form .dialog-actions .ui-button-primary {
+  min-width: 180px;
+  min-height: 44px;
+  border-radius: 10px;
+}
+
+@media (max-width: 640px) {
+  .shift-change-form-modal {
+    max-height: calc(100dvh - 24px);
+  }
+
+  .shift-change-form-modal .dialog-surface {
+    min-height: 0;
+  }
+
+  .shift-change-form-modal .dialog-header {
+    padding: 24px 20px 14px;
+  }
+
+  .shift-change-form-modal .dialog-header h2 {
+    font-size: 20px;
+  }
+
+  .shift-change-form-body {
+    padding: 0 20px 20px;
+  }
+
+  .shift-change-fields {
+    gap: 12px;
+  }
+
+  .shift-change-form .dialog-actions {
+    padding: 14px 20px 20px;
+  }
+}
+
+@media (max-width: 420px) {
+  .shift-change-type-options,
+  .shift-change-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .shift-change-types {
+    margin-bottom: 22px;
+  }
+
+  .shift-change-fields {
+    margin-bottom: 22px;
+  }
+}

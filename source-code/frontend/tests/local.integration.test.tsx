@@ -8,6 +8,9 @@ import App from '../src/app/App';
 
 // Opt in against the isolated database started with backend's --qa option.
 const localBase = process.env.ME_CAFE_LOCAL_API_BASE_URL;
+const localAccessFile =
+  process.env.ME_CAFE_LOCAL_ACCESS_FILE ??
+  resolve(process.cwd(), '../backend/.local/qa/access.json');
 afterEach(() => {
   cleanup();
   sessionStorage.clear();
@@ -19,8 +22,7 @@ it.skipIf(!localBase)(
   async () => {
     const credentials = JSON.parse(
       await readFile(
-        process.env.ME_CAFE_LOCAL_CREDENTIAL_FILE ??
-          resolve(process.cwd(), '../backend/.local/qa/access.json'),
+        localAccessFile,
         'utf8',
       ),
     );
@@ -113,14 +115,12 @@ it.skipIf(!localBase)(
     const add = (await screen.findAllByRole('button', { name: /^Thêm / }))[0];
     const name = add.getAttribute('aria-label')!.replace(/^Thêm /, '');
     await user.click(add);
+    await user.click(screen.getByRole('button', { name: 'Tiếp tục lập đơn' }));
     const quantity = screen.getByRole('spinbutton', {
       name: 'Số lượng ' + name,
     });
     await user.clear(quantity);
     await user.type(quantity, '2');
-    await user.click(
-      screen.getByRole('button', { name: 'Tiếp tục lập hóa đơn' }),
-    );
     const main = screen.getByRole('main');
     await user.click(
       screen.getByRole('button', { name: 'Kiểm tra đơn', exact: true }),
@@ -137,8 +137,12 @@ it.skipIf(!localBase)(
       '100000',
     );
     await user.click(
-      within(cash).getByRole('button', { name: 'Xác nhận số tiền' }),
+      within(cash).getByRole('button', { name: 'Xác nhận lại số tiền' }),
     );
+    await user.click(
+      await screen.findByRole('button', { name: 'Xuất hóa đơn', exact: true }),
+    );
+    await screen.findByRole('heading', { name: 'Xem trước hóa đơn' });
     await user.click(
       await screen.findByRole('button', { name: 'Xuất hóa đơn', exact: true }),
     );

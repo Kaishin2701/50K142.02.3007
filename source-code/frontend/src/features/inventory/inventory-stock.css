@@ -1,0 +1,189 @@
+.inventory-stock-page {
+  min-width: 0;
+  margin-right: 4px;
+  margin-left: 4px;
+}
+
+.inventory-stock-breadcrumb {
+  margin-top: -24px;
+  margin-bottom: 12px;
+}
+
+.inventory-stock-page .page-header h1 {
+  font-size: 28px;
+  line-height: 1.4;
+}
+
+.inventory-stock-page .page-header {
+  margin-bottom: 28px;
+}
+
+.inventory-stock-state {
+  min-height: 208px;
+  padding: 28px 23px;
+}
+
+.inventory-stock-error > p {
+  color: #c6281d;
+}
+
+.inventory-stock-error .ui-button {
+  width: 140px;
+  min-height: 44px;
+  margin-top: 42px;
+  border-color: var(--accent);
+}
+
+.inventory-stock-empty > p {
+  color: var(--muted);
+}
+
+.inventory-stock-notice {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border: 1px solid;
+  border-radius: 10px;
+}
+
+.inventory-stock-notice.is-warning {
+  border-color: #ba321f;
+  background: #fcebe3;
+  color: #8d291b;
+}
+
+.inventory-stock-notice.is-normal {
+  border-color: #28774e;
+  background: #e4f1e8;
+  color: #1d6842;
+}
+
+.inventory-stock-table-panel {
+  min-height: 728px;
+  padding: 14px 15px;
+}
+
+.inventory-stock-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.inventory-stock-table {
+  width: 100%;
+  min-width: 960px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  text-align: left;
+}
+.inventory-stock-table th {
+  padding: 4px 8px 8px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.35;
+  vertical-align: top;
+}
+
+.inventory-stock-table th:nth-child(1) {
+  width: 4%;
+}
+
+.inventory-stock-table th:nth-child(2) {
+  width: 10%;
+}
+
+.inventory-stock-table th:nth-child(3) {
+  width: 15%;
+}
+
+.inventory-stock-table th:nth-child(4) {
+  width: 7%;
+}
+
+.inventory-stock-table th:nth-child(5) {
+  width: 11%;
+}
+
+.inventory-stock-table th:nth-child(6) {
+  width: 13%;
+}
+
+.inventory-stock-table th:nth-child(7) {
+  width: 14%;
+}
+
+.inventory-stock-table th:nth-child(8) {
+  width: 26%;
+}
+
+.inventory-stock-table td {
+  height: 82px;
+  padding: 14px 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.inventory-stock-table .is-low-stock td {
+  border-bottom-color: var(--border);
+  background: #fcebe3;
+  color: #8d291b;
+}
+
+.inventory-stock-table .is-low-stock td:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.inventory-stock-table .is-low-stock td:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.inventory-stock-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 122px;
+  max-width: 100%;
+  min-height: 28px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.inventory-stock-badge.is-warning {
+  color: #bd321f;
+}
+
+.inventory-stock-badge.is-normal {
+  background: #e4f1e8;
+  color: #1d6842;
+}
+
+@media (max-width: 900px) {
+  .inventory-stock-table-panel {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .inventory-stock-breadcrumb {
+    margin-top: 0;
+  }
+
+  .inventory-stock-state {
+    padding: 22px 18px;
+  }
+
+  .inventory-stock-table-panel {
+    padding: 12px;
+  }
+
+  .inventory-stock-table {
+    min-width: 960px;
+  }
+}

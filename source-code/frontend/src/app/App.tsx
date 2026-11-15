@@ -2,6 +2,7 @@ import { Component, Suspense, lazy, type ReactNode } from 'react';
 import { SessionProvider, useSession } from './auth';
 import { DataProvider } from './data';
 import { RouterProvider, useRouter, type Page } from './router';
+import { store } from './store';
 import { AppShell } from '../components/AppShell';
 import { Button, ErrorMessage, NoticeProvider, Panel } from '../components/ui';
 import { CheckoutProvider } from '../features/sales/CheckoutContext';
@@ -68,12 +69,12 @@ function Workspace() {
     </AppShell>
   );
 }
-function SessionGate() {
+function SessionContent() {
   const { user, ready } = useSession();
   if (!ready)
     return (
       <main className="session-loading" role="status">
-        <strong>Mê Cà Phê</strong>
+        <strong>{store.name}</strong>
         <span>Đang tải…</span>
       </main>
     );
@@ -82,12 +83,18 @@ function SessionGate() {
     <DataProvider key={user.ma_nguoi_dung}>
       <RouterProvider>
         <CheckoutProvider>
-          <NoticeProvider>
-            <Workspace />
-          </NoticeProvider>
+          <Workspace />
         </CheckoutProvider>
       </RouterProvider>
     </DataProvider>
+  );
+}
+function SessionGate() {
+  const { user } = useSession();
+  return (
+    <NoticeProvider scope={user?.ma_nguoi_dung ?? null}>
+      <SessionContent />
+    </NoticeProvider>
   );
 }
 export default function App() {

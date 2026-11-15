@@ -1,4 +1,4 @@
-# Hợp đồng API Mê Cà Phê
+# Hợp đồng API Mê cà phê
 
 Base URL: `http://127.0.0.1:3000/api`. Mặc định trả JSON. `:id` là UUID. QL = Quản lý; NV = Nhân viên. Tất cả API ngoài health, login và webhook cần đăng nhập. POST/PATCH/PUT/DELETE từ phiên cookie cần Origin nằm trong FRONTEND_ORIGINS.
 
@@ -17,6 +17,8 @@ Base URL: `http://127.0.0.1:3000/api`. Mặc định trả JSON. `:id` là UUID.
 | PATCH | /users/:id/status | QL | trang_thai: Đang hoạt động hoặc Đã khóa |
 
 Tạo tài khoản: ten_dang_nhap (3–50 ký tự chữ/số/_.-), ho_ten, so_dien_thoai (9–15 chữ số, có thể có +), vai_tro (Quản lý/Nhân viên), mat_khau, xac_nhan_mat_khau. Sửa tài khoản gửi các trường tương tự, trừ hai trường mật khẩu. Không được khóa/hạ quyền quản lý hoạt động cuối cùng.
+
+Khi khóa tài khoản hoặc đổi vai trò khiến người lập không còn quyền gửi báo cáo cuối ca, các phiếu kiểm kê đã lưu nhưng chưa có báo cáo hoặc còn báo cáo Nháp được chuyển sang Chờ xác nhận trong cùng giao dịch. Người lập, số liệu và lý do chênh lệch giữ nguyên; không tự áp dụng tồn kho hoặc tự xác nhận. Quản lý nhận thông báo và duyệt bằng API xác nhận hiện có. Yêu cầu lập kiểm kê đã xác thực từ trước vẫn phải kiểm tra lại trạng thái/vai trò sau khi lấy khóa kho, tránh tạo phiếu mới ngay sau khi tài khoản bị khóa. Với dữ liệu cũ đã bị kẹt, lưu lại thông tin tài khoản đang khóa hoặc đã chuyển khỏi vai trò nhân viên cũng áp dụng quy tắc này; không cần mở khóa tài khoản.
 
 ## Menu và đơn hàng
 
@@ -51,10 +53,13 @@ NV cần được phân công vào ca đang diễn ra. Tổng tiền và định
 
 Tra cứu đơn: page (mặc định 1), limit (mặc định 20, tối đa 100), code, from/to (YYYY-MM-DD), method (Tiền mặt/Chuyển khoản qua QR). Đơn đang xử lý hỗ trợ status (Chưa pha chế/Bắt đầu pha chế). Giá và tên món lúc lập đơn được lưu cố định.
 
+`GET /orders` trả cả nháp chưa xác nhận để có thể tìm lại đơn bằng API hiện có. Nháp có `da_xac_nhan=false`, chưa có `ma_don_hien_thi`; không xuất hiện trong lịch sử hoàn tất. Bộ lọc quyền ca làm được áp dụng trước phân trang và tính `total`. Nháp ca đang mở tiếp tục giữ tồn. Khi tạo đơn mới hoặc lập kiểm kê, backend dọn nháp thuộc ca đã kết thúc, chưa xác nhận, chưa pha chế, chưa có bất kỳ giao dịch thanh toán và chưa tiêu hao tồn. Việc dọn và nghiệp vụ đang thực hiện dùng chung giao dịch/khóa kho; không dọn đơn đã xác nhận. Khóa idempotency của nháp đã dọn không tạo lại đơn cũ.
+
 ## Thanh toán
 
 | Phương thức | Đường dẫn | Quyền | Nội dung |
 |---|---|---|---|
+| GET | /payments/mode | NV | Chế độ QR hiện tại: demo, live hoặc disabled; không trả thông tin bí mật |
 | POST | /payments/cash | NV | ma_don, so_tien_nhan |
 | POST | /payments/qr | NV | ma_don |
 | POST | /payments/:id/reconcile | NV | Đối soát giao dịch QR |
@@ -62,13 +67,19 @@ Tra cứu đơn: page (mặc định 1), limit (mặc định 20, tối đa 100)
 
 Tiền mặt thiếu bị từ chối; đủ/thừa trả thêm tien_thua. Mỗi đơn chỉ có một giao dịch thành công. Chỉ khi thanh toán thành công, phần tồn đã giữ được chuyển thành tiêu hao thực tế trên sổ lý thuyết.
 
-Adapter QR gửi POST JSON tới QR_GATEWAY_URL với Bearer QR_GATEWAY_TOKEN:
+Nếu webhook hợp lệ đã ghi nhận khoản QR nhận vào lớn hơn 0 cho bất kỳ giao dịch nào của đơn, thu tiền mặt bị từ chối với `409 QR_FUNDS_RECEIVED`, hủy đơn bị từ chối với `409 CANNOT_CANCEL`. Quy tắc này cũng áp dụng khi tiền QR còn thiếu; không tự coi chuyển thiếu là đã thanh toán. Sự kiện pending/failed, khoản 0 đồng, SePay sai tài khoản hoặc chuyển ra không được coi là tiền đã nhận cho đơn.
+
+QR thật có bằng chứng nhận tiền hợp lệ và đủ số tiền được đối soát sau giờ kết thúc ca, miễn ca chưa kiểm kê và nhân viên còn quyền trên đơn. Nếu ca đã kiểm kê, giao dịch chưa hoàn tất bị từ chối với `409 SHIFT_ALREADY_COUNTED`. Nhánh QR mô phỏng vẫn yêu cầu ca đang diễn ra. Gọi lại giao dịch đã thành công không trừ tồn thêm; việc kiểm kê vẫn đòi hỏi hoàn tất hoặc hủy đơn còn xử lý.
+
+Một đơn có thể giữ nhiều giao dịch QR đang chờ khi nhân viên chủ động tạo mã mới sau khi đổi chế độ. Giao dịch cũ vẫn được lưu nguyên trạng; chỉ hiển thị lại khi `qr_mo_phong` của giao dịch khớp chế độ từ `GET /payments/mode`. Reconcile luôn dùng ID của giao dịch đang hiển thị.
+
+Với `QR_PROVIDER=http`, adapter QR gửi POST JSON tới QR_GATEWAY_URL với Bearer QR_GATEWAY_TOKEN:
 
 ```json
 {"paymentId":"<UUID>","orderCode":"ME-000001","amount":25000,"reference":"<UUID>"}
 ```
 
-Cổng cần trả `{ "qrContent": "...", "expiresAt": "ISO timestamp tùy chọn" }`. qrContent phải là mã thanh toán do nhà cung cấp thực tạo. Adapter chưa gắn với nhà cung cấp cụ thể.
+Cổng HTTP cần trả `{ "qrContent": "...", "expiresAt": "ISO timestamp tùy chọn" }`. `qrContent` phải là mã thanh toán do nhà cung cấp thực tạo. Với `QR_PROVIDER=sepay`, backend trả Quick Link VietQR trong `qrImageUrl`; amount lấy từ tổng tiền do backend tính và `addInfo` là `ma_tham_chieu_qr` duy nhất đã lưu cho giao dịch. Cấu hình SePay, xác thực webhook và giới hạn kiểm thử thanh toán thật được mô tả trong [deployment.md](./deployment.md#sepay-qr).
 
 Webhook body:
 

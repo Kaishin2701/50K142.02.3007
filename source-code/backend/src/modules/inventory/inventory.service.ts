@@ -6,6 +6,8 @@ import { notify,notifyManagers } from '../../shared/notifications.js';
 import type { Actor } from '../auth/auth.service.js';
 import { shiftsRepository } from '../shifts/shifts.repository.js';
 import { inventoryRepository as repo } from './inventory.repository.js';
+import { discardEndedDrafts } from '../orders/orders.service.js';
+import { usersRepository } from '../users/users.repository.js';
 import { previousRequest,rememberRequest } from '../../shared/idempotency.js';
 export const materialInput=z.object({ten_nguyen_lieu:text(100),don_vi_tinh:text(20),muc_ton_toi_thieu:quantity,nguong_chenh_lech:quantity,dang_hoat_dong:z.boolean().default(true)}).strict();
 export const importInput=z.object({ten_nha_cung_cap:text(150),ngay_nhap:date,ma_ca:id.optional(),trang_thai_thanh_toan:z.enum(['Đã thanh toán','Công nợ']),hinh_thuc_thanh_toan:z.enum(['Tiền mặt','Chuyển khoản']).optional(),
@@ -41,11 +43,15 @@ export function inventoryService(db:Database){
   losses:(limit:number,offset:number)=>repo.lossHistory(db,limit,offset),
   preview:async(actor:Actor,shift:string)=>{await forEmployee(db,actor,shift);return{ma_ca:shift,...await repo.shiftRevenue(db,shift),items:await repo.list(db,true)};},
   count:(actor:Actor,v:z.infer<typeof countInput>,key?:string)=>db.transaction(async tx=>{await lock(tx,'kho');
+    // Account changes use the same lock: a previously authenticated request cannot strand a new count.
+    const user=await usersRepository.get(tx,actor.id);
+    check(user?.trang_thai==='Đang hoạt động'&&user.vai_tro==='Nhân viên','Tài khoản không còn quyền lập phiếu kiểm kho.','FORBIDDEN',403);
     const previous=await previousRequest(tx,key,actor.id,'count-stock',v);
     if(previous)return {...await repo.count(tx,previous),items:await repo.countLines(tx,previous)};
     await forEmployee(tx,actor,v.ma_ca);
     check(!await repo.countForShift(tx,v.ma_ca),'Ca này đã có phiếu kiểm kho.','COUNT_EXISTS');
     check(!await repo.pendingCount(tx),'Cần xác nhận báo cáo kiểm kho trước đó trước khi lập phiếu mới.','PENDING_CLOSE');
+    await discardEndedDrafts(tx);
     check(!await repo.unfinished(tx,v.ma_ca),'Cần hoàn tất hoặc hủy các đơn còn xử lý của ca.','UNFINISHED_ORDERS');
     const materials=await repo.list(tx,true);check(materials.length===v.items.length,'Phải nhập đủ mọi nguyên liệu đang hoạt động.','INCOMPLETE_COUNT',422);
     const revenue=Number((await repo.shiftRevenue(tx,v.ma_ca)).doanh_thu);

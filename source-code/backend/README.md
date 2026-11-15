@@ -33,6 +33,18 @@ npm.cmd test
 
 Tests chạy PostgreSQL nhúng PGlite trong bộ nhớ, không đọc DATABASE_URL và không thay đổi Supabase.
 
+## Database local và QA cô lập
+
+Từ thư mục gốc, `npm run local` khởi tạo PostgreSQL nhúng tại `backend/.local/postgres/`, chạy migration, tạo tài khoản `quanly`/`nhanvien` khi database mới và tạo ca thử nghiệm hôm nay. Chế độ này không tự nạp menu, công thức hoặc tồn kho demo và không đọc `.env`/`DATABASE_URL`.
+
+Credentials được lưu riêng trong `backend/.local/access.json`. Database QA tách biệt tại `backend/.local/qa/postgres/`, với credentials trong `backend/.local/qa/access.json`; khởi động QA từ thư mục này bằng `npm run dev:local -- --qa`. Để khôi phục tài khoản khi mật khẩu đã đổi hoặc file credentials bị thiếu/cũ, dừng server tương ứng rồi chạy từ thư mục gốc `npm run local:credentials -- --local` hoặc `npm run local:credentials -- --qa`. Lệnh yêu cầu đúng một đích, chỉ mở embedded database đã chọn, và không đọc `DATABASE_URL`; mật khẩu mới chỉ được ghi vào `access.json`, không in vào log. Khởi động thường chỉ cảnh báo về file credentials không khớp, không tự đổi mật khẩu.
+
+Nếu cổng 3000 bị một dịch vụ không liên quan chiếm, có thể chạy với cổng loopback khác, ví dụ `npm run dev:local -- --qa --port=3001`. Không dùng cổng khác để bỏ qua một server đang mở chính database đã chọn.
+
+Để chạy luồng QR mô phỏng, chạy từ thư mục gốc `npm run local:demo` (tương đương `--demo-menu --demo-qr`) với `SEPAY_BANK`, `SEPAY_ACCOUNT_NUMBER` và `SEPAY_ACCOUNT_NAME` đã cấu hình trong môi trường backend. Ảnh là VietQR có thể quét cho tài khoản ngân hàng thật; chỉ bước đối soát trong POS được mô phỏng và không cần webhook. Việc quét có thể mở màn hình chuyển tiền thật: chỉ kiểm tra tài khoản, số tiền và nội dung rồi dừng trước khi xác nhận/chuyển tiền. Cờ chỉ tồn tại ở runner PostgreSQL nhúng local/QA; giao dịch mô phỏng được đánh dấu riêng. POS lấy chế độ hiện hành từ `GET /api/payments/mode`. Không bật cờ này khi kiểm thử thanh toán VietQR thật; giao dịch live vẫn cần webhook SePay hợp lệ và đủ tiền.
+
+Nhấn Ctrl+C hoặc gửi SIGTERM để server đóng các kết nối SSE, đóng HTTP server, rồi đóng PGlite và tự nhả `server.lock`; sau khi server thoát, có thể chạy lệnh nhập menu mà không cần xóa lock thủ công. Mỗi database local/QA chỉ được một tiến trình local mở tại một thời điểm. Nếu tiến trình dừng bất thường, kiểm tra PID trong `server.lock`; chỉ xóa đúng file lock sau khi xác nhận tiến trình không còn chạy. Không xóa thư mục `postgres/` để khắc phục lỗi đăng nhập.
+
 ## Xác thực và gọi từ FrontEnd
 
 Đăng nhập qua `POST /api/auth/login` với `{ "ten_dang_nhap": "...", "mat_khau": "..." }`. Máy chủ đặt cookie HttpOnly `me_session`; phản hồi chỉ chứa thông tin công khai của tài khoản. FrontEnd gọi fetch với `credentials: 'include'`. Cookie được đặt Secure khi NODE_ENV=production, nên triển khai bằng HTTPS.

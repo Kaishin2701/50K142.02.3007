@@ -1,0 +1,291 @@
+.shifts-page.is-employee .employee-calendar-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 17px;
+}
+
+.shifts-page.is-employee .employee-calendar-eyebrow {
+  margin: 0 0 12px;
+  color: #7d6657;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.shifts-page.is-employee .employee-calendar-heading h1 {
+  color: #1f140e;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.shifts-page.is-employee .employee-calendar-requests {
+  min-width: 160px;
+  min-height: 44px;
+  margin-top: 24px;
+  margin-right: 16px;
+  border-color: #e5d6c4;
+  border-radius: 10px;
+  background: #fffdf9;
+  color: #8e321e;
+  font-weight: 700;
+}
+
+.shifts-page.is-employee .calendar-toolbar {
+  min-height: 52px;
+  margin-bottom: 16px;
+  padding: 6px 11px;
+  border: 1px solid #e5d6c4;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.shifts-page.is-employee .calendar-toolbar-main {
+  gap: 12px;
+}
+
+.shifts-page.is-employee .week-nav-pill {
+  min-height: 36px;
+  width: 254px;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  border-color: #e5d6c4;
+  border-radius: 8px;
+  background: #fcf7f0;
+}
+
+.shifts-page.is-employee .week-nav-label {
+  padding: 0 12px;
+  color: #33211a;
+  font-size: 13px;
+}
+
+.shifts-page.is-employee .week-nav-arrow {
+  min-width: 36px;
+  min-height: 34px;
+  color: #8e321e;
+}
+
+.shifts-page.is-employee .calendar-toolbar-main > .ui-button {
+  min-height: 36px;
+  padding: 6px 10px;
+  border-color: transparent;
+  background: transparent;
+  color: #8e321e;
+  font-weight: 600;
+}
+
+.shifts-page.is-employee .shifts-panel {
+  min-height: 664px;
+  margin-bottom: 0;
+  padding: 0;
+  overflow: hidden;
+  border-color: #e5d6c4;
+  background: #fff;
+}
+
+.shifts-page.is-employee .calendar-body {
+  min-height: 662px;
+  overflow-x: auto;
+}
+
+.shifts-page.is-employee .calendar-grid {
+  min-width: 760px;
+  min-height: 662px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  padding-inline: 15px;
+  border-top: 0;
+}
+
+.shifts-page.is-employee .calendar-day,
+.shifts-page.is-employee .calendar-body.is-empty-week .calendar-day {
+  min-height: 662px;
+  border-left: 0;
+}
+
+.shifts-page.is-employee .calendar-day > header {
+  position: relative;
+  min-height: 81px;
+  padding: 18px 30px 10px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  border-bottom: 0;
+}
+
+.shifts-page.is-employee .calendar-day.is-today > header {
+  background: transparent;
+}
+
+.shifts-page.is-employee .calendar-day-weekday {
+  color: #7d6657;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 17px;
+}
+
+.shifts-page.is-employee .calendar-day-date {
+  color: #4a3525;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.shifts-page.is-employee .employee-calendar-add-button {
+  position: absolute;
+  top: 17px;
+  right: 10px;
+  display: inline-flex;
+  width: 25px;
+  min-width: 25px;
+  min-height: 25px;
+  padding: 0;
+  border-color: #e5d6c4;
+  border-radius: 7px;
+  background: #fffdf9;
+}
+
+.shifts-page.is-employee .employee-calendar-add-button span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: center / contain no-repeat
+    url('../../assets/schedule/plus.svg');
+}
+
+.shifts-page.is-employee .calendar-cards {
+  gap: 8px;
+  padding: 0 8px 12px 0;
+}
+
+.shifts-page.is-employee .employee-shift-card,
+.shifts-page.is-employee .employee-registration-card {
+  min-height: 110px;
+  border: 2px solid #c67d53;
+  border-radius: 9px;
+  background: #fcf7f0;
+}
+
+.shifts-page.is-employee .employee-shift-card .shift-card-main {
+  min-height: 106px;
+  padding: 12px 6px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  text-align: center;
+}
+
+.shifts-page.is-employee .employee-shift-card .shift-time {
+  color: #4a3525;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.shifts-page.is-employee .employee-registration-card {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 6px;
+  border-width: 1px;
+  border-color: #e5d6c4;
+  background: #faf5ed;
+  color: #4a3525;
+  text-align: center;
+  cursor: pointer;
+}
+
+.shifts-page.is-employee .employee-registration-card strong {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.shifts-page.is-employee .employee-registration-status {
+  font-size: 11px;
+}
+
+.shifts-page.is-employee .employee-registration-status.is-available {
+  color: #296e4d;
+}
+
+.shifts-page.is-employee .employee-registration-status.is-wanted {
+  color: #8e321e;
+}
+
+.shifts-page.is-employee .employee-registration-assignment {
+  color: #7d6657;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.shifts-page.is-employee .calendar-body.is-empty-week .calendar-day {
+  min-height: 662px;
+}
+
+.shifts-page.is-employee .calendar-body.is-empty-week .calendar-week-empty {
+  position: absolute;
+  top: 76px;
+  right: 0;
+  left: 0;
+  height: 196px;
+  min-height: 0;
+  padding: 24px;
+  color: #7d6657;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .shifts-page.is-employee .employee-calendar-heading {
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .shifts-page.is-employee .employee-calendar-heading h1 {
+    font-size: 22px;
+  }
+
+  .shifts-page.is-employee .employee-calendar-requests {
+    min-width: 92px;
+    margin-top: 16px;
+    padding-inline: 12px;
+  }
+
+  .shifts-page.is-employee .calendar-toolbar {
+    padding: 6px 8px;
+  }
+
+  .shifts-page.is-employee .calendar-toolbar-main {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .shifts-page.is-employee .week-nav-pill {
+    width: auto;
+    justify-content: flex-start;
+  }
+
+  .shifts-page.is-employee .week-nav-label {
+    padding: 0 6px;
+    font-size: 11px;
+  }
+
+  .shifts-page.is-employee .calendar-grid {
+    min-width: 760px;
+  }
+
+  .shifts-page.is-employee .calendar-body.is-empty-week .calendar-week-empty {
+    min-height: 0;
+  }
+}
+
+@media (min-width: 1281px) {
+  .shifts-page.is-employee {
+    margin-top: -25px;
+    margin-inline: 4px;
+  }
+}

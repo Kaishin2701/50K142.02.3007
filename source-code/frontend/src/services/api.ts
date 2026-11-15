@@ -9,6 +9,13 @@ export class ApiError extends Error {
     super(message);
   }
 }
+function notifySessionEnded(status: number, code?: string) {
+  if (status !== 401) return;
+  window.dispatchEvent(new CustomEvent('me-session-ended', {
+    detail: { reason: code === 'ACCOUNT_LOCKED' ? 'locked' : 'expired' },
+  }));
+}
+
 export const apiBase =
   (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
     /\/$/,
@@ -39,8 +46,7 @@ export async function api<T = RecordData>(
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    if (response.status === 401 && !path.startsWith('/auth/'))
-      window.dispatchEvent(new Event('me-session-expired'));
+    if (!path.startsWith('/auth/')) notifySessionEnded(response.status, data.error?.code);
     throw new ApiError(
       response.status,
       data.error?.code ?? 'NETWORK_ERROR',
@@ -54,6 +60,7 @@ export async function download(path: string, name: string) {
   const response = await fetch(apiBase + path, { credentials: 'include' });
   if (!response.ok) {
     const value = await response.json().catch(() => ({}));
+    notifySessionEnded(response.status, value.error?.code);
     throw new ApiError(
       response.status,
       value.error?.code ?? 'DOWNLOAD_ERROR',

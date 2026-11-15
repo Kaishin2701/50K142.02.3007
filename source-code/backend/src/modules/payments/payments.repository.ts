@@ -2,6 +2,11 @@ import { first,rows,type Database } from '../../shared/database.js';
 export const paymentsRepository={
  byReference:(db:Database,reference:string)=>first(db,`SELECT t.*,d.ma_don_hien_thi,d.ma_ca FROM giao_dich_thanh_toan t JOIN don_hang d USING(ma_don) WHERE upper(t.ma_tham_chieu_qr)=upper($1)`,[reference]),
  get:(db:Database,id:string)=>first(db,'SELECT * FROM giao_dich_thanh_toan WHERE ma_giao_dich=$1',[id]),
+ // A received transfer is money already collected, even before staff reconcile it.
+ receivedQrFunds:(db:Database,order:string)=>first(db,`SELECT e.ma_su_kien FROM su_kien_thanh_toan e
+ JOIN giao_dich_thanh_toan t USING(ma_giao_dich)
+ WHERE t.ma_don=$1 AND t.phuong_thuc='Chuyển khoản qua QR'
+ AND e.noi_dung->>'status'='success' AND (e.noi_dung->>'amount')::numeric>0 LIMIT 1`,[order]),
  successful:(db:Database,order:string)=>first(db,`SELECT * FROM giao_dich_thanh_toan WHERE ma_don=$1 AND trang_thai='Thành công'`,[order]),
  create:(db:Database,id:string,order:string,method:string,total:unknown,reference:string|null)=>first(db,`INSERT INTO giao_dich_thanh_toan(ma_giao_dich,ma_don,phuong_thuc,so_tien_thanh_toan,ma_tham_chieu_qr,trang_thai)
  VALUES($1,$2,$3,$4,$5,'Chờ xác nhận') RETURNING *`,[id,order,method,total,reference]),

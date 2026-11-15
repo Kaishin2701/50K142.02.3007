@@ -1,0 +1,44 @@
+.preparation-ticket-body {
+  display: grid;
+  gap: 14px;
+}
+.preparation-ticket-print {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  background: #fffdf9;
+}
+.preparation-ticket-print h1 {
+  margin-bottom: 12px;
+}
+.preparation-ticket-print ul {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+.preparation-ticket-print li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px dashed var(--border);
+  padding: 8px 0;
+}
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #preparation-ticket-print,
+  #preparation-ticket-print * {
+    visibility: visible !important;
+  }
+  #preparation-ticket-print {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    padding: 16mm;
+    border: 0;
+    background: #fff;
+    color: #000;
+  }
+}

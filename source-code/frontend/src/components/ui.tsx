@@ -148,7 +148,7 @@ export function Modal({
   busy = false,
   wide = false,
   className = '',
-  inline = false,
+  'aria-label': ariaLabel,
 }: {
   title: string;
   children: ReactNode;
@@ -156,14 +156,13 @@ export function Modal({
   busy?: boolean;
   wide?: boolean;
   className?: string;
-  inline?: boolean;
+  'aria-label'?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const close = useRef(onClose);
   close.current = onClose;
   useEffect(() => {
-    if (inline) return;
     const dialog = ref.current!;
     const previous = document.activeElement as HTMLElement | null;
     if (typeof dialog.showModal === 'function') dialog.showModal();
@@ -172,27 +171,17 @@ export function Modal({
       if (typeof dialog.close === 'function') dialog.close();
       previous?.focus();
     };
-  }, [inline]);
-  if (inline)
-    return (
-      <section
-        className={'inline-dialog ' + className}
-        role="dialog"
-        aria-labelledby={titleId}
-      >
-        <h2 className="visually-hidden" id={titleId}>
-          {title}
-        </h2>
-        {children}
-      </section>
-    );
+  }, []);
   return (
     <dialog
       ref={ref}
       className={
-        'ui-dialog' + (wide ? ' ui-dialog-wide' : '') + ' ' + className
+        'ui-dialog' +
+        (wide ? ' ui-dialog-wide' : '') +
+        (className ? ` ${className}` : '')
       }
-      aria-labelledby={titleId}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabel ? undefined : titleId}
       onCancel={(event) => {
         event.preventDefault();
         if (!busy) close.current();
@@ -226,6 +215,7 @@ export function Confirm({
   onClose,
   pending,
   error,
+  className = '',
 }: {
   title: string;
   children: ReactNode;
@@ -234,13 +224,14 @@ export function Confirm({
   onClose(): void;
   pending?: boolean;
   error?: string;
+  className?: string;
 }) {
   return (
     <Modal
       title={title}
       onClose={onClose}
       busy={pending}
-      className="confirm-dialog"
+      className={className}
     >
       <div className="dialog-body">
         {children}
@@ -267,13 +258,11 @@ export function DataTable<T>({
   rows,
   rowKey,
   empty = 'Không có dữ liệu.',
-  rowClassName,
 }: {
   columns: Column<T>[];
   rows: T[];
   rowKey(row: T): string;
   empty?: string;
-  rowClassName?(row: T): string;
 }) {
   return (
     <div className="ui-table-scroll">
@@ -281,7 +270,7 @@ export function DataTable<T>({
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column.key} scope="col" data-column={column.key}>
+              <th key={column.key} scope="col">
                 {column.label}
               </th>
             ))}
@@ -289,13 +278,9 @@ export function DataTable<T>({
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <tr key={rowKey(row)} className={rowClassName?.(row)}>
+            <tr key={rowKey(row)}>
               {columns.map((column) => (
-                <td
-                  key={column.key}
-                  data-label={column.label}
-                  data-column={column.key}
-                >
+                <td key={column.key} data-label={column.label}>
                   {column.render(row, index)}
                 </td>
               ))}
@@ -321,31 +306,71 @@ export function Pagination({
       <Button onClick={() => onChange(page - 1)} disabled={page <= 1}>
         Trang trước
       </Button>
-      <span aria-label={`Trang ${page}`}>{page}</span>
+      <span>Trang {page}</span>
       <Button onClick={() => onChange(page + 1)} disabled={!hasMore}>
         Trang sau
       </Button>
     </nav>
   );
 }
-const NoticeContext = createContext<((message: string) => void) | null>(null);
-export function NoticeProvider({ children }: { children: ReactNode }) {
+type NoticeKind =
+  | 'success'
+  | 'error'
+  | 'shift-success'
+  | 'shift-create-success'
+  | 'logout-success'
+  | 'logout-error'
+  | 'shift-edit-success'
+  | 'shift-assignment-success'
+  | 'employee-shift-success'
+  | 'inventory-success'
+  | 'employee-request-success'
+  | 'employee-request-reject-success';
+type NoticeContextValue = (
+  message: string,
+  kind?: NoticeKind,
+) => void;
+const NoticeContext = createContext<NoticeContextValue | null>(null);
+export function NoticeProvider({
+  children,
+  scope = null,
+}: {
+  children: ReactNode;
+  scope?: string | null;
+}) {
   const [message, setMessage] = useState('');
+  const [kind, setKind] = useState<NoticeKind | null>(null);
+  const previousScope = useRef(scope);
+  const showNotice: NoticeContextValue = (nextMessage, nextKind) => {
+    setMessage(nextMessage);
+    setKind(nextKind ?? null);
+  };
+  useEffect(() => {
+    if (previousScope.current === scope) return;
+    previousScope.current = scope;
+    if (kind === null) setMessage('');
+  }, [scope, kind]);
   useEffect(() => {
     if (!message) return;
     const timer = window.setTimeout(() => setMessage(''), 5000);
     return () => window.clearTimeout(timer);
   }, [message]);
   return (
-    <NoticeContext.Provider value={setMessage}>
+    <NoticeContext.Provider value={showNotice}>
       {children}
       {message && (
-        <div className="ui-notice" role="status">
+        <div
+          className={`ui-notice${kind === 'logout-error' ? ' ui-notice-error' : ''}${kind ? ` ui-notice-${kind}` : ''}`}
+          role="status"
+        >
           {message}
           <button
             type="button"
             aria-label="Đóng thông báo"
-            onClick={() => setMessage('')}
+            onClick={() => {
+              setMessage('');
+              setKind(null);
+            }}
           >
             ×
           </button>

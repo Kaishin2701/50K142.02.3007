@@ -22,6 +22,9 @@ test('local PostgreSQL preserves committed data across close and reopen',async()
   const homepage=await request(app).get('/');
   assert.match(homepage.text,/<div id="root"><\/div>/);
   assert.equal(homepage.headers['cache-control'],'no-cache');
+  const contentSecurityPolicy=homepage.headers['content-security-policy'] as string;
+  assert.ok(contentSecurityPolicy.includes("img-src 'self' data:"));
+  assert.ok(!contentSecurityPolicy.includes('img.vietqr.io'));
   assert.equal((await request(app).get('/api/users')).status,401);
  }finally{await db.close();await rm(directory,{recursive:true,force:true});}
 });

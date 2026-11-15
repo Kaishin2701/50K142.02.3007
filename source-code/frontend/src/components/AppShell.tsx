@@ -2,109 +2,72 @@ import { useState, type ReactNode } from 'react';
 import { useSession } from '../app/auth';
 import { useTask } from '../app/data';
 import { useRouter, type Page } from '../app/router';
-import { Button, Confirm } from './ui';
+import { store } from '../app/store';
+import accountsIcon from '../assets/sidebar/accounts.png';
+import ordersIcon from '../assets/sidebar/orders.png';
+import overviewIcon from '../assets/sidebar/overview.png';
+import salesIcon from '../assets/sidebar/sales.png';
+import scheduleIcon from '../assets/sidebar/schedule.png';
+import stockIcon from '../assets/sidebar/stock.png';
+import { Button, Confirm, useNotice } from './ui';
+
+const navIcons = {
+  overview: { image: overviewIcon, width: 20 },
+  sales: { image: salesIcon, width: 20 },
+  orders: { image: ordersIcon, width: 19.5 },
+  stock: { image: stockIcon, width: 20 },
+  accounts: { image: accountsIcon, width: 22 },
+  shifts: { image: scheduleIcon, width: 20 },
+};
+
+type NavIconType = keyof typeof navIcons;
 
 type Link = {
   page: Page;
   label: string;
-  icon: string;
-  activeIcon: string;
-  assets?: string;
+  iconType: NavIconType;
+  hasSub?: boolean;
 };
+
 const managerLinks: Link[] = [
-  {
-    page: 'reports',
-    label: 'Tổng quan',
-    icon: 'ed483.svg',
-    activeIcon: '4d779.svg',
-  },
-  {
-    page: 'orders',
-    label: 'Quản lý đơn hàng',
-    icon: '97b10.svg',
-    activeIcon: '0094a.svg',
-  },
-  { page: 'stock', label: 'Kho', icon: '9090e.svg', activeIcon: '8bfd0.svg' },
-  {
-    page: 'accounts',
-    label: 'Quản lý tài khoản',
-    icon: 'bce45.svg',
-    activeIcon: 'f0d04.svg',
-  },
-  {
-    page: 'shifts',
-    label: 'Quản lý ca',
-    icon: 'be514.svg',
-    activeIcon: 'c0874.svg',
-  },
+  { page: 'reports', label: 'Tổng quan', iconType: 'overview' },
+  { page: 'orders', label: 'Quản lý đơn hàng', iconType: 'orders', hasSub: true },
+  { page: 'stock', label: 'Kho', iconType: 'stock', hasSub: true },
+  { page: 'accounts', label: 'Quản lý tài khoản', iconType: 'accounts' },
+  { page: 'shifts', label: 'Quản lý ca', iconType: 'shifts' },
 ];
+
 const employeeLinks: Link[] = [
-  {
-    page: 'sales',
-    label: 'Bán hàng',
-    icon: 'c2dde.svg',
-    activeIcon: 'fa371.svg',
-  },
-  {
-    page: 'orders',
-    label: 'Quản lý đơn hàng',
-    icon: '97b10.svg',
-    activeIcon: '0094a.svg',
-  },
-  { page: 'count', label: 'Kho', icon: '9090e.svg', activeIcon: '8bfd0.svg' },
-  {
-    page: 'schedule',
-    label: 'Lịch làm việc của tôi',
-    icon: 'be514.svg',
-    activeIcon: 'c0874.svg',
-  },
+  { page: 'sales', label: 'Bán hàng', iconType: 'sales' },
+  { page: 'orders', label: 'Quản lý đơn hàng', iconType: 'orders', hasSub: true },
+  { page: 'count', label: 'Kho', iconType: 'stock', hasSub: true },
+  { page: 'schedule', label: 'Lịch làm việc của tôi', iconType: 'shifts', hasSub: true },
 ];
+
 const stockPages: Page[] = ['stock', 'receipts', 'losses', 'count', 'closing'];
+
+function NavIcon({ type }: { type: NavIconType }) {
+  const { image, width } = navIcons[type];
+  return (
+    <span className="nav-icon" aria-hidden="true">
+      <span
+        className="nav-icon-image"
+        style={{ maskImage: `url("${image}")`, width }}
+      />
+    </span>
+  );
+}
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, logout } = useSession();
   const { page, go } = useRouter();
+  const notice = useNotice();
   const [menuOpen, setMenuOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const task = useTask();
   const manager = user!.vai_tro === 'Quản lý';
   const links = manager ? managerLinks : employeeLinks;
-  const breadcrumbs: Record<Page, string> = {
-    reports: 'TỔNG QUAN / BÁO CÁO DOANH THU',
-    accounts: 'QUẢN LÝ TÀI KHOẢN / DANH SÁCH TÀI KHOẢN',
-    shifts: 'QUẢN LÝ CA / LỊCH LÀM VIỆC',
-    schedule: 'LỊCH LÀM VIỆC CỦA TÔI',
-    sales: 'BÁN HÀNG',
-    orders: manager
-      ? 'QUẢN LÝ ĐƠN HÀNG / LỊCH SỬ ĐƠN HÀNG'
-      : 'QUẢN LÝ ĐƠN HÀNG / THEO DÕI TRẠNG THÁI',
-    stock: 'KHO / TỔNG HỢP TỒN KHO',
-    receipts: 'KHO / LỊCH SỬ NHẬP HÀNG',
-    losses: 'KHO / LỊCH SỬ HAO HỤT',
-    count: 'KHO / KIỂM KÊ NGUYÊN LIỆU',
-    closing: manager
-      ? 'KHO / DUYỆT BÁO CÁO CUỐI CA'
-      : 'KHO / LẬP VÀ GỬI BÁO CÁO CUỐI CA',
-  };
-  const active = (next: Page) =>
-    page === next ||
-    ((next === 'stock' || next === 'count') && stockPages.includes(page));
-  const iconPath = (filename: string) => {
-    const folders: Record<string, string> = {
-      '4d779.svg': '261-37926',
-      '0094a.svg': '261-54234',
-      '8bfd0.svg': '261-39479',
-      'f0d04.svg': '261-28400',
-      'c0874.svg': '261-31725',
-      'b46ed.svg': '261-50660',
-      'c2dde.svg': '261-46793',
-      'ed483.svg': '261-28400',
-      'daaae.svg': '261-37926',
-      '5424e.svg': '261-39479',
-    };
-    if (filename === 'fa371.svg') return '/assets/figma/261-50660/fa371.svg';
-    return `/assets/figma/${folders[filename] ?? '261-37926'}/${filename}`;
-  };
+
   const initials = user!.ho_ten
     .trim()
     .split(/\s+/)
@@ -112,15 +75,26 @@ export function AppShell({ children }: { children: ReactNode }) {
     .map((word) => word[0])
     .join('')
     .toUpperCase();
+
   const navigate = (next: Page) => {
     setMenuOpen(false);
-    if (next === page)
-      window.dispatchEvent(
-        new CustomEvent('me-page-reselect', { detail: next }),
-      );
     go(next);
   };
-  const subLinks: { page: Page; label: string }[] = manager
+
+  const isStockActive = stockPages.includes(page);
+  const isOrdersActive = page === 'orders';
+  const confirmLogout = async () => {
+    const succeeded = await task.run(logout);
+    setLoggingOut(false);
+    notice(
+      succeeded
+        ? 'Đăng xuất thành công!'
+        : 'Đăng xuất chưa thành công. Vui lòng thử lại',
+      succeeded ? 'logout-success' : 'logout-error',
+    );
+  };
+
+  const stockSubLinks: { page: Page; label: string }[] = manager
     ? [
         { page: 'stock', label: 'Tổng hợp tồn kho' },
         { page: 'receipts', label: 'Lịch sử nhập hàng' },
@@ -131,14 +105,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         { page: 'count', label: 'Kiểm kê nguyên liệu' },
         { page: 'closing', label: 'Lập và gửi báo cáo cuối ca' },
       ];
+
+  const orderSubLinks: { page: Page; label: string }[] = manager
+    ? [{ page: 'orders', label: 'Lịch sử đơn hàng' }]
+    : [{ page: 'orders', label: 'Theo dõi trạng thái đơn hàng' }];
+
   return (
-    <div
-      className="app-shell"
-      data-page={page}
-      data-role={manager ? 'manager' : 'employee'}
-    >
+    <div className="app-shell">
       <header className="mobile-bar">
-        <strong>Mê Cà Phê</strong>
+        <strong>{store.shortName}</strong>
         <Button
           aria-label="Mở menu điều hướng"
           aria-expanded={menuOpen}
@@ -147,6 +122,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           ☰
         </Button>
       </header>
+
       {menuOpen && (
         <button
           className="sidebar-backdrop"
@@ -154,8 +130,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           onClick={() => setMenuOpen(false)}
         />
       )}
+
       <aside
-        className={'app-sidebar' + (menuOpen ? ' is-open' : '')}
+        className={`app-sidebar ${manager ? 'is-manager' : 'is-employee'}${menuOpen ? ' is-open' : ''}`}
         aria-label="Thanh điều hướng"
       >
         <a
@@ -166,60 +143,68 @@ export function AppShell({ children }: { children: ReactNode }) {
             navigate(manager ? 'reports' : 'sales');
           }}
         >
-          <img src="/assets/figma/261-37926/b4c0b.png" alt="Mê Cà Phê" />
+          <div className="brand-logo-card">
+            <img src="/logo.png" alt={store.name} />
+          </div>
         </a>
+
         <nav className="main-navigation" aria-label="Điều hướng chính">
-          {links.map((link) => (
-            <div key={link.page}>
-              <a
-                href={'#/' + link.page}
-                aria-current={active(link.page) ? 'page' : undefined}
-                onClick={(event) => {
-                  event.preventDefault();
-                  navigate(link.page);
-                }}
-              >
-                <span className="navigation-icon" aria-hidden="true">
-                  <img
-                    src={iconPath(
-                      active(link.page) ? link.activeIcon : link.icon,
-                    )}
-                    alt=""
-                  />
-                </span>
-                {link.label}
-                {['orders', 'stock', 'count', 'schedule'].includes(
-                  link.page,
-                ) && (
-                  <img
-                    className="navigation-chevron"
-                    src={iconPath(
-                      active(link.page) ? '5424e.svg' : 'daaae.svg',
-                    )}
-                    alt=""
-                  />
-                )}
-              </a>
-              {link.page === 'orders' && page === 'orders' && (
-                <nav className="sub-navigation" aria-label="Chức năng đơn hàng">
-                  <a
-                    href="#/orders"
-                    aria-current="page"
-                    onClick={(e) => e.preventDefault()}
+          {links.map((link) => {
+            const isStockLink = link.page === 'stock' || link.page === 'count';
+            const isOrdersLink = link.page === 'orders';
+
+            const isActive =
+              (isStockLink && isStockActive) ||
+              (isOrdersLink && isOrdersActive) ||
+              (!isStockLink && !isOrdersLink && page === link.page);
+
+            const isExpanded =
+              (isStockLink && isStockActive) || (isOrdersLink && isOrdersActive);
+
+            return (
+              <div key={link.page} className="nav-item-wrapper">
+                <a
+                  href={'#/' + link.page}
+                  className={`nav-main-link${isActive ? ' is-active' : ''}`}
+                  aria-current={isActive ? 'page' : undefined}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    navigate(link.page);
+                  }}
+                >
+                  <NavIcon type={link.iconType} />
+                  <span className="nav-label">{link.label}</span>
+                  {link.hasSub && (
+                    <span
+                      className={`nav-chevron${isExpanded ? ' is-expanded' : ''}`}
+                      aria-hidden="true"
+                    >
+                      <svg
+                        width="6"
+                        height="9"
+                        viewBox="0 0 6 9"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M1 1l3.5 3.5L1 8" />
+                      </svg>
+                    </span>
+                  )}
+                </a>
+
+                {isOrdersLink && isOrdersActive && (
+                  <nav
+                    className="sub-navigation"
+                    aria-label="Chức năng đơn hàng"
                   >
-                    {manager
-                      ? 'Lịch sử đơn hàng'
-                      : 'Theo dõi trạng thái đơn hàng'}
-                  </a>
-                </nav>
-              )}
-              {(link.page === 'stock' || link.page === 'count') &&
-                stockPages.includes(page) && (
-                  <nav className="sub-navigation" aria-label="Chức năng kho">
-                    {subLinks.map((sub) => (
+                    {orderSubLinks.map((sub) => (
                       <a
                         href={'#/' + sub.page}
-                        key={sub.page}
+                        key={sub.label}
+                        className={`sub-nav-link${page === sub.page ? ' is-active' : ''}`}
                         aria-current={page === sub.page ? 'page' : undefined}
                         onClick={(event) => {
                           event.preventDefault();
@@ -231,15 +216,39 @@ export function AppShell({ children }: { children: ReactNode }) {
                     ))}
                   </nav>
                 )}
-            </div>
-          ))}
+
+                {isStockLink && isStockActive && (
+                  <nav
+                    className="sub-navigation"
+                    aria-label="Chức năng kho"
+                  >
+                    {stockSubLinks.map((sub) => (
+                      <a
+                        href={'#/' + sub.page}
+                        key={sub.page}
+                        className={`sub-nav-link${page === sub.page ? ' is-active' : ''}`}
+                        aria-current={page === sub.page ? 'page' : undefined}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          navigate(sub.page);
+                        }}
+                      >
+                        {sub.label}
+                      </a>
+                    ))}
+                  </nav>
+                )}
+              </div>
+            );
+          })}
         </nav>
+
         <div className="sidebar-bottom">
-          <div className="profile">
-            <span className="avatar">{initials}</span>
-            <div>
-              <strong>{user!.ho_ten}</strong>
-              <small>{user!.vai_tro}</small>
+          <div className="profile-card">
+            <span className="profile-avatar">{initials}</span>
+            <div className="profile-info">
+              <strong className="profile-name">{user!.ho_ten}</strong>
+              <small className="profile-role">{user!.vai_tro}</small>
             </div>
           </div>
           <button
@@ -249,21 +258,36 @@ export function AppShell({ children }: { children: ReactNode }) {
               setLoggingOut(true);
             }}
           >
-            <span aria-hidden="true">↪</span>Đăng xuất
+            <span className="logout-icon" aria-hidden="true">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M7.5 6.5 4 10a2 2 0 0 0 1.4 3.4H20m-5-5 5 5-5 5" />
+              </svg>
+            </span>
+            <span>Đăng xuất</span>
           </button>
         </div>
       </aside>
+
       <main className="app-main" id="main-content">
-        <p className="app-breadcrumb">{breadcrumbs[page]}</p>
         {children}
       </main>
+
       {loggingOut && (
         <Confirm
           title="Đăng xuất"
+          className="logout-confirm-modal"
           onClose={() => setLoggingOut(false)}
-          onConfirm={() => void task.run(logout)}
+          onConfirm={() => void confirmLogout()}
           pending={task.pending}
-          error={task.error}
         >
           Bạn có chắc chắn muốn đăng xuất không?
         </Confirm>

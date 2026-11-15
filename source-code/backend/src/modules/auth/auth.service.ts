@@ -10,7 +10,7 @@ export async function hashPassword(password: string) {
   const key = await scrypt(password, salt, 64) as Buffer;
   return `scrypt$${salt}$${key.toString('hex')}`;
 }
-async function verify(password: string, stored: string) {
+export async function verifyPassword(password: string, stored: string) {
   const [algorithm,salt,hex] = stored.split('$');
   if (algorithm !== 'scrypt' || !salt || !hex) return false;
   const actual = await scrypt(password,salt,64) as Buffer;
@@ -23,25 +23,31 @@ export const publicUser = (user: Row) => ({ ma_nguoi_dung:user.ma_nguoi_dung, te
 // Same-cost verification for usernames that do not exist.
 const dummy = hashPassword(randomBytes(32).toString('hex'));
 export function authService(db: Database, hours: number) {
+  const checkAccountStatus = (user: Row) => {
+    check(user.trang_thai==='Đang hoạt động', 'Tài khoản của bạn đã bị khóa.', 'ACCOUNT_LOCKED',401);
+  };
   return {
     login: async (username: string, password: string) => {
       const user = await repo.byUsername(db,username);
-      const valid = await verify(password,user?.mat_khau_bam ?? await dummy);
-      check(user && valid && user.trang_thai==='Đang hoạt động', 'Tài khoản hoặc mật khẩu không chính xác', 'INVALID_CREDENTIALS',401);
+      const valid = await verifyPassword(password,user?.mat_khau_bam ?? await dummy);
+      check(user && valid, 'Tài khoản hoặc mật khẩu không chính xác', 'INVALID_CREDENTIALS',401);
       const token = randomBytes(32).toString('base64url');
       await db.transaction(async tx => {
         await lock(tx,'tai_khoan');
         const current = await repo.byUsername(tx,username);
-        check(current && current.trang_thai==='Đang hoạt động' && current.mat_khau_bam===user.mat_khau_bam,
+        check(current && current.ma_nguoi_dung===user.ma_nguoi_dung && current.mat_khau_bam===user.mat_khau_bam,
           'Tài khoản hoặc mật khẩu không chính xác','INVALID_CREDENTIALS',401);
+        checkAccountStatus(current);
         await repo.createSession(tx,user.ma_nguoi_dung,tokenHash(token),hours);
       });
       return { token, user:publicUser(user) };
     },
     authenticate: async (token?: string): Promise<{actor:Actor;user:Row}> => {
       if (typeof token!=='string' || !token || token.length>256) throw new AppError(401,'UNAUTHENTICATED','Vui lòng đăng nhập.');
-      const user = await repo.session(db,tokenHash(token));
-      check(user,'Phiên đăng nhập đã hết hạn hoặc tài khoản bị khóa.','UNAUTHENTICATED',401);
+      const user = await repo.sessionByTokenHash(db,tokenHash(token));
+      check(user,'Phiên đăng nhập đã kết thúc.','UNAUTHENTICATED',401);
+      checkAccountStatus(user);
+      check(!user.thu_hoi_luc,'Phiên đăng nhập đã kết thúc.','UNAUTHENTICATED',401);
       return { actor:{id:user.ma_nguoi_dung,role:user.vai_tro,sessionId:user.ma_phien}, user:publicUser(user) };
     },
     logout: (actor: Actor) => repo.revoke(db,actor.sessionId),

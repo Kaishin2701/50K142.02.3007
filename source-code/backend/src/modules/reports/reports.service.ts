@@ -8,6 +8,7 @@ import { check } from '../../shared/errors.js';
 import { date } from '../../shared/validation.js';
 import { reportsRepository as repo } from './reports.repository.js';
 import { renderPdf } from '../../shared/pdf.js';
+import { store } from '../../config/store.js';
 export const revenueQuery=z.object({period:z.enum(['day','month','year']).default('day'),date,
  method:z.enum(['Tiền mặt','Chuyển khoản qua QR']).optional()}).strict();
 export function reportsService(db:Database,fontPath?:string){
@@ -24,14 +25,14 @@ export function reportsService(db:Database,fontPath?:string){
     const records=[['Khoảng thời gian',`${v.period}: ${v.date}`],['Tổng doanh thu',result.doanh_thu],['Số ly bán ra',result.so_ly],['Tiền mặt',result.tien_mat],['Chuyển khoản',result.chuyen_khoan],['Doanh thu đã chốt',result.doanh_thu_da_chot]];
     if(format==='xlsx'){
       const book=new ExcelJS.Workbook();const sheet=book.addWorksheet('Doanh thu');sheet.columns=[{width:30},{width:35}];
-      sheet.addRow(['Mê Cà Phê — Báo cáo doanh thu']);sheet.getRow(1).font={bold:true,size:16};
+      sheet.addRow([`${store.name} — Báo cáo doanh thu`]);sheet.getRow(1).font={bold:true,size:16};
       for(const row of records)sheet.addRow(row);sheet.addRow([]);sheet.addRow(['Ngày','Phương thức','Doanh thu','Số ly']);
       for(const row of result.items)sheet.addRow([row.ngay,row.phuong_thuc,row.doanh_thu,row.so_ly]);
       sheet.getColumn(3).width=25;sheet.getColumn(4).width=16;
       return Buffer.from(await book.xlsx.writeBuffer());
     }
     return renderPdf(doc=>{
-        doc.fontSize(20).text('Mê Cà Phê');doc.fontSize(16).text('Báo cáo doanh thu');doc.moveDown();
+        doc.fontSize(20).text(store.name);doc.fontSize(16).text('Báo cáo doanh thu');doc.moveDown();
         for(const [label,value] of records)doc.fontSize(11).text(`${label}: ${value}`);
         doc.moveDown();doc.fontSize(11).text('Chi tiết theo ngày và phương thức thanh toán');
         for(const item of result.items)doc.fontSize(10).text(`${item.ngay} | ${item.phuong_thuc} | ${new Intl.NumberFormat('vi-VN').format(BigInt(item.doanh_thu))} đ | ${item.so_ly} ly`);

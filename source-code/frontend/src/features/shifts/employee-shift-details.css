@@ -1,0 +1,136 @@
+.employee-shift-details-modal {
+  width: min(600px, calc(100% - 32px));
+  max-height: calc(100dvh - 40px);
+  border-radius: 20px;
+  background: #fffdfa;
+}
+
+.employee-shift-details-modal .dialog-surface {
+  display: flex;
+  min-height: 500px;
+  flex-direction: column;
+}
+
+.employee-shift-details-modal .dialog-header {
+  padding: 30px 31px 16px;
+  border-bottom: 0;
+}
+
+.employee-shift-details-modal .dialog-header h2 {
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.employee-shift-details-modal .dialog-header > .ui-button {
+  border: 0;
+  background: transparent;
+}
+
+.employee-shift-details-body {
+  flex: 1;
+  gap: 0;
+  padding: 8px 31px 20px;
+}
+
+.employee-shift-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+  margin: 0;
+}
+
+.employee-shift-details-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.employee-shift-details-field.is-date {
+  grid-column: 1 / -1;
+}
+
+.employee-shift-details-field dt,
+.employee-shift-details-coworkers h3 {
+  color: #4a3525;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.employee-shift-details-field dd {
+  display: flex;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  margin: 0;
+  padding: 10px 13px;
+  overflow-wrap: anywhere;
+  border: 1px solid #e5d6c4;
+  border-radius: 10px;
+  background: #faf6f0;
+}
+
+.employee-shift-details-coworkers {
+  margin-top: 42px;
+}
+
+.employee-shift-details-coworkers h3 {
+  margin: 0 0 8px;
+  color: #7d6657;
+}
+
+.employee-shift-details-coworkers p {
+  min-height: 20px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.employee-shift-details-actions {
+  gap: 16px;
+  padding: 16px 31px 30px;
+  border-top: 0;
+}
+
+.employee-shift-details-actions .ui-button {
+  min-height: 44px;
+}
+
+.employee-shift-details-actions .ui-button-secondary {
+  min-width: 150px;
+  background: #fffdfa;
+  color: #8f351f;
+}
+
+.employee-shift-details-actions .ui-button-primary {
+  min-width: 220px;
+}
+
+@media (max-width: 640px) {
+  .employee-shift-details-modal {
+    max-height: calc(100dvh - 24px);
+  }
+
+  .employee-shift-details-modal .dialog-surface {
+    min-height: 0;
+  }
+
+  .employee-shift-details-modal .dialog-header {
+    padding: 24px 20px 12px;
+  }
+
+  .employee-shift-details-modal .dialog-header h2 {
+    font-size: 20px;
+  }
+
+  .employee-shift-details-body {
+    padding: 8px 20px 20px;
+  }
+
+  .employee-shift-details-coworkers {
+    margin-top: 32px;
+  }
+
+  .employee-shift-details-actions {
+    padding: 14px 20px 20px;
+  }
+}

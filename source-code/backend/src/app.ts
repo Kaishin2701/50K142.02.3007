@@ -16,7 +16,7 @@ import { menuService } from './modules/menu/menu.service.js';
 import { menuRoutes } from './modules/menu/menu.routes.js';
 import { ordersService } from './modules/orders/orders.service.js';
 import { ordersRoutes } from './modules/orders/orders.routes.js';
-import { paymentsService,type Gateway } from './modules/payments/payments.service.js';
+import { paymentsService,type Gateway,type QrMode } from './modules/payments/payments.service.js';
 import { paymentsRoutes } from './modules/payments/payments.routes.js';
 import { shiftsService } from './modules/shifts/shifts.service.js';
 import { shiftsRoutes } from './modules/shifts/shifts.routes.js';
@@ -27,15 +27,16 @@ import { reportsRoutes } from './modules/reports/reports.routes.js';
 import { pageQuery } from './shared/validation.js';
 import { notificationList,notificationRead } from './shared/notifications.js';
 import { eventStream } from './shared/events.js';
-export type Options={db:Database;origins:string[];secureCookies?:boolean;sessionHours?:number;gateway:Gateway;webhookSecret?:string;autoConfirmQr?:boolean;pdfFontPath?:string;logErrors?:boolean;staticDir?:string;trustProxy?:number;sepay?:{secret:string;account:string}};
+export type Options={db:Database;origins:string[];secureCookies?:boolean;sessionHours?:number;gateway:Gateway;webhookSecret?:string;pdfFontPath?:string;logErrors?:boolean;staticDir?:string;trustProxy?:number;sepay?:{secret:string;account:string};demoQr?:boolean;qrMode?:Exclude<QrMode,'demo'>};
 export function createApp(options:Options){
  const {db}=options;const app=express();const hours=options.sessionHours??12;
  app.disable('x-powered-by');if(options.trustProxy)app.set('trust proxy',options.trustProxy);
- app.use(helmet({contentSecurityPolicy:{directives:{imgSrc:["'self'",'data:','https://vietqr.app']}}}));
+ app.use(helmet({contentSecurityPolicy:{directives:{imgSrc:["'self'",'data:']}}}));
  app.use(cors({origin:(origin,done)=>done(null,!origin||options.origins.includes(origin)),credentials:true}));
  app.use('/api',(_req,res,next)=>{res.setHeader('Cache-Control','no-store');next();});
  app.use(rateLimit({windowMs:60000,limit:300,standardHeaders:true,legacyHeaders:false,message:{error:{code:'RATE_LIMIT',message:'Quá nhiều yêu cầu. Vui lòng thử lại sau.'}}}));
- const payments=paymentsService(db,options.gateway,options.webhookSecret,options.autoConfirmQr);
+ const payments=paymentsService(db,options.gateway,options.webhookSecret,options.demoQr);
+ const qrMode:QrMode=options.demoQr?'demo':options.qrMode??'live';
  app.post('/api/payments/sepay/webhook',express.raw({type:'application/json',limit:'128kb'}),controller(async(req,res)=>{
    check(options.sepay,'Chưa cấu hình SePay.','PAYMENT_NOT_CONFIGURED',503);check(Buffer.isBuffer(req.body),'Yêu cầu webhook phải là application/json.','INVALID_WEBHOOK',400);
    await payments.sepayWebhook(req.body,req.get('Authorization'),options.sepay);res.json({success:true});
@@ -58,11 +59,11 @@ export function createApp(options:Options){
  app.use('/api/users',usersRoutes(usersService(db)));
  app.use('/api/menu',menuRoutes(menuService(db)));
  app.use('/api/orders',ordersRoutes(ordersService(db,options.pdfFontPath)));
- app.use('/api/payments',paymentsRoutes(payments));
+ app.use('/api/payments',paymentsRoutes(payments,qrMode));
  app.use('/api/shifts',shiftsRoutes(shiftsService(db)));
  app.use('/api/inventory',inventoryRoutes(inventoryService(db)));
  app.use('/api/reports',reportsRoutes(reportsService(db,options.pdfFontPath)));
- app.get('/api/events',eventStream(db,auth));
+ const events=eventStream(db,auth);app.get('/api/events',events);
  app.get('/api/notifications',controller(async req=>{const v=pageQuery.parse(req.query);return notificationList(db,req.actor!.id,v.limit,(v.page-1)*v.limit);}));
  app.post('/api/notifications/:id/read',controller(async req=>{
    const {id}=await import('./shared/validation.js');const notification=id.parse(req.params.id);
@@ -88,5 +89,5 @@ export function createApp(options:Options){
    if(error?.type==='entity.too.large'){res.status(413).json({error:{code:'BODY_TOO_LARGE',message:'Dữ liệu gửi lên quá lớn.'}});return;}
    if(options.logErrors)console.error('API error:',error instanceof Error?error.message:'Unknown error');
    res.status(500).json({error:{code:'INTERNAL_ERROR',message:'Không thể xử lý yêu cầu. Vui lòng thử lại.'}});
- };app.use(errorHandler);return app;
+ };app.use(errorHandler);return Object.assign(app,{closeEventStreams:events.closeAll});
 }

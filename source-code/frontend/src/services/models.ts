@@ -1,4 +1,6 @@
 export type Numeric = number | string;
+export type QrMode = 'demo' | 'live' | 'disabled';
+export type QrModeResponse = { mode: QrMode };
 export type User = {
   ma_nguoi_dung: string;
   ten_dang_nhap: string;
@@ -12,6 +14,7 @@ export type MenuItem = {
   ten_mon: string;
   danh_muc: string;
   don_gia_hien_tai: Numeric;
+  dang_hoat_dong: boolean;
 };
 export type CartLine = MenuItem & { so_luong: string };
 export type OrderLine = {
@@ -30,8 +33,10 @@ export type Payment = {
   so_tien_nhan?: Numeric;
   tien_thua?: Numeric;
   ma_tham_chieu_qr?: string;
+  qrContent?: string;
   qrImageUrl?: string;
-  autoConfirm?: boolean;
+  expiresAt?: string;
+  qr_mo_phong?: boolean;
 };
 export type Order = {
   ma_don: string;
@@ -66,6 +71,7 @@ export type Registration = {
   gio_ket_thuc: string;
   loai_dang_ky: 'Rảnh' | 'Mong muốn';
   ho_ten?: string;
+  da_phan_cong?: boolean;
 };
 export type CalendarData = { shifts: Shift[]; registrations: Registration[] };
 export type Candidate = {
@@ -83,18 +89,47 @@ export type ShiftRequest = {
   loai_yeu_cau: string;
   trang_thai: string;
   ly_do: string;
-  ca_hien_tai: Shift;
-  ca_dong_nghiep?: Shift;
+  ca_hien_tai: Pick<
+    Shift,
+    'ma_ca' | 'ngay_lam' | 'gio_bat_dau' | 'gio_ket_thuc'
+  >;
+  ca_dong_nghiep: Pick<
+    Shift,
+    'ma_ca' | 'ngay_lam' | 'gio_bat_dau' | 'gio_ket_thuc'
+  > | null;
 };
 export type Material = {
   ma_nguyen_lieu: string;
   ten_nguyen_lieu: string;
   don_vi_tinh: string;
   ton_ly_thuyet: Numeric;
+  ton_kha_dung: Numeric;
   ton_thuc_te_gan_nhat?: Numeric;
   muc_ton_toi_thieu: Numeric;
   nguong_chenh_lech: Numeric;
   trang_thai: string;
+  dang_hoat_dong: boolean;
+};
+export type RecipeLine = {
+  ma_mon: string;
+  ma_nguyen_lieu: string;
+  dinh_luong: Numeric;
+  ten_nguyen_lieu: string;
+  don_vi_tinh: string;
+};
+export type PreparationTicket = {
+  ma_don: string;
+  ma_don_hien_thi: string;
+  trang_thai_pha_che: Order['trang_thai_pha_che'];
+  items: { ten_mon: string; so_luong: Numeric }[];
+};
+export type Notification = {
+  ma_thong_bao: string;
+  loai: string;
+  noi_dung: string;
+  du_lieu: unknown;
+  tao_luc: string;
+  doc_luc: string | null;
 };
 export type CountPreview = {
   ma_ca: string;
@@ -107,6 +142,7 @@ export type CountLine = {
   don_vi_tinh: string;
   ton_thuc_te: Numeric;
   chenh_lech: Numeric;
+  muc_ton_toi_thieu: Numeric;
   ly_do_chenh_lech?: string;
   ghi_chu?: string;
 };

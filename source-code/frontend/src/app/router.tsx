@@ -8,6 +8,7 @@ import {
 } from 'react';
 import legacyRoutes from './legacy-routes.json';
 import { useSession } from './auth';
+import { store } from './store';
 
 export type Page =
   | 'reports'
@@ -91,7 +92,7 @@ export function RouterProvider({ children }: { children: ReactNode }) {
     startTransition(() => setRequested(fallback));
   }, [requested, allowed, fallback]);
   useEffect(() => {
-    document.title = 'Mê Cà Phê';
+    document.title = store.name;
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [page]);
   return <Context.Provider value={{ page, go }}>{children}</Context.Provider>;

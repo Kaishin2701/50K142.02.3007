@@ -4,6 +4,7 @@ import { useDataStore, useResource, useTask } from '../../app/data';
 import {
   addDays,
   dateText,
+  errorText,
   shiftText,
   shiftTime,
   timeText,
@@ -14,7 +15,6 @@ import { api } from '../../services/api';
 import type { Registration, Shift } from '../../services/models';
 import {
   Button,
-  Confirm,
   ErrorMessage,
   Field,
   Loading,
@@ -23,6 +23,10 @@ import {
   TextField,
   useNotice,
 } from '../../components/ui';
+import './availability-form.css';
+import './employee-shift-details.css';
+import './registration-details.css';
+import './shift-change-form.css';
 
 export function AvailabilityForm({
   date,
@@ -44,8 +48,21 @@ export function AvailabilityForm({
     setForm((previous) => ({ ...previous, [key]: value }));
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    if (
+      !form.date ||
+      !form.start ||
+      !form.end ||
+      (form.status !== 'Rảnh' && form.status !== 'Mong muốn')
+    ) {
+      task.setError('Vui lòng nhập đầy đủ thời gian và trạng thái đăng ký');
+      return;
+    }
+    if (form.date < today()) {
+      task.setError('Không thể đăng ký ngày trong quá khứ');
+      return;
+    }
     if (form.start >= form.end) {
-      task.setError('Giờ kết thúc phải sau giờ bắt đầu.');
+      task.setError('Giờ bắt đầu phải trước giờ kết thúc');
       return;
     }
     void task.run(async () => {
@@ -60,7 +77,7 @@ export function AvailabilityForm({
       });
       refresh();
       onClose();
-      notice('Gửi đăng ký thành công.');
+      notice('Đăng ký thành công', 'employee-shift-success');
     });
   };
   return (
@@ -68,56 +85,45 @@ export function AvailabilityForm({
       title="Đăng ký lịch rảnh hoặc ca muốn làm"
       onClose={onClose}
       busy={task.pending}
-      className="availability-dialog"
+      className="availability-form-modal"
     >
-      <form onSubmit={submit}>
-        <div className="dialog-body">
-          <div className="form-grid">
-            <Field
-              label="Ngày"
-              type="date"
-              min={today()}
-              value={form.date}
-              onChange={(event) => field('date', event.target.value)}
-              required
-            />
+      <form className="availability-form" noValidate onSubmit={submit}>
+        <div className="dialog-body availability-form-body">
+          <div className="form-grid availability-form-grid">
+            <div className="availability-form-date">
+              <Field
+                label="Ngày"
+                type="date"
+                min={today()}
+                value={form.date}
+                onChange={(event) => field('date', event.target.value)}
+              />
+            </div>
             <Field
               label="Giờ bắt đầu"
               type="time"
               value={form.start}
               onChange={(event) => field('start', event.target.value)}
-              required
             />
             <Field
               label="Giờ kết thúc"
-              type={form.end === '24:00' ? 'text' : 'time'}
-              readOnly={form.end === '24:00'}
+              type="time"
               value={form.end}
               onChange={(event) => field('end', event.target.value)}
-              required
             />
-            <label className="end-of-day-option">
-              <input
-                type="checkbox"
-                checked={form.end === '24:00'}
-                onChange={(event) =>
-                  field('end', event.target.checked ? '24:00' : '23:59')
-                }
-              />
-              Đến hết ngày (24:00)
-            </label>
-            <fieldset className="radio-field">
+            <fieldset className="availability-form-status">
               <legend>Trạng thái</legend>
-              <div className="radio-options">
-                {['Rảnh', 'Mong muốn'].map((value) => (
-                  <label key={value}>
+              <div className="availability-form-options">
+                {(['Rảnh', 'Mong muốn'] as const).map((status) => (
+                  <label key={status}>
                     <input
                       type="radio"
-                      name="availability-type"
-                      checked={form.status === value}
-                      onChange={() => field('status', value)}
+                      name="availability-status"
+                      value={status}
+                      checked={form.status === status}
+                      onChange={() => field('status', status)}
                     />
-                    {value}
+                    <span>{status}</span>
                   </label>
                 ))}
               </div>
@@ -139,73 +145,99 @@ export function AvailabilityForm({
 }
 export function RegistrationDetails({
   registration,
-  visibleRange,
   onClose,
+  onError,
 }: {
   registration: Registration;
-  visibleRange?: { start: string; end: string };
   onClose(): void;
+  onError?(message: string): void;
 }) {
   const [canceling, setCanceling] = useState(false);
   const task = useTask();
   const { refresh } = useDataStore();
   const notice = useNotice();
+  const cancel = async () => {
+    let message = '';
+    const succeeded = await task.run(async () => {
+      try {
+        await api(`/shifts/availability/${registration.ma_dang_ky}`, {
+          method: 'DELETE',
+        });
+      } catch (error) {
+        message = errorText(error);
+        throw error;
+      }
+      refresh();
+      setCanceling(false);
+      onClose();
+      notice('Hủy đăng ký thành công', 'employee-shift-success');
+    });
+    if (!succeeded && onError) {
+      setCanceling(false);
+      onClose();
+      onError(message);
+    }
+  };
   return (
     <>
       <Modal
-        title="Chi tiết đăng ký lịch làm việc"
+        title="Thông tin đăng ký"
         onClose={onClose}
         busy={task.pending}
+        className="registration-details-modal"
       >
-        <div className="dialog-body">
-          <dl className="detail-grid">
-            <dt>Ngày</dt>
-            <dd>{dateText(registration.ngay)}</dd>
-            <dt>Giờ bắt đầu</dt>
-            <dd>{visibleRange?.start ?? timeText(registration.gio_bat_dau)}</dd>
-            <dt>Giờ kết thúc</dt>
-            <dd>{visibleRange?.end ?? timeText(registration.gio_ket_thuc)}</dd>
-            <dt>Trạng thái</dt>
-            <dd>{registration.loai_dang_ky}</dd>
+        <div className="dialog-body registration-details-body">
+          <dl className="registration-details-list">
+            <div className="registration-details-date">
+              <dt>Ngày</dt>
+              <dd>{dateText(registration.ngay)}</dd>
+            </div>
+            <div>
+              <dt>Giờ bắt đầu</dt>
+              <dd>{timeText(registration.gio_bat_dau)}</dd>
+            </div>
+            <div>
+              <dt>Giờ kết thúc</dt>
+              <dd>{timeText(registration.gio_ket_thuc)}</dd>
+            </div>
+            <div className="registration-details-status">
+              <dt>Trạng thái</dt>
+              <dd>{registration.loai_dang_ky}</dd>
+            </div>
           </dl>
-          {visibleRange &&
-            (visibleRange.start !== timeText(registration.gio_bat_dau) ||
-              visibleRange.end !== timeText(registration.gio_ket_thuc)) && (
-              <p className="muted">
-                Đăng ký gốc: {timeText(registration.gio_bat_dau)}–
-                {timeText(registration.gio_ket_thuc)}. Lịch chỉ hiển thị các
-                khung giờ còn trống.
-              </p>
-            )}
-          <ErrorMessage message={task.error} />
         </div>
         <footer className="dialog-actions">
-          <Button onClick={onClose}>Đóng</Button>
-          <Button variant="danger" onClick={() => setCanceling(true)}>
-            Hủy đăng ký
+          <Button
+            onClick={() => setCanceling(true)}
+            disabled={task.pending}
+          >
+            Hủy
           </Button>
         </footer>
       </Modal>
       {canceling && (
-        <Confirm
-          title="Hủy đăng ký lịch làm việc"
-          pending={task.pending}
-          error={task.error}
+        <Modal
+          title="Bạn có chắc chắn muốn hủy đăng ký này không?"
+          className="registration-cancel-confirm"
           onClose={() => setCanceling(false)}
-          onConfirm={() =>
-            void task.run(async () => {
-              await api('/shifts/availability/' + registration.ma_dang_ky, {
-                method: 'DELETE',
-              });
-              setCanceling(false);
-              onClose();
-              refresh();
-              notice('Hủy đăng ký thành công.');
-            })
-          }
+          busy={task.pending}
         >
-          Bạn có chắc chắn muốn hủy đăng ký này không?
-        </Confirm>
+          <div className="dialog-body">
+            <ErrorMessage message={task.error} />
+          </div>
+          <footer className="dialog-actions">
+            <Button onClick={() => setCanceling(false)} disabled={task.pending}>
+              Không
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => void cancel()}
+              disabled={task.pending}
+            >
+              Xác nhận
+            </Button>
+          </footer>
+        </Modal>
       )}
     </>
   );
@@ -221,26 +253,41 @@ export function EmployeeShiftDetails({
   const [requesting, setRequesting] = useState(false);
   return (
     <>
-      <Modal title="Chi tiết ca làm" onClose={onClose}>
-        <div className="dialog-body">
-          <dl className="detail-grid">
-            <dt>Ngày làm</dt>
-            <dd>{dateText(shift.ngay_lam)}</dd>
-            <dt>Giờ bắt đầu</dt>
-            <dd>{timeText(shift.gio_bat_dau)}</dd>
-            <dt>Giờ kết thúc</dt>
-            <dd>{timeText(shift.gio_ket_thuc)}</dd>
-            <dt>Nhân viên làm cùng ca</dt>
-            <dd>
+      <Modal
+        title="Thông tin ca làm"
+        onClose={onClose}
+        className="employee-shift-details-modal"
+      >
+        <div className="dialog-body employee-shift-details-body">
+          <dl className="employee-shift-details-grid">
+            <div className="employee-shift-details-field is-date">
+              <dt>Ngày làm</dt>
+              <dd>{dateText(shift.ngay_lam)}</dd>
+            </div>
+            <div className="employee-shift-details-field">
+              <dt>Giờ bắt đầu</dt>
+              <dd>{timeText(shift.gio_bat_dau)}</dd>
+            </div>
+            <div className="employee-shift-details-field">
+              <dt>Giờ kết thúc</dt>
+              <dd>{timeText(shift.gio_ket_thuc)}</dd>
+            </div>
+          </dl>
+          <section className="employee-shift-details-coworkers">
+            <h3>Nhân viên làm cùng ca</h3>
+            <p>
               {shift.nhan_vien
-                .filter((person) => person.ma_nhan_vien !== user!.ma_nguoi_dung)
+                .filter(
+                  (person) =>
+                    user && person.ma_nhan_vien !== user.ma_nguoi_dung,
+                )
                 .map((person) => person.ho_ten)
                 .join(' · ') || '—'}
-            </dd>
-          </dl>
+            </p>
+          </section>
         </div>
-        <footer className="dialog-actions">
-          <Button onClick={onClose}>Đóng</Button>
+        <footer className="dialog-actions employee-shift-details-actions">
+          <Button onClick={onClose}>Hủy</Button>
           <Button
             variant="primary"
             disabled={shiftTime(shift) <= Date.now()}
@@ -254,10 +301,6 @@ export function EmployeeShiftDetails({
         <ShiftChangeForm
           shift={shift}
           onClose={() => setRequesting(false)}
-          onSaved={() => {
-            setRequesting(false);
-            onClose();
-          }}
         />
       )}
     </>
@@ -267,11 +310,9 @@ type Coworker = { ma_nguoi_dung: string; ho_ten: string; shifts: Shift[] };
 function ShiftChangeForm({
   shift,
   onClose,
-  onSaved,
 }: {
   shift: Shift;
   onClose(): void;
-  onSaved(): void;
 }) {
   const from = weekStart();
   const colleagues = useResource<Coworker[]>(
@@ -286,12 +327,21 @@ function ShiftChangeForm({
   });
   const task = useTask();
   const { refresh } = useDataStore();
-  const notice = useNotice();
+  const [sent, setSent] = useState(false);
   const partner = colleagues.data.find(
     (person) => person.ma_nguoi_dung === form.colleague,
   );
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    if (sent || task.pending) return;
+    if (
+      !form.colleague ||
+      !form.reason.trim() ||
+      (form.type === 'Đổi ca hai chiều' && !form.otherShift)
+    ) {
+      task.setError('Vui lòng nhập đầy đủ thông tin yêu cầu');
+      return;
+    }
     void task.run(async () => {
       await api('/shifts/requests', {
         method: 'POST',
@@ -306,95 +356,118 @@ function ShiftChangeForm({
         },
       });
       refresh();
-      onSaved();
-      notice('Gửi yêu cầu thành công.');
+      setSent(true);
     });
   };
   return (
-    <Modal title="Đổi hoặc xoay ca" onClose={onClose} busy={task.pending}>
-      <form onSubmit={submit}>
-        <div className="dialog-body">
-          <p>Ca làm cần thay đổi</p>
-          <strong>{shiftText(shift)}</strong>
-          <Loading active={colleagues.loading} />
-          <ErrorMessage message={colleagues.error || task.error} />
-          <SelectField
-            label="Loại yêu cầu"
-            value={form.type}
-            onChange={(event) =>
-              setForm((previous) => ({
-                ...previous,
-                type: event.target.value,
-                otherShift: '',
-              }))
-            }
-          >
-            <option>Đổi ca hai chiều</option>
-            <option>Nhờ nhân viên khác làm thay</option>
-          </SelectField>
-          <SelectField
-            label="Đồng nghiệp"
-            value={form.colleague}
-            onChange={(event) =>
-              setForm((previous) => ({
-                ...previous,
-                colleague: event.target.value,
-                otherShift: '',
-              }))
-            }
-            required
-          >
-            <option value="">Chọn đồng nghiệp</option>
-            {colleagues.data.map((person) => (
-              <option key={person.ma_nguoi_dung} value={person.ma_nguoi_dung}>
-                {person.ho_ten}
-              </option>
-            ))}
-          </SelectField>
-          {form.type === 'Đổi ca hai chiều' && (
+    <Modal
+      title="Gửi yêu cầu đổi hoặc xoay ca"
+      onClose={onClose}
+      busy={task.pending}
+      className="shift-change-form-modal"
+    >
+      <form className="shift-change-form" noValidate onSubmit={submit}>
+        <div className="dialog-body shift-change-form-body">
+          <Field
+            className="shift-change-source"
+            label="Ca làm cần thay đổi"
+            value={shiftText(shift)}
+            readOnly
+          />
+          <fieldset className="shift-change-types">
+            <legend>Loại yêu cầu</legend>
+            <div className="shift-change-type-options">
+              {(
+                [
+                  'Đổi ca hai chiều',
+                  'Nhờ nhân viên khác làm thay',
+                ] as const
+              ).map((type) => (
+                <label key={type}>
+                  <input
+                    type="radio"
+                    name="shift-change-type"
+                    value={type}
+                    checked={form.type === type}
+                    onChange={() =>
+                      setForm((previous) => ({
+                        ...previous,
+                        type,
+                        otherShift: '',
+                      }))
+                    }
+                  />
+                  <span>{type}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <div className="shift-change-fields">
             <SelectField
-              label="Ca làm của đồng nghiệp"
-              value={form.otherShift}
+              label="Đồng nghiệp"
+              value={form.colleague}
               onChange={(event) =>
                 setForm((previous) => ({
                   ...previous,
-                  otherShift: event.target.value,
+                  colleague: event.target.value,
+                  otherShift: '',
                 }))
               }
-              required
             >
-              <option value="">Chọn ca làm</option>
-              {partner?.shifts
-                .filter((other) => other.ma_ca !== shift.ma_ca)
-                .map((other) => (
-                  <option key={other.ma_ca} value={other.ma_ca}>
-                    {shiftText(other)}
-                  </option>
-                ))}
+              <option value="">Chọn đồng nghiệp</option>
+              {colleagues.data.map((person) => (
+                <option key={person.ma_nguoi_dung} value={person.ma_nguoi_dung}>
+                  {person.ho_ten}
+                </option>
+              ))}
             </SelectField>
-          )}
+            {form.type === 'Đổi ca hai chiều' && (
+              <SelectField
+                label="Ca làm của đồng nghiệp"
+                value={form.otherShift}
+                onChange={(event) =>
+                  setForm((previous) => ({
+                    ...previous,
+                    otherShift: event.target.value,
+                  }))
+                }
+              >
+                <option value="">Chọn ca làm</option>
+                {partner?.shifts
+                  .filter((other) => other.ma_ca !== shift.ma_ca)
+                  .map((other) => (
+                    <option key={other.ma_ca} value={other.ma_ca}>
+                      {shiftText(other)}
+                    </option>
+                  ))}
+              </SelectField>
+            )}
+          </div>
           <TextField
             label="Lý do"
             value={form.reason}
             onChange={(reason) =>
               setForm((previous) => ({ ...previous, reason }))
             }
-            required
           />
+          <Loading active={colleagues.loading} />
+          <ErrorMessage message={task.error || colleagues.error} />
         </div>
         <footer className="dialog-actions">
-          <Button onClick={onClose} disabled={task.pending}>
-            Hủy
-          </Button>
           <Button
             variant="primary"
             type="submit"
-            disabled={task.pending || colleagues.loading}
+            disabled={sent || task.pending || colleagues.loading}
           >
             Gửi yêu cầu
           </Button>
         </footer>
       </form>
+      {sent && (
+        <p className="ui-notice ui-notice-employee-request-success" role="status">
+          Gửi yêu cầu thành công.
+        </p>
+      )}
     </Modal>
   );
 }

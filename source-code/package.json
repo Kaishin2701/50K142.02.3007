@@ -7,7 +7,11 @@
     "build": "npm run build --prefix backend && npm run build --prefix frontend",
     "test": "npm test --prefix backend && npm test --prefix frontend",
     "start": "node backend/dist/server.js",
-    "local": "npm run dev:local --prefix backend -- --demo"
+    "local": "npm run dev:local --prefix backend --",
+    "local:demo": "npm run dev:local:demo --prefix backend --",
+    "local:credentials": "npm run local:credentials --prefix backend --"
   },
-  "engines": { "node": ">=24" }
+  "engines": {
+    "node": ">=24"
+  }
 }

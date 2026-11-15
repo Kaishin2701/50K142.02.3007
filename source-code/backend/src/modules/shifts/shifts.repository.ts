@@ -27,7 +27,11 @@ export const shiftsRepository={
  LEFT JOIN nguoi_dung u ON u.ma_nguoi_dung=p.ma_nhan_vien WHERE c.ngay_lam BETWEEN $1 AND $2
  AND ($3::uuid IS NULL OR EXISTS(SELECT 1 FROM phan_cong_ca p2 WHERE p2.ma_ca=c.ma_ca AND p2.ma_nhan_vien=$3 AND p2.dang_hieu_luc))
  GROUP BY c.ma_ca ORDER BY c.ngay_lam,c.gio_bat_dau`,[from,to,user]),
- availabilityList:(db:Database,from:string,to:string,user:string|null)=>rows(db,`SELECT d.*,u.ho_ten FROM dang_ky_lich_lam_viec d JOIN nguoi_dung u ON u.ma_nguoi_dung=d.ma_nhan_vien WHERE d.ngay BETWEEN $1 AND $2 AND d.thoi_diem_huy_dang_ky IS NULL AND ($3::uuid IS NULL OR d.ma_nhan_vien=$3) ORDER BY d.ngay,d.gio_bat_dau`,[from,to,user]),
+ availabilityList:(db:Database,from:string,to:string,user:string|null)=>rows(db,`SELECT d.*,u.ho_ten,
+ EXISTS(SELECT 1 FROM phan_cong_ca p WHERE p.ma_dang_ky_nguon=d.ma_dang_ky AND p.dang_hieu_luc) AS da_phan_cong
+ FROM dang_ky_lich_lam_viec d JOIN nguoi_dung u ON u.ma_nguoi_dung=d.ma_nhan_vien
+ WHERE d.ngay BETWEEN $1 AND $2 AND d.thoi_diem_huy_dang_ky IS NULL AND ($3::uuid IS NULL OR d.ma_nhan_vien=$3)
+ ORDER BY d.ngay,d.gio_bat_dau`,[from,to,user]),
  register:(db:Database,user:string,v:any)=>first(db,`INSERT INTO dang_ky_lich_lam_viec(ma_nhan_vien,ngay,gio_bat_dau,gio_ket_thuc,loai_dang_ky) VALUES($1,$2,$3,$4,$5) RETURNING *`,[user,v.ngay,v.gio_bat_dau,v.gio_ket_thuc,v.loai_dang_ky]),
  registration:(db:Database,id:string)=>first(db,`SELECT d.*,EXISTS(SELECT 1 FROM phan_cong_ca p WHERE p.ma_dang_ky_nguon=d.ma_dang_ky AND p.dang_hieu_luc) AS da_phan_cong FROM dang_ky_lich_lam_viec d WHERE ma_dang_ky=$1`,[id]),
  cancelRegistration:(db:Database,id:string)=>db.query('UPDATE dang_ky_lich_lam_viec SET thoi_diem_huy_dang_ky=now() WHERE ma_dang_ky=$1',[id]),
