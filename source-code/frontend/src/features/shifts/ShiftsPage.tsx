@@ -290,6 +290,7 @@ export default function ShiftsPage() {
       {dialog?.kind === 'registration' && selectedAvailability && (
         <RegistrationDetails
           registration={dialog.registration}
+          assignedShifts={calendar.data.shifts.filter(shift => shift.nhan_vien.some(person => person.ma_nhan_vien === user!.ma_nguoi_dung))}
           visibleRange={{
             start: selectedAvailability.startTime,
             end: selectedAvailability.endTime,

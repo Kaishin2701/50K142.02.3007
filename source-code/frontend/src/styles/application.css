@@ -2631,13 +2631,11 @@ h2 {
 .confirm-dialog .dialog-surface {
   display: flex;
   flex-direction: column;
-  min-height: 220px;
-}
-.confirm-dialog .dialog-header .ui-button {
-  display: none;
+  min-height: 218px;
 }
 .confirm-dialog .dialog-actions {
   margin-top: auto;
+  border-top: 0;
 }
 .confirm-dialog .dialog-actions .ui-button {
   min-width: 130px;
@@ -3000,3 +2998,35 @@ body, #root {
   width: 100%;
   min-height: var(--design-viewport-height, 100dvh);
 }
+
+/* Each confirmation follows its own Figma frame; forms keep their dividers. */
+.confirm-dialog .dialog-actions { gap: 12px; }
+.confirm-dialog .dialog-actions .ui-button { flex: 0 0 130px; min-width: 130px; }
+.confirm-dialog .dialog-actions .ui-button-primary { flex-basis: 150px; min-width: 150px; }
+.shift-confirm-dialog .dialog-actions { padding-bottom: 42px; }
+.shift-confirm-dialog .dialog-body { padding-top: 14px; padding-bottom: 0; font-size: 14px; line-height: 20px; }
+.account-status-dialog .dialog-surface { min-height: 266px; }
+.account-status-dialog .dialog-body { padding-top: 13px; }
+.account-status-dialog .dialog-actions { gap: 16px; }
+.account-status-summary { gap: 1px; font-size: 14px; line-height: 20px; }
+.account-status-summary > span { font-size: 12px; font-weight: 600; }
+.ui-dialog.closing-confirm-dialog { width: 560px; }
+.closing-confirm-dialog .dialog-surface { min-height: 278px; }
+.closing-confirm-dialog .dialog-body { padding-top: 26px; font-size: 14px; line-height: 20px; }
+.closing-confirm-dialog .dialog-actions { gap: 16px; }
+.closing-confirm-dialog .dialog-actions .ui-button-primary { flex-basis: 176px; min-width: 176px; }
+.ui-dialog.registration-cancel-dialog { width: 580px; }
+.registration-cancel-dialog .dialog-surface { min-height: 288px; }
+.registration-cancel-dialog .dialog-actions { gap: 16px; }
+.registration-cancel-dialog .dialog-actions .ui-button { flex-basis: 150px; min-width: 150px; }
+.registration-cancel-dialog .dialog-actions .ui-button-primary { flex-basis: 172px; min-width: 172px; }
+.logout-dialog .dialog-actions { border-top: 1px solid #e5d6c4; }
+.logout-dialog .dialog-actions .ui-button { flex-basis: 155px; min-width: 155px; }
+.logout-dialog .dialog-actions .ui-button-primary { flex-basis: 189px; min-width: 189px; }
+.low-stock-request-dialog .dialog-actions { border-top: 0; }
+.low-stock-request-dialog .dialog-actions .ui-button { flex: 0 0 250px; }
+.registration-detail-dialog .dialog-actions { border-top: 0; gap: 16px; }
+.registration-detail-dialog .dialog-actions .ui-button { flex: 0 0 150px; }
+.registration-detail-dialog .dialog-actions .ui-button-primary { flex-basis: 220px; }
+.shift-change-dialog .dialog-actions { border-top: 0; }
+.ui-notice { width: 375px; min-height: 52px; padding: 14px 13px; right: 25px; bottom: 28px; border-color: #296e4d; font-weight: 600; line-height: 20px; }

@@ -357,6 +357,7 @@ export default function AccountsPage() {
       )}
       {status && (
         <Confirm
+          className="account-status-dialog"
           title={
             status.trang_thai === 'Đã khóa'
               ? 'Kích hoạt tài khoản'

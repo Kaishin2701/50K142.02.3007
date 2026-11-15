@@ -268,6 +268,8 @@ export function ClosingDetails({
       </Modal>
       {confirming && (
         <Confirm
+          className="closing-confirm-dialog"
+          showClose
           title="Xác nhận báo cáo"
           pending={task.pending}
           error={task.error}
@@ -307,7 +309,7 @@ function LowStockMessages({ manager, onReport }: { manager: boolean; onReport(id
           { key: 'actual', label: 'Tồn thực tế', render: item => numberText(item.ton_thuc_te) },
           { key: 'minimum', label: 'Mức tồn tối thiểu', render: item => numberText(item.muc_ton_toi_thieu) },
         ]} /><ErrorMessage message={task.error} />
-      </div><footer className="dialog-actions"><Button onClick={() => setSelected(null)}>Đóng</Button><Button disabled={task.pending || !data.ma_bao_cao} onClick={() => void task.run(async () => {
+      </div><footer className="dialog-actions"><Button variant="primary" disabled={task.pending || !data.ma_bao_cao} onClick={() => void task.run(async () => {
         await api(`/inventory/close-reports/${data.ma_bao_cao}/request-low-stock-resend`, { method: 'POST' }); notice('Đã yêu cầu gửi lại thông tin nguyên liệu cần nhập'); setSelected(null); refresh();
       })}>Yêu cầu gửi lại</Button></footer>
     </Modal>}

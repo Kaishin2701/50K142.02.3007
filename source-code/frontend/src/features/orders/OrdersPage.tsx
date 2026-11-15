@@ -1,13 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import { useSession } from '../../app/auth';
-import { useDataStore, useResource, useTask } from '../../app/data';
+import { useResource } from '../../app/data';
 import { dateTimeText, money } from '../../app/format';
-import { api, download, query } from '../../services/api';
+import { query } from '../../services/api';
 import type { Order } from '../../services/models';
 import {
   Badge,
   Button,
-  Confirm,
   DataTable,
   ErrorMessage,
   Field,
@@ -17,7 +16,6 @@ import {
   Panel,
   Pagination,
   SelectField,
-  useNotice,
 } from '../../components/ui';
 
 const emptyFilters = { code: '', from: '', to: '', method: '', status: '' };
@@ -186,25 +184,8 @@ export default function OrdersPage() {
   );
 }
 function OrderDetails({ id, onClose }: { id: string; onClose(): void }) {
-  const { user } = useSession();
-  const employee = user!.vai_tro === 'Nhân viên';
   const detail = useResource<Order | null>('/orders/' + id, null);
-  const task = useTask();
-  const { refresh } = useDataStore();
-  const notice = useNotice();
-  const [canceling, setCanceling] = useState(false);
   const order = detail.data;
-  const phase = (action: 'start-preparing' | 'complete') =>
-    void task.run(async () => {
-      await api(`/orders/${id}/${action}`, { method: 'POST' });
-      if (action === 'complete') onClose();
-      refresh();
-      notice(
-        action === 'complete'
-          ? 'Đã ghi nhận hoàn tất pha chế.'
-          : 'Đã bắt đầu pha chế.',
-      );
-    });
   return (
     <>
       <Modal
@@ -214,12 +195,11 @@ function OrderDetails({ id, onClose }: { id: string; onClose(): void }) {
             : 'Chi tiết đơn hàng'
         }
         onClose={onClose}
-        busy={task.pending}
         wide
       >
         <div className="dialog-body">
           <Loading active={detail.loading} />
-          <ErrorMessage message={detail.error || task.error} />
+          <ErrorMessage message={detail.error} />
           {order && (
             <>
               <dl className="detail-grid">
@@ -276,76 +256,12 @@ function OrderDetails({ id, onClose }: { id: string; onClose(): void }) {
           )}
         </div>
         <footer className="dialog-actions">
-          <Button onClick={onClose} disabled={task.pending}>
+          <Button onClick={onClose}>
             Đóng
           </Button>
-          {order?.da_thanh_toan && (
-            <Button
-              disabled={task.pending}
-              onClick={() =>
-                void task.run(async () => {
-                  await download(
-                    `/orders/${id}/invoice.pdf`,
-                    `hoa-don-${order.ma_don_hien_thi}.pdf`,
-                  );
-                })
-              }
-            >
-              Xuất hóa đơn
-            </Button>
-          )}
-          {employee &&
-            order?.da_thanh_toan &&
-            order.trang_thai_pha_che === 'Chưa pha chế' && (
-              <Button
-                variant="primary"
-                disabled={task.pending}
-                onClick={() => phase('start-preparing')}
-              >
-                Bắt đầu pha chế
-              </Button>
-            )}
-          {employee && order?.trang_thai_pha_che === 'Bắt đầu pha chế' && (
-            <Button
-              variant="primary"
-              disabled={task.pending}
-              onClick={() => phase('complete')}
-            >
-              Hoàn tất pha chế
-            </Button>
-          )}
-          {employee && order && !order.da_thanh_toan && (
-            <Button
-              variant="danger"
-              onClick={() => {
-                task.setError('');
-                setCanceling(true);
-              }}
-            >
-              Hủy đơn
-            </Button>
-          )}
         </footer>
       </Modal>
-      {canceling && (
-        <Confirm
-          title="Hủy đơn"
-          pending={task.pending}
-          error={task.error}
-          onClose={() => setCanceling(false)}
-          onConfirm={() =>
-            void task.run(async () => {
-              await api('/orders/' + id, { method: 'DELETE' });
-              setCanceling(false);
-              onClose();
-              refresh();
-              notice('Hủy đơn thành công.');
-            })
-          }
-        >
-          Bạn có chắc chắn muốn hủy đơn #{order?.ma_don_hien_thi} không?
-        </Confirm>
-      )}
+
     </>
   );
 }

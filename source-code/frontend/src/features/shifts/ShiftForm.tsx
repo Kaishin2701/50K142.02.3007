@@ -206,6 +206,7 @@ export function ShiftForm({
       </Modal>
       {confirming && (
         <Confirm
+          className="shift-confirm-dialog"
           title="Chỉnh sửa ca làm"
           onClose={() => setConfirming(false)}
           onConfirm={save}

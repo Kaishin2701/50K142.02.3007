@@ -131,14 +131,18 @@ export function AvailabilityForm({
 }
 export function RegistrationDetails({
   registration,
+  assignedShifts = [],
   visibleRange,
   onClose,
 }: {
   registration: Registration;
+  assignedShifts?: Shift[];
   visibleRange?: { start: string; end: string };
   onClose(): void;
 }) {
   const [canceling, setCanceling] = useState(false);
+  const [requesting, setRequesting] = useState(false);
+  const changeableShifts = assignedShifts.filter(shift => shiftTime(shift) > Date.now());
   const task = useTask();
   const { refresh } = useDataStore();
   const notice = useNotice();
@@ -173,14 +177,15 @@ export function RegistrationDetails({
           <ErrorMessage message={task.error} />
         </div>
         <footer className="dialog-actions">
-          <Button onClick={onClose}>Đóng</Button>
-          <Button variant="danger" onClick={() => setCanceling(true)}>
-            Hủy đăng ký
+          <Button onClick={() => setCanceling(true)}>Hủy</Button>
+          <Button variant="primary" disabled={!changeableShifts.length} onClick={() => setRequesting(true)}>
+            Đổi hoặc xoay ca
           </Button>
         </footer>
       </Modal>
       {canceling && (
         <Confirm
+          className="registration-cancel-dialog"
           title="Bạn có chắc chắn muốn hủy đăng ký này không?"
           cancelLabel="Không"
           pending={task.pending}
@@ -200,6 +205,14 @@ export function RegistrationDetails({
         >
           {null}
         </Confirm>
+      )}
+      {requesting && changeableShifts.length > 0 && (
+        <ShiftChangeForm
+          shift={changeableShifts[0]}
+          sourceShifts={changeableShifts}
+          onClose={() => setRequesting(false)}
+          onSaved={() => { setRequesting(false); onClose(); }}
+        />
       )}
     </>
   );
@@ -255,14 +268,18 @@ export function EmployeeShiftDetails({
 }
 type Coworker = { ma_nguoi_dung: string; ho_ten: string; shifts: Shift[] };
 function ShiftChangeForm({
-  shift,
+  shift: initialShift,
+  sourceShifts = [],
   onClose,
   onSaved,
 }: {
   shift: Shift;
+  sourceShifts?: Shift[];
   onClose(): void;
   onSaved(): void;
 }) {
+  const [sourceId, setSourceId] = useState(initialShift.ma_ca);
+  const shift = sourceShifts.find(item => item.ma_ca === sourceId) ?? initialShift;
   const from = weekStart();
   const colleagues = useResource<Coworker[]>(
     `/shifts/co-workers?from=${from}&to=${addDays(from, 27)}`,
@@ -301,11 +318,14 @@ function ShiftChangeForm({
     });
   };
   return (
-    <Modal title="Đổi hoặc xoay ca" onClose={onClose} busy={task.pending}>
+    <Modal title="Gửi yêu cầu đổi hoặc xoay ca" className="shift-change-dialog" onClose={onClose} busy={task.pending}>
       <form onSubmit={submit}>
         <div className="dialog-body">
-          <p>Ca làm cần thay đổi</p>
-          <strong>{shiftText(shift)}</strong>
+          {sourceShifts.length > 1 ? (
+            <SelectField label="Ca làm cần thay đổi" value={sourceId} onChange={event => { setSourceId(event.target.value); setForm(previous => ({ ...previous, otherShift: '' })); }}>
+              {sourceShifts.map(item => <option key={item.ma_ca} value={item.ma_ca}>{shiftText(item)}</option>)}
+            </SelectField>
+          ) : <><p>Ca làm cần thay đổi</p><strong>{shiftText(shift)}</strong></>}
           <Loading active={colleagues.loading} />
           <ErrorMessage message={colleagues.error || task.error} />
           <SelectField
@@ -373,9 +393,6 @@ function ShiftChangeForm({
           />
         </div>
         <footer className="dialog-actions">
-          <Button onClick={onClose} disabled={task.pending}>
-            Hủy
-          </Button>
           <Button
             variant="primary"
             type="submit"

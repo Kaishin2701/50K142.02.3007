@@ -403,6 +403,21 @@ async function checkSale(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('native application architecture', () => {
+  it('keeps order details read-only even for paid employee orders', async () => {
+    const user = await startSale();
+    await checkSale(user);
+    order.da_thanh_toan = true;
+    await user.click(screen.getByRole('link', { name: 'Quản lý đơn hàng', exact: true }));
+    await user.click(await screen.findByRole('button', { name: '#' + order.ma_don_hien_thi, exact: true }));
+    const detail = await screen.findByRole('dialog', { name: 'Chi tiết đơn #' + order.ma_don_hien_thi });
+    expect(within(detail).queryByRole('button', { name: 'Xuất hóa đơn', exact: true })).toBeNull();
+    expect(within(detail).queryByRole('button', { name: 'Bắt đầu pha chế', exact: true })).toBeNull();
+    expect(within(detail).queryByRole('button', { name: 'Hoàn tất pha chế', exact: true })).toBeNull();
+    expect(within(detail).queryByRole('button', { name: 'Hủy đơn', exact: true })).toBeNull();
+    await user.click(within(detail).getAllByRole('button', { name: 'Đóng', exact: true }).at(-1)!);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(calls.filter(c => /start-preparing|complete|invoice\.pdf/.test(c.path))).toEqual([]);
+  });
   it('clears QR UI after cancelling an unpaid order and returning to an empty cart', async () => {
     qrEnabled = true;
     const user = await startSale(); await checkSale(user);
@@ -429,6 +444,7 @@ describe('native application architecture', () => {
     expect(within(detail).getByText(material.ten_nguyen_lieu)).toBeTruthy();
     expect(within(detail).getByText(employee.ho_ten)).toBeTruthy();
     expect(within(detail).getByRole('button', { name: 'Yêu cầu gửi lại' })).toBeTruthy();
+    expect(within(detail).getAllByRole('button', { name: 'Đóng', exact: true })).toHaveLength(1); // Header × only.
     await waitFor(() => expect(calls.some(c => c.path === '/notifications/notice-low-stock/read')).toBe(true));
   });
   it('distinguishes stock-entry validation from discrepancies and never saves an invalid count', async () => {
@@ -809,6 +825,39 @@ describe('native application architecture', () => {
     );
     expect(location.hash).toBe('#/schedule');
   });
+  it('keeps registration cancellation separate from requests that use actual assigned shifts', async () => {
+    activeUser = employee;
+    location.hash = '/schedule';
+    shifts = [{ ...shifts[0], ngay_lam: addDays(today(), 1), gio_bat_dau: '07:00', gio_ket_thuc: '12:00' }];
+    registrations = [{ ma_dang_ky: 'registration-only', ngay: addDays(today(), 2), gio_bat_dau: '10:00', gio_ket_thuc: '14:00', loai_dang_ky: 'Rảnh' }];
+    const previousFetch = vi.mocked(fetch).getMockImplementation()!;
+    vi.mocked(fetch).mockImplementation(async (input, options) => {
+      if (String(input).includes('/shifts/co-workers')) return response([{ ma_nguoi_dung: 'colleague', ho_ten: 'Partner', shifts: [] }]);
+      return previousFetch(input, options);
+    });
+    render(<App />);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: /10:00–14:00/ }));
+    let detail = screen.getByRole('dialog', { name: 'Thông tin đăng ký' });
+    expect(within(detail).queryByRole('button', { name: 'Hủy đăng ký', exact: true })).toBeNull();
+    await user.click(within(detail).getByRole('button', { name: 'Đổi hoặc xoay ca', exact: true }));
+    const change = screen.getByRole('dialog', { name: 'Gửi yêu cầu đổi hoặc xoay ca' });
+    expect(within(change).queryByRole('button', { name: 'Hủy', exact: true })).toBeNull();
+    await within(change).findByRole('option', { name: 'Partner' });
+    await user.selectOptions(within(change).getByLabelText('Loại yêu cầu'), 'Nhờ nhân viên khác làm thay');
+    await user.selectOptions(within(change).getByLabelText('Đồng nghiệp'), 'colleague');
+    await user.type(within(change).getByLabelText('Lý do'), 'Busy');
+    await user.click(within(change).getByRole('button', { name: 'Gửi yêu cầu' }));
+    await waitFor(() => expect(calls.some(c => c.path === '/shifts/requests' && c.method === 'POST')).toBe(true));
+    expect(calls.find(c => c.path === '/shifts/requests' && c.method === 'POST')!.body.ma_ca).toBe(shifts[0].ma_ca);
+    await user.click(screen.getByRole('button', { name: /10:00–14:00/ }));
+    detail = screen.getByRole('dialog', { name: 'Thông tin đăng ký' });
+    await user.click(within(detail).getByRole('button', { name: 'Hủy', exact: true }));
+    const cancellation = screen.getByRole('dialog', { name: 'Bạn có chắc chắn muốn hủy đăng ký này không?' });
+    await user.click(within(cancellation).getByRole('button', { name: 'Không', exact: true }));
+    expect(calls.some(c => c.method === 'DELETE')).toBe(false);
+    expect(screen.getByRole('dialog', { name: 'Thông tin đăng ký' })).toBe(detail);
+  });
   it('renders remaining employee availability chronologically and recomputes it with time and assignments', async () => {
     activeUser = employee;
     location.hash = '/schedule';
@@ -1071,6 +1120,7 @@ describe('native application architecture', () => {
         exact: true,
       }),
     );
+    expect(within(screen.getByRole('dialog', { name: 'Xác nhận báo cáo' })).getByRole('button', { name: 'Đóng', exact: true })).toBeTruthy();
     await user.click(
       within(
         screen.getByRole('dialog', { name: 'Xác nhận báo cáo' }),

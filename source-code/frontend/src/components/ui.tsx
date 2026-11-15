@@ -166,6 +166,7 @@ export function Modal({
   wide = false,
   className = '',
   inline = false,
+  showClose = true,
 }: {
   title: string;
   children: ReactNode;
@@ -174,6 +175,7 @@ export function Modal({
   wide?: boolean;
   className?: string;
   inline?: boolean;
+  showClose?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -221,14 +223,14 @@ export function Modal({
       <div className="dialog-surface">
         <header className="dialog-header">
           <h2 id={titleId}>{title}</h2>
-          <Button
+          {showClose && <Button
             variant="quiet"
             aria-label="Đóng"
             onClick={onClose}
             disabled={busy}
           >
             ×
-          </Button>
+          </Button>}
         </header>
         {children}
       </div>
@@ -245,6 +247,7 @@ export function Confirm({
   pending,
   error,
   className = '',
+  showClose = false,
 }: {
   title: string;
   children: ReactNode;
@@ -255,18 +258,22 @@ export function Confirm({
   pending?: boolean;
   error?: string;
   className?: string;
+  showClose?: boolean;
 }) {
   return (
     <Modal
       title={title}
       onClose={onClose}
       busy={pending}
+      showClose={showClose}
       className={'confirm-dialog ' + className}
     >
-      <div className="dialog-body">
-        {children}
-        <ErrorMessage message={error} />
-      </div>
+      {(children || error) && (
+        <div className="dialog-body">
+          {children}
+          <ErrorMessage message={error} />
+        </div>
+      )}
       <footer className="dialog-actions">
         <Button onClick={onClose} disabled={pending}>
           {cancelLabel}
