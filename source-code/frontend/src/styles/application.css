@@ -105,7 +105,7 @@ a {
   color: var(--muted);
 }
 .app-shell {
-  min-height: 100dvh;
+  min-height: var(--design-viewport-height, 100dvh);
 }
 .app-sidebar {
   position: fixed;
@@ -223,10 +223,7 @@ a {
   padding: 40px 20px 24px;
   min-width: 0;
 }
-.mobile-bar,
-.sidebar-backdrop {
-  display: none;
-}
+
 .page-header {
   display: flex;
   align-items: center;
@@ -464,7 +461,6 @@ a {
   max-width: 100%;
   min-width: 0;
   overflow-x: hidden;
-  container: data-table / inline-size;
 }
 .ui-table {
   width: 100%;
@@ -520,7 +516,7 @@ a {
   color: #4a3525;
   background: var(--surface);
   width: min(620px, calc(100% - 32px));
-  max-height: calc(100dvh - 48px);
+  max-height: calc(var(--design-viewport-height, 100dvh) - 48px);
   overflow: auto;
 }
 .ui-dialog-wide {
@@ -843,7 +839,7 @@ a {
   gap: 16px;
 }
 .login-page {
-  min-height: 100dvh;
+  min-height: var(--design-viewport-height, 100dvh);
   display: grid;
   grid-template-columns: minmax(300px, 40%) minmax(0, 1fr);
 }
@@ -897,276 +893,12 @@ a {
   gap: 16px;
   align-items: center;
   justify-content: center;
-  min-height: 100dvh;
+  min-height: var(--design-viewport-height, 100dvh);
 }
 .session-loading strong {
   font-size: 25px;
 }
-@media (max-width: 1280px) {
-  :root {
-    --sidebar-width: 260px;
-  }
-  .main-navigation {
-    padding: 0 10px;
-  }
-  .main-navigation a {
-    padding: 12px;
-    gap: 10px;
-  }
-  .app-main {
-    padding: 32px 18px 24px;
-  }
-  .sales-layout {
-    grid-template-columns: minmax(0, 1fr) 300px;
-    gap: 16px;
-  }
-  .ui-panel {
-    padding: 18px;
-  }
-  .calendar-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-  }
-  .calendar-day {
-    min-height: 230px;
-  }
-}
-@media (max-width: 1000px) {
-  .sales-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .checkout-panel {
-    position: static;
-  }
-  .cart-list {
-    max-height: none;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .metric-grid-three {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-@media (max-width: 900px) {
-  .mobile-bar {
-    display: flex;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    height: 64px;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    border-bottom: 1px solid var(--border);
-    background: #faf5ed;
-  }
-  .mobile-bar > strong {
-    font-size: 17px;
-  }
-  .app-sidebar {
-    inset: 76px auto 16px 12px;
-    width: min(310px, calc(100% - 32px));
-    transform: translateX(calc(-100% - 24px));
-    visibility: hidden;
-  }
-  .app-sidebar.is-open {
-    transform: none;
-    visibility: visible;
-  }
-  .sidebar-backdrop {
-    display: block;
-    position: fixed;
-    inset: 64px 0 0;
-    z-index: 35;
-    border: 0;
-    background: #4a35254d;
-  }
-  .app-main {
-    margin: 0;
-    padding: 24px 20px;
-  }
-  .brand {
-    min-height: 100px;
-  }
-  .brand img {
-    max-height: 70px;
-  }
-  .ui-field input,
-  .ui-field select,
-  .ui-field textarea {
-    font-size: 16px;
-  }
-  .ui-button {
-    min-height: 44px;
-  }
-  .calendar-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (max-width: 640px) {
-  .page-header {
-    align-items: flex-start;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  h1 {
-    font-size: 21px;
-  }
-  .app-main {
-    padding: 20px 14px;
-  }
-  .ui-panel {
-    padding: 16px;
-  }
-  .form-grid,
-  .metric-grid,
-  .payment-summary,
-  .cart-list {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .metric strong {
-    font-size: 27px;
-  }
-  .report-toolbar {
-    align-items: stretch;
-  }
-  .report-toolbar .ui-field {
-    width: 100%;
-  }
-  .filter-bar .ui-field {
-    flex-basis: calc(50% - 14px);
-  }
-  .ui-table thead {
-    display: none;
-  }
-  .ui-table,
-  .ui-table tbody,
-  .ui-table tr {
-    display: block;
-    width: 100%;
-  }
-  .ui-table tr {
-    margin: 12px 0;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .ui-table td {
-    display: grid;
-    grid-template-columns: minmax(80px, 38%) minmax(0, 1fr);
-    gap: 12px;
-    padding: 12px;
-    border-bottom: 1px solid #eee3d2;
-    min-width: 0;
-  }
-  .ui-table td:last-child {
-    border-bottom: 0;
-  }
-  .ui-table td::before {
-    content: attr(data-label);
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .ui-table td > * {
-    min-width: 0;
-  }
-  .ui-pagination {
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .ui-pagination .ui-button {
-    padding: 8px 12px;
-  }
-  .dialog-header {
-    padding: 18px;
-  }
-  .dialog-body {
-    padding: 18px;
-  }
-  .dialog-actions {
-    padding: 16px 18px;
-  }
-  .dialog-error {
-    padding: 0 18px;
-  }
-  .detail-grid {
-    grid-template-columns: minmax(90px, 40%) minmax(0, 1fr);
-    gap: 10px 14px;
-  }
-  .category-tabs {
-    flex-wrap: wrap;
-    padding-bottom: 6px;
-  }
-  .category-tabs .ui-button {
-    flex: 0 1 auto;
-  }
-  .calendar-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .calendar-day {
-    min-height: 0;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-  }
-  .calendar-day > header {
-    flex-direction: row;
-    justify-content: space-between;
-    min-height: 44px;
-    padding: 10px 14px;
-  }
-  .calendar-day header strong,
-  .calendar-day header span {
-    font-size: 13px;
-  }
-  .calendar-cards {
-    padding: 10px;
-  }
-  .shift-card-main,
-  .registration-card {
-    padding: 14px;
-  }
-  .shift-card-main strong {
-    font-size: 14px;
-  }
-  .shift-card-main span,
-  .shift-card-main small {
-    font-size: 12px;
-  }
-  .week-controls {
-    gap: 8px;
-    width: 100%;
-    justify-content: space-between;
-  }
-  .week-controls strong {
-    font-size: 11px;
-  }
-  .calendar-toolbar > .ui-button {
-    width: 100%;
-  }
-  .login-page {
-    display: block;
-  }
-  .login-brand {
-    min-height: 170px;
-    padding: 22px;
-    gap: 8px;
-  }
-  .login-brand img {
-    width: 64px;
-    height: 64px;
-  }
-  .login-brand h1 {
-    font-size: 25px;
-  }
-  .login-brand p {
-    font-size: 14px;
-  }
-  .login-form-region {
-    padding: 28px 18px;
-  }
-  .login-form {
-    padding: 24px 20px;
-  }
-}
+
 @media (prefers-reduced-motion: no-preference) {
   .ui-button,
   .main-navigation a {
@@ -1657,50 +1389,8 @@ a {
   .ui-field:nth-of-type(4) {
   flex: 1.4;
 }
-@media (max-width: 1100px) {
-  .app-shell[data-page='orders'] .order-filter-panel .filter-bar {
-    flex-wrap: wrap;
-  }
-  .metadata-grid,
-  .money-reconciliation-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .closing-report-row {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 16px;
-  }
-  .closing-money-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 640px) {
-  .money-reconciliation-grid,
-  .metadata-grid,
-  .closing-money-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .count-metadata-panel .metadata-grid > * {
-    order: initial !important;
-  }
-  .count-money-panel,
-  .closing-money-panel {
-    min-height: 0;
-  }
-  .closing-report-row {
-    grid-template-columns: 1fr;
-    padding: 16px;
-  }
-  .closing-status {
-    padding: 0 16px;
-  }
-  .count-stock-panel {
-    min-height: 0;
-  }
-  .quantity-stepper input {
-    font-size: 16px;
-  }
-}
+
+
 h1 {
   color: #1f140e;
   font-size: 28px;
@@ -2014,7 +1704,7 @@ h2 {
 }
 .ui-dialog {
   width: min(660px, calc(100% - 32px));
-  max-height: calc(100dvh - 40px);
+  max-height: calc(var(--design-viewport-height, 100dvh) - 40px);
   border-radius: 20px;
   background: #fffdfa;
   color: #4a3525;
@@ -2065,10 +1755,10 @@ h2 {
 .availability-dialog .dialog-surface {
   display: flex;
   flex-direction: column;
-  min-height: min(718px, calc(100dvh - 42px));
+  min-height: min(718px, calc(var(--design-viewport-height, 100dvh) - 42px));
 }
 .shift-form-dialog .dialog-surface {
-  min-height: min(738px, calc(100dvh - 42px));
+  min-height: min(738px, calc(var(--design-viewport-height, 100dvh) - 42px));
 }
 .account-form-dialog .dialog-actions,
 .shift-form-dialog .dialog-actions,
@@ -2087,7 +1777,7 @@ h2 {
   width: min(600px, calc(100% - 32px));
 }
 .availability-dialog .dialog-surface {
-  min-height: min(570px, calc(100dvh - 42px));
+  min-height: min(570px, calc(var(--design-viewport-height, 100dvh) - 42px));
 }
 .availability-dialog .radio-field {
   grid-column: 1 / -1;
@@ -2359,7 +2049,7 @@ h2 {
   height: 90px;
 }
 .inventory-stock .ui-table-scroll {
-  max-height: calc(100dvh - 280px);
+  max-height: calc(var(--design-viewport-height, 100dvh) - 280px);
 }
 .low-stock-row {
   background: #fcebe3;
@@ -2896,12 +2586,12 @@ h2 {
   grid-area: 1 / 1;
   max-width: none;
 }
-@media (min-width: 1281px) {
+
   :root {
     --sidebar-width: 310px;
   }
-}
-@media (min-width: 901px) {
+
+
   .app-shell[data-page='accounts'] .app-breadcrumb {
     margin-bottom: 16px;
   }
@@ -2934,334 +2624,9 @@ h2 {
   .app-shell[data-page='orders'] h1 {
     line-height: 42px;
   }
-}
-@media (min-width: 901px) and (max-width: 1280px) {
-  .sales-layout {
-    grid-template-columns: minmax(0, 1fr) 290px;
-  }
-  .report-toolbar {
-    gap: 10px;
-  }
-  .report-toolbar .segmented {
-    margin-right: 0;
-  }
-  .report-toolbar .ui-field {
-    flex: 1;
-    width: auto;
-    min-width: 160px;
-  }
-  .report-toolbar .segmented .ui-button {
-    width: 64px;
-  }
-  .calendar-day header strong {
-    font-size: 10px;
-  }
-}
-@media (max-width: 1100px) {
-  .account-list-panel .table-actions {
-    flex-wrap: wrap;
-  }
-  .account-list-panel .ui-table td {
-    height: auto;
-  }
-  .calendar-legend {
-    gap: 20px;
-  }
-}
-@media (max-width: 900px) {
-  .app-main {
-    margin: 0;
-    padding: 20px;
-  }
-  .page-header {
-    margin-bottom: 24px;
-  }
-  .page-header .ui-actions .ui-button {
-    min-width: 0;
-  }
-  .brand {
-    height: 150px;
-    min-height: 150px;
-    padding-top: 26px;
-  }
-  .brand img {
-    width: 101px;
-    height: 101px;
-  }
-  .ui-field input,
-  .ui-field select,
-  .ui-field textarea {
-    font-size: 16px;
-  }
-  .report-toolbar {
-    flex-wrap: wrap;
-  }
-  .report-toolbar .segmented {
-    margin-right: 0;
-  }
-  .report-toolbar .ui-field {
-    flex: 1;
-    min-width: 180px;
-  }
-  .report-filter-panel {
-    height: auto;
-  }
-  .sales-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .sales-main,
-  .checkout-panel {
-    min-height: 0;
-  }
-  .checkout-panel {
-    position: relative;
-    top: 0;
-  }
-  .checkout-cancel {
-    margin-top: 24px;
-  }
-  .calendar-grid {
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-  }
-  .calendar-panel,
-  .app-shell[data-role='employee'] .calendar-panel {
-    min-height: 580px;
-  }
-  .calendar-legend {
-    display: none;
-  }
-  .calendar-day header strong {
-    font-size: 10px;
-  }
-  .calendar-day > header {
-    padding: 14px 0;
-  }
-  .calendar-day header > .ui-button {
-    position: static;
-    margin-top: 6px;
-  }
-  .shift-card-main small {
-    overflow-wrap: anywhere;
-  }
-  .inventory-list-panel,
-  .account-list-panel {
-    min-height: 560px;
-  }
-  .inventory-stock .ui-table-scroll {
-    max-height: none;
-  }
-  .stock-alert {
-    min-height: 0;
-  }
-}
-@media (max-width: 640px) {
-  h1 {
-    font-size: 22px;
-    line-height: 30px;
-  }
-  .app-main {
-    padding: 18px 14px;
-  }
-  .app-breadcrumb {
-    font-size: 10px;
-  }
-  .page-header {
-    margin-bottom: 18px;
-    gap: 12px;
-  }
-  .ui-panel {
-    padding: 16px;
-  }
-  .ui-table td {
-    padding: 10px 12px !important;
-    min-height: 40px;
-  }
-  .ui-table th,
-  .ui-table td {
-    width: auto !important;
-  }
-  .order-list-panel .ui-table td {
-    height: auto;
-  }
-  .order-list-panel .ui-table [data-column='total'] {
-    text-align: left;
-  }
-  .account-list-panel > h2 {
-    padding-bottom: 12px;
-  }
-  .account-list-panel .table-actions {
-    flex-wrap: wrap;
-  }
-  .ui-pagination {
-    padding-top: 16px;
-    gap: 8px;
-  }
-  .ui-pagination .ui-button {
-    min-width: 0;
-  }
-  .report-toolbar {
-    gap: 12px;
-  }
-  .report-toolbar .segmented {
-    width: 100%;
-  }
-  .report-toolbar .segmented .ui-button {
-    flex: 1;
-    width: auto;
-  }
-  .report-toolbar .ui-field {
-    width: 100%;
-    flex-basis: 100%;
-  }
-  .report-toolbar > .ui-button {
-    width: 100%;
-  }
-  .report-period-panel {
-    height: auto;
-    min-height: 92px;
-  }
-  .report-metrics {
-    grid-template-columns: 1fr;
-  }
-  .report-payment-panel {
-    min-height: 230px;
-  }
-  .report-payment-panel .segmented {
-    flex-wrap: nowrap;
-    gap: 10px;
-    width: 100%;
-  }
-  .report-payment-panel .ui-button {
-    width: auto;
-    flex: 1;
-  }
-  .dialog-header {
-    padding: 22px 20px 0;
-  }
-  .dialog-header h2 {
-    font-size: 21px;
-  }
-  .dialog-body {
-    padding: 20px;
-  }
-  .dialog-actions {
-    margin-left: 20px;
-    margin-right: 20px;
-    padding-bottom: 20px;
-  }
-  .dialog-actions .ui-button {
-    min-width: 110px;
-  }
-  .dialog-error {
-    padding: 0 20px;
-  }
-  .account-form-dialog .dialog-surface,
-  .shift-form-dialog .dialog-surface,
-  .availability-dialog .dialog-surface {
-    min-height: 0;
-  }
-  .account-form-dialog .dialog-actions,
-  .shift-form-dialog .dialog-actions,
-  .availability-dialog .dialog-actions {
-    margin-top: 16px;
-  }
-  .form-grid {
-    gap: 18px;
-  }
-  .radio-options {
-    gap: 12px;
-  }
-  .calendar-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-  .calendar-day {
-    border: 1px solid #e5d6c4;
-  }
-  .calendar-day > header {
-    padding: 12px;
-    min-height: 44px;
-  }
-  .calendar-day header strong {
-    font-size: 13px;
-  }
-  .calendar-day header > .ui-button {
-    margin: 0;
-  }
-  .calendar-cards {
-    padding: 10px;
-  }
-  .calendar-cards:has(.calendar-empty) {
-    display: none;
-  }
-  .shift-card-main {
-    min-height: 140px;
-  }
-  .calendar-toolbar {
-    padding: 8px;
-    gap: 8px;
-  }
-  .week-controls {
-    flex: 1;
-    gap: 0;
-    width: auto;
-  }
-  .week-controls strong {
-    font-size: 11px;
-  }
-  .calendar-toolbar > .ui-button {
-    width: auto;
-  }
-  .calendar-toolbar .create-shift-action {
-    width: 100%;
-  }
-  .calendar-footer {
-    padding-top: 16px;
-  }
-  .menu-item .ui-button {
-    min-width: 64px;
-  }
-  .menu-list {
-    max-height: 480px;
-  }
-  .category-tabs {
-    margin: 0 0 12px;
-  }
-  .category-tabs .ui-button {
-    min-height: 36px;
-  }
-  .login-page {
-    display: block;
-  }
-  .login-brand {
-    padding: 24px;
-    min-height: 220px;
-  }
-  .login-brand img {
-    width: 72px;
-    height: 72px;
-    margin-bottom: 12px;
-  }
-  .login-brand h1 {
-    font-size: 26px;
-    line-height: 34px;
-    margin-bottom: 4px;
-  }
-  .login-brand p {
-    font-size: 14px;
-    line-height: 22px;
-  }
-  .login-form-region {
-    padding: 24px 16px;
-  }
-  .login-form {
-    min-height: 0;
-    padding: 28px 24px;
-  }
-}
 
 .ui-dialog.confirm-dialog {
-  width: min(460px, calc(100vw - 32px));
+  width: min(460px, calc(var(--design-viewport-width, 1440px) - 32px));
 }
 .confirm-dialog .dialog-surface {
   display: flex;
@@ -3281,8 +2646,7 @@ h2 {
   min-width: 150px;
 }
 
-/* Reflow content before containing overflow. Horizontal scrolling is never a
-   navigation mechanism, including inside tables, dialogs and menu categories. */
+/* Keep long dynamic content inside the single Figma composition. */
 html,
 body,
 #root {
@@ -3371,7 +2735,7 @@ body,
 }
 .week-controls {
   max-width: 100%;
-  gap: clamp(0px, 1vw, 16px);
+  gap: 16px;
 }
 .week-controls strong {
   min-width: 0;
@@ -3400,102 +2764,6 @@ body,
 .ui-notice > button {
   flex-shrink: 0;
 }
-.calendar-panel {
-  container: calendar / inline-size;
-}
-@container data-table (max-width: 840px) {
-  .ui-table thead {
-    display: none;
-  }
-  .ui-table,
-  .ui-table tbody,
-  .ui-table tr {
-    display: block;
-    width: 100%;
-  }
-  .ui-table tr {
-    margin: 12px 0;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-  }
-  .ui-table td {
-    display: grid;
-    grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
-    gap: 12px;
-    width: auto !important;
-    max-width: none !important;
-    min-width: 0;
-    height: auto !important;
-    min-height: 40px;
-    padding: 10px 12px !important;
-    text-align: left !important;
-  }
-  .ui-table td::before {
-    content: attr(data-label);
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .ui-table td[data-label=''] {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .ui-table td[data-label='']::before {
-    display: none;
-  }
-  .ui-table td > *,
-  .ui-table .ui-field,
-  .ui-table .table-actions {
-    min-width: 0;
-    max-width: 100%;
-  }
-  .ui-table .table-actions {
-    flex-wrap: wrap;
-  }
-}
-@container calendar (max-width: 760px) {
-  .calendar-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .calendar-legend {
-    position: static;
-    margin: 12px 0;
-    gap: 12px;
-  }
-}
-@container calendar (max-width: 480px) {
-  .calendar-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-@media (max-width: 640px) {
-  .filter-bar .ui-field {
-    flex-basis: 100%;
-  }
-  .report-toolbar .segmented {
-    margin-right: 0;
-  }
-  .report-payment-panel .segmented {
-    flex-wrap: wrap;
-  }
-  .report-payment-panel .ui-button {
-    flex-basis: 120px;
-    height: auto;
-  }
-  .category-tabs .ui-button {
-    flex: 0 1 auto;
-  }
-  .sale-check-footer > .ui-button {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    min-width: 0;
-  }
-  .page-header .ui-actions {
-    max-width: 100%;
-  }
-  .page-header .ui-actions .ui-button {
-    min-width: 0;
-  }
-}
-
 /* Account/auth QA: match the individual Figma dialogs without resizing other flows. */
 .ui-field input[aria-invalid='true'],
 .ui-field select[aria-invalid='true'] {
@@ -3552,7 +2820,7 @@ body,
   margin: 0;
 }
 .account-form-dialog .dialog-surface {
-  min-height: min(718px, calc(100dvh - 42px));
+  min-height: min(718px, calc(var(--design-viewport-height, 100dvh) - 42px));
 }
 .account-form-dialog .dialog-body {
   padding-top: 26px;
@@ -3561,7 +2829,7 @@ body,
   flex-basis: 172px;
 }
 .account-detail-dialog .dialog-surface {
-  min-height: min(608px, calc(100dvh - 42px));
+  min-height: min(608px, calc(var(--design-viewport-height, 100dvh) - 42px));
 }
 .account-detail-dialog .form-grid { row-gap: 28px; }
 .account-detail-dialog .form-grid > :last-child { grid-column: 1 / -1; }
@@ -3573,7 +2841,7 @@ body,
 .account-confirm-dialog .dialog-actions .ui-button { flex-basis: 130px; }
 .account-confirm-dialog .dialog-actions .ui-button-primary { flex-basis: 150px; }
 .ui-dialog.logout-dialog { width: min(640px, calc(100% - 32px)); }
-.logout-dialog .dialog-surface { min-height: min(382px, calc(100dvh - 42px)); }
+.logout-dialog .dialog-surface { min-height: min(382px, calc(var(--design-viewport-height, 100dvh) - 42px)); }
 .logout-dialog .dialog-body {
   padding-top: 37px;
   font-size: 16px;
@@ -3583,7 +2851,7 @@ body,
 .logout-dialog .dialog-actions { gap: 16px; }
 .logout-dialog .dialog-actions .ui-button { flex-basis: 155px; }
 .logout-dialog .dialog-actions .ui-button-primary { flex-basis: 189px; }
-@container data-table (min-width: 841px) {
+
   .account-list-panel .ui-table [data-column='username'] { width: 14.1%; }
   .account-list-panel .ui-table [data-column='name'] { width: 15.6%; }
   .account-list-panel .ui-table [data-column='phone'] { width: 14.2%; }
@@ -3598,26 +2866,14 @@ body,
   }
   .account-list-panel .table-actions .ui-button:nth-child(2) { flex-basis: 94px; }
   .account-list-panel .table-actions .ui-button:nth-child(3) { flex-basis: 108px; }
-}
-@media (max-width: 640px) {
-  .account-form-dialog .dialog-surface,
-  .account-detail-dialog .dialog-surface { min-height: 0; }
-  .account-form-dialog .form-grid { row-gap: 32px; }
-  .account-form-dialog .dialog-body { padding-top: 20px; }
-  .account-form-dialog .field-error { position: static; margin-top: -6px; }
-  .account-form-dialog .dialog-actions { margin-top: 20px; }
-  .account-form-error { margin-top: 20px; }
-  .logout-dialog .dialog-actions { gap: 10px; }
-  .logout-dialog .dialog-actions .ui-button { flex: 1 1 0; }
-}
 
-/* Shared Figma states from the full QA review. Layout reflows before overflow. */
+/* Shared Figma states from the full QA review. */
 .inline-form-error, .difference-value { color: #b8332a; }
 .shift-form-dialog .ui-error, .availability-dialog .ui-error, .count-stock-panel > .ui-error { background: transparent; border: 0; padding: 0; color: #b8332a; font-size: 12px; }
 .low-stock-sender { display: grid; gap: 10px; font-size: 13px; }
 .low-stock-sender p { color: #7d6657; font-size: 12px; }
 .inline-form-error { font-size: 12px; line-height: 20px; margin: 8px 0; }
-.ui-notice { width: min(340px, calc(100vw - 32px)); min-width: 0; color: #296e4d; background: #e5f2e8; border-color: #9bb9a1; box-shadow: none; font-size: 12px; }
+.ui-notice { width: min(340px, calc(var(--design-viewport-width, 1440px) - 32px)); min-width: 0; color: #296e4d; background: #e5f2e8; border-color: #9bb9a1; box-shadow: none; font-size: 12px; }
 .revenue-empty { border: 1px solid #e5d6c4; background: #fcf7f0; border-radius: 9px; padding: 14px; font-size: 12px; color: #7d6657; margin-bottom: 16px; }
 .account-status-field { grid-column: 1 / -1; }
 .account-status-summary { display: grid; gap: 6px; font-size: 13px; }
@@ -3628,13 +2884,13 @@ body,
 .assigned-staff p { color: #7d6657; font-size: 12px; margin-bottom: 6px; }
 .assigned-staff strong { font-weight: 500; }
 .assignment-dialog.ui-dialog { width: min(820px, calc(100% - 32px)); }
-.assignment-dialog .dialog-surface { display: flex; flex-direction: column; min-height: min(818px, calc(100dvh - 42px)); }
+.assignment-dialog .dialog-surface { display: flex; flex-direction: column; min-height: min(818px, calc(var(--design-viewport-height, 100dvh) - 42px)); }
 .assignment-dialog .dialog-actions, .employee-shift-dialog .dialog-actions { margin-top: auto; }
 .assignment-metadata { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; background: #fcf7f0; border: 1px solid #e5d6c4; border-radius: 12px; padding: 16px; margin: 0; }
 .assignment-metadata dt { font-size: 11px; color: #7d6657; margin-bottom: 8px; }
 .assignment-metadata dd { font-size: 14px; font-weight: 700; margin: 0; }
 .assignment-dialog .candidate { border: 1px solid #e5d6c4; border-radius: 9px; background: #fcf7f0; padding: 12px; }
-.employee-shift-dialog .dialog-surface, .registration-detail-dialog .dialog-surface { display: flex; flex-direction: column; min-height: min(548px, calc(100dvh - 42px)); }
+.employee-shift-dialog .dialog-surface, .registration-detail-dialog .dialog-surface { display: flex; flex-direction: column; min-height: min(548px, calc(var(--design-viewport-height, 100dvh) - 42px)); }
 .employee-shift-dialog .form-grid > :first-child { grid-column: 1 / -1; }
 .employee-shift-dialog input:read-only { background: #fcf7f0; }
 .registration-detail-dialog .dialog-actions { margin-top: auto; }
@@ -3659,7 +2915,7 @@ body,
 .closing-empty { padding: 48px 24px; font-size: 13px; color: #7d6657; }
 .closing-empty p + p { margin-top: 12px; }
 .low-stock-request-dialog.ui-dialog { width: min(820px, calc(100% - 32px)); }
-.low-stock-request-dialog .dialog-surface { display: flex; flex-direction: column; min-height: min(578px, calc(100dvh - 42px)); }
+.low-stock-request-dialog .dialog-surface { display: flex; flex-direction: column; min-height: min(578px, calc(var(--design-viewport-height, 100dvh) - 42px)); }
 .low-stock-request-dialog .dialog-actions { margin-top: auto; }
 .asset-overlay { display: inline-grid; place-items: center; vertical-align: middle; flex-shrink: 0; }
 .asset-overlay > img { grid-area: 1 / 1; max-width: none; }
@@ -3667,8 +2923,6 @@ body,
 .sales-main { position: relative; }
 .sales-main > .ui-badge { align-self: flex-end; font-size: 11px; margin-bottom: 12px; }
 .sales-main .sale-table { margin-top: 16px; }
-.sale-table { container-name: sale-table; }
-.compact-table { container-name: sale-table; }
 .sale-table .ui-table [data-column='index'] { width: 6%; }
 .sale-table .ui-table [data-column='name'] { width: 34%; }
 .sale-table .ui-table [data-column='quantity'] { width: 16%; }
@@ -3730,24 +2984,19 @@ body,
 .invoice-print-grid .quantity-stepper { width: 100%; min-width: 0; justify-content: space-between; }
 .invoice-print-grid .quantity-stepper .ui-button { min-width: 0; padding: 5px; }
 .invoice-export-action { margin-top: auto; width: 100%; }
-@container sale-table (max-width: 560px) {
-  .ui-table thead { display: none; }
-  .ui-table, .ui-table tbody, .ui-table tr { display: block; width: 100%; }
-  .ui-table tr { border: 1px solid #e5d6c4; border-radius: 10px; margin: 12px 0; }
-  .ui-table td { display: grid; grid-template-columns: minmax(0, 38%) minmax(0, 1fr); gap: 12px; width: auto !important; min-height: 40px; height: auto; padding: 10px 12px; }
-  .ui-table td::before { content: attr(data-label); font-size: 11px; color: #7d6657; }
-  .ui-table td[data-label=''] { display: block; }
-  .ui-table td[data-label='']::before { display: none; }
+
+/* One 1440px Figma composition at every window size. The viewport controller
+   scales the entire document, including native dialogs and fixed navigation.
+   There are no alternate mobile, narrow-desktop or table-card layouts. */
+html {
+  width: var(--design-viewport-width, 1440px);
+  max-inline-size: none;
+  zoom: var(--design-scale, 1);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-y: scroll;
 }
-@media (max-width: 900px) {
-  .sale-payment-notice { max-width: 100%; margin: 0 0 16px; justify-content: flex-start; }
-  .invoice-preview-panel, .invoice-settings { min-height: 0; }
-}
-@media (max-width: 640px) {
-  .assignment-metadata, .receipt-metadata, .closing-confirmation-metadata { grid-template-columns: minmax(0, 1fr); }
-  .assignment-dialog .dialog-surface, .employee-shift-dialog .dialog-surface, .registration-detail-dialog .dialog-surface, .low-stock-request-dialog .dialog-surface { min-height: 0; }
-  .invoice-paper { padding: 24px 16px; }
-  .invoice-preview-panel { padding: 14px; }
-  .invoice-paper-area { padding: 8px; }
-  .receipt-detail > .ui-panel { min-height: 0; }
+body, #root {
+  width: 100%;
+  min-height: var(--design-viewport-height, 100dvh);
 }

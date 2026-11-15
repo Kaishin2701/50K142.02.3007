@@ -7,11 +7,12 @@ The supplied Figma file defines the visual language and business copy. Its 209 o
 ## Runtime structure
 
 - `frontend/src/app/App.tsx` composes authentication, data, navigation and checkout providers.
-- `frontend/src/components/AppShell.tsx` owns the persistent sidebar, profile, mobile navigation and main content region.
+- `frontend/src/components/AppShell.tsx` owns the persistent sidebar, profile and main content region.
 - `frontend/src/features/` contains business pages and their domain dialogs.
 - `frontend/src/components/ui.tsx` provides shared native controls, tables, dialogs, status messages and pagination.
 - `frontend/src/services/` contains the API client and business response types.
-- `frontend/src/styles/application.css` supplies responsive layouts and shared visual tokens.
+- `frontend/src/styles/application.css` supplies the single Figma composition and shared visual tokens.
+- `frontend/src/app/designViewport.ts` fits the 1440px Figma canvas to the available window width without changing page composition.
 
 Business pages are loaded by feature. The shell stays mounted when navigating between features. Forms, field errors, calendar dialogs, category selection and checkout phases update component state within the current page.
 
@@ -25,11 +26,11 @@ Checkout state lives above the page outlet. Unchecked cart contents and pending 
 
 Each data resource cancels obsolete requests. Existing cached data remains visible during background refresh. SSE events trigger refreshes without replacing the page. A stock-count submission keeps its payload and idempotency key until the count and closing report are saved.
 
-## Responsive layout
+## Single Figma layout
 
-Layout uses normal document flow, CSS Grid and Flexbox. Desktop navigation stays visible, smaller screens use a drawer, tables become labelled rows on phones, and form fields retain readable sizes. The design is adapted from the supplied desktop references.
+Layout uses normal document flow, CSS Grid and Flexbox within one 1440px-wide composition matching the supplied desktop Figma reference. There are no narrow-desktop or mobile alternatives: the sidebar stays visible, tables keep their columns, calendars keep seven days in a row, and forms keep their desktop grids. Window resizing scales the whole document proportionally, including text, controls and native dialogs; it does not remount pages or reset checkout state. On phones this deliberately produces smaller text and controls rather than a separate mobile layout, as requested by the user.
 
-Horizontal scrolling is prohibited for the page and nested content. Data tables use their own container width: below 840px they become labelled records, including tables inside dialogs and the sales column. Menu categories wrap onto new lines. Calendar columns adapt to their panel width. Long content wraps, flex/grid children can shrink, and dialog actions wrap. Root overflow containment and vertical-only list/dialog scrolling provide a final boundary; they do not replace content reflow.
+Horizontal scrolling remains prohibited for the page and nested content. The canvas scale reserves browser scrollbar space; document-height limits use the corresponding unscaled viewport height. Dynamic long content can wrap inside its original column. Page and nested list scrolling remain vertical. All width-based media queries and container queries that changed composition have been removed; the reduced-motion preference remains supported.
 
 The employee calendar hides ended shifts and derives remaining availability from the original registrations. It removes elapsed time and every assigned interval, keeps each remaining fragment only when it lasts at least two hours, and sorts assigned shifts and availability fragments together by start time. Fragment boundaries round inward to whole minutes to prevent displayed overlap with second-precision assignments. The clock updates at each minute boundary and when the window regains focus or visibility. Original registration records remain available for subsequent manager assignments; manager shift history remains visible. Availability may end at `24:00`, represented as midnight of the following day.
 
@@ -62,7 +63,7 @@ To run the application interaction test against the real isolated local API, sta
 
 ## Account and authentication QA revision (local, 2026-11-15)
 
-The Word QA findings are addressed in login validation, the dedicated logout dialog, account-table column allocation, read-only account details, and account creation/confirmation. Field errors use the Figma messages and red borders; duplicate username/phone errors come from the database constraints through explicit API codes, including accounts outside the current list page. The account detail dialog uses a two-column form with full-width status. Desktop actions stay together when the table has room; narrower tables retain the existing card reflow.
+The Word QA findings are addressed in login validation, the dedicated logout dialog, account-table column allocation, read-only account details, and account creation/confirmation. Field errors use the Figma messages and red borders; duplicate username/phone errors come from the database constraints through explicit API codes, including accounts outside the current list page. The account detail dialog uses a two-column form with full-width status. Account actions stay together in the single desktop table composition.
 
 The subsequent full Word QA revision also covers checkout and QR state reset, cash validation, an invoice preview and 80 mm PDF copies, account status updates, shift forms and availability details, stock counts and deviations, closing-report notifications and resend requests, and empty revenue states. Existing active-shift sales rules and automatic payment verification remain in effect. No database migration is required.
 

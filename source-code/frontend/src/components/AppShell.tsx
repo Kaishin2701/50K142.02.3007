@@ -64,7 +64,6 @@ const stockPages: Page[] = ['stock', 'receipts', 'losses', 'count', 'closing'];
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, logout } = useSession();
   const { page, go } = useRouter();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const task = useTask();
   const manager = user!.vai_tro === 'Quản lý';
@@ -113,7 +112,6 @@ export function AppShell({ children }: { children: ReactNode }) {
     .join('')
     .toUpperCase();
   const navigate = (next: Page) => {
-    setMenuOpen(false);
     if (next === page)
       window.dispatchEvent(
         new CustomEvent('me-page-reselect', { detail: next }),
@@ -137,25 +135,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       data-page={page}
       data-role={manager ? 'manager' : 'employee'}
     >
-      <header className="mobile-bar">
-        <strong>Mê Cà Phê</strong>
-        <Button
-          aria-label="Mở menu điều hướng"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((value) => !value)}
-        >
-          ☰
-        </Button>
-      </header>
-      {menuOpen && (
-        <button
-          className="sidebar-backdrop"
-          aria-label="Đóng menu điều hướng"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
       <aside
-        className={'app-sidebar' + (menuOpen ? ' is-open' : '')}
+        className="app-sidebar"
         aria-label="Thanh điều hướng"
       >
         <a
