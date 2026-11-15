@@ -3181,18 +3181,24 @@ body, #root {
 .inventory-stock { padding: 16px; }
 .inventory-stock .ui-table { border-collapse: separate; border-spacing: 0 16px; }
 .inventory-stock .ui-table th { padding: 0 8px; }
-.inventory-stock .ui-table tbody tr { position: relative; background: transparent; }
-.inventory-stock .ui-table tbody td { height: 74px; padding: 16px 8px; border-bottom: 0; }
-.inventory-stock .ui-table tbody tr::after { content: ''; position: absolute; left: 8px; right: 8px; bottom: -8px; height: 1px; background: #e5d6c4; }
+.inventory-stock .ui-table tbody tr { background: transparent; }
+.inventory-stock .ui-table tbody td { position: relative; height: 74px; padding: 16px 8px; border-bottom: 0; }
+/* Keep separators inside the real cells; generated content on a table row can
+   create an anonymous cell and leave an unpainted column in fixed layouts. */
+.inventory-stock .ui-table tbody td::after { content: ''; position: absolute; left: 0; right: 0; bottom: -8px; height: 1px; background: #e5d6c4; }
+.inventory-stock .ui-table tbody td:first-child::after { left: 8px; }
+.inventory-stock .ui-table tbody td:last-child::after { right: 8px; }
 .inventory-stock .ui-table .low-stock-row > td { background: #fcebe3; color: #7a2e1d; }
 .inventory-stock .ui-table .low-stock-row > td:first-child { border-radius: 8px 0 0 8px; }
 .inventory-stock .ui-table .low-stock-row > td:last-child { border-radius: 0 8px 8px 0; }
-.inventory-stock .ui-table [data-column='code'] { width: 110px; }
-.inventory-stock .ui-table [data-column='name'] { width: 160px; }
-.inventory-stock .ui-table [data-column='unit'] { width: 80px; }
-.inventory-stock .ui-table [data-column='stock'] { width: 116px; }
-.inventory-stock .ui-table [data-column='counted'] { width: 126px; }
-.inventory-stock .ui-table [data-column='minimum'] { width: 145px; }
+.inventory-stock .ui-table [data-column='index'] { width: 3.82%; }
+.inventory-stock .ui-table [data-column='code'] { width: 10.27%; }
+.inventory-stock .ui-table [data-column='name'] { width: 15.17%; }
+.inventory-stock .ui-table [data-column='unit'] { width: 7.34%; }
+.inventory-stock .ui-table [data-column='stock'] { width: 11.25%; }
+.inventory-stock .ui-table [data-column='counted'] { width: 12.23%; }
+.inventory-stock .ui-table [data-column='minimum'] { width: 14.09%; }
+.inventory-stock .ui-table [data-column='status'] { width: 25.83%; }
 .inventory-stock .ui-badge { width: 122px; min-height: 27px; white-space: nowrap; }
 
 /* Figma 261:53305: underpaid cash stays unpaid and offers a method retry. */
