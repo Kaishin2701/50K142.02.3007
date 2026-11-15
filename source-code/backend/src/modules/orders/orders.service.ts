@@ -9,14 +9,14 @@ import { notifyShift } from '../../shared/notifications.js';
 import { previousRequest,rememberRequest } from '../../shared/idempotency.js';
 export const orderInput=z.object({ma_ca:id,items:z.array(z.object({ma_mon:id,so_luong:z.number().int().min(1).max(1000)}).strict()).min(1).max(100).refine(v=>distinct(v,i=>i.ma_mon))}).strict();
 export const orderQuery=pageQuery.extend({code:z.string().max(30).optional(),from:date.optional(),to:date.optional(),
- method:z.enum(['Tiền mặt','Chuyển khoản qua QR']).optional(),status:z.enum(['Chưa pha chế','Bắt đầu pha chế']).optional()})
+ method:z.enum(['Tiền mặt','Chuyển khoản qua QR']).optional(),status:z.enum(['Chưa pha chế','Bắt đầu pha chế','Hoàn tất pha chế']).optional()})
  .refine(v=>!v.from||!v.to||v.from<=v.to,{message:'Khoảng ngày không hợp lệ.'});
-export async function accessibleOrder(db:Database,id:string,actor:Actor){
+export async function accessibleOrder(db:Database,id:string,actor:Actor,allowCompleted=false){
  const order=await repo.get(db,id);check(order,'Đơn hàng không còn tồn tại.','NOT_FOUND',404);
  if(actor.role==='Nhân viên'){
    const shift=await repo.shift(db,order.ma_ca,actor.id);
    check(shift?.duoc_phan_cong,'Bạn không được phân công trong ca của đơn hàng này.','FORBIDDEN',403);
-   check(order.trang_thai_pha_che!=='Hoàn tất pha chế','Lịch sử đơn hàng chỉ dành cho quản lý.','FORBIDDEN',403);
+   check(allowCompleted||order.trang_thai_pha_che!=='Hoàn tất pha chế','Lịch sử đơn hàng chỉ dành cho quản lý.','FORBIDDEN',403);
  }
  return order;
 }
@@ -42,7 +42,7 @@ export function ordersService(db:Database,fontPath?:string){return{
  confirm:(actor:Actor,id:string)=>db.transaction(async tx=>{await lock(tx,'kho');const order=await accessibleOrder(tx,id,actor);
    if(order.da_xac_nhan)return order;const shift=await repo.shift(tx,order.ma_ca,actor.id);
    check(shift?.dang_dien_ra&&!shift.da_kiem_ke,'Ca làm đã kết thúc.');const result=await repo.confirm(tx,id);await notifyShift(tx,order.ma_ca,'DON_HANG','Có đơn hàng mới.',{ma_don:id});return result;}),
- get:async(actor:Actor,id:string)=>{const order=await accessibleOrder(db,id,actor);return {...order,items:await repo.lines(db,id),payments:await repo.payments(db,id)};},
+ get:async(actor:Actor,id:string)=>{const order=await accessibleOrder(db,id,actor,true);return {...order,items:await repo.lines(db,id),payments:await repo.payments(db,id)};},
  list:(v:z.infer<typeof orderQuery>,history:boolean)=>repo.list(db,v,history),
  cancel:(actor:Actor,id:string)=>db.transaction(async tx=>{await lock(tx,'kho');const order=await accessibleOrder(tx,id,actor);
    check(!order.da_thanh_toan&&order.trang_thai_pha_che==='Chưa pha chế','Đơn hàng không thể hủy do đã thanh toán thành công hoặc đã bắt đầu pha chế.','CANNOT_CANCEL');

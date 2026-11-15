@@ -63,6 +63,11 @@ function useCheckoutModel() {
   const [reviewing, setReviewing] = useState(Boolean(stored.orderId));
   const task = useTask();
   const requestKey = useRef(stored.requestKey);
+  const resetStoredOrder = () => {
+    requestKey.current = crypto.randomUUID();
+    setStored({ cart: [], requestKey: requestKey.current });
+    task.setError('');
+  };
   const cart = stored.cart;
   const storeOrder = (found: Order) => {
     setOrder(found);
@@ -86,10 +91,12 @@ function useCheckoutModel() {
       return previous?.ma_don === found.ma_don ? previous : undefined;
     });
     const complete = found.trang_thai_pha_che === 'Hoàn tất pha chế';
+    if (complete) requestKey.current = crypto.randomUUID();
     setStored((previous) => ({
       ...previous,
       orderId: complete ? undefined : found.ma_don,
       cart: complete ? [] : previous.cart,
+      requestKey: complete ? requestKey.current : previous.requestKey,
     }));
     return found;
   };
@@ -109,11 +116,7 @@ function useCheckoutModel() {
       .then((found) => {
         if (controller.signal.aborted) return;
         if (found.trang_thai_pha_che === 'Hoàn tất pha chế') {
-          setStored((previous) => ({
-            ...previous,
-            orderId: undefined,
-            cart: [],
-          }));
+          resetStoredOrder();
           setOrder(null);
           setPayment(undefined);
           setReviewing(false);
@@ -122,11 +125,7 @@ function useCheckoutModel() {
       .catch((error) => {
         if (controller.signal.aborted) return;
         if (error instanceof ApiError && [403, 404].includes(error.status)) {
-          setStored((previous) => ({
-            ...previous,
-            orderId: undefined,
-            cart: [],
-          }));
+          resetStoredOrder();
           setOrder(null);
           setPayment(undefined);
           setReviewing(false);
@@ -248,19 +247,31 @@ function useCheckoutModel() {
           throw new Error(
             'Số lượng là số nguyên từ 1 đến 1000. Đơn cần ít nhất một món.',
           );
-        const draft = await api<Order>('/orders/drafts', {
+        const body = {
+          ma_ca: shiftId,
+          items: cart.map((line) => ({
+            ma_mon: line.ma_mon,
+            so_luong: Number(line.so_luong),
+          })),
+        };
+        let draft = await api<Order>('/orders/drafts', {
           method: 'POST',
           key: requestKey.current,
-          body: {
-            ma_ca: shiftId,
-            items: cart.map((line) => ({
-              ma_mon: line.ma_mon,
-              so_luong: Number(line.so_luong),
-            })),
-          },
+          body,
         });
+        // Older clients may have saved a key belonging to a completed sale.
+        // Retry only this known terminal replay, never an ambiguous network error.
+        if (draft.trang_thai_pha_che === 'Hoàn tất pha chế') {
+          requestKey.current = crypto.randomUUID();
+          setStored(previous => ({ ...previous, requestKey: requestKey.current }));
+          draft = await api<Order>('/orders/drafts', {
+            method: 'POST', key: requestKey.current, body,
+          });
+          if (draft.trang_thai_pha_che === 'Hoàn tất pha chế')
+            throw new Error('Không thể tạo đơn mới. Vui lòng thử lại.');
+        }
         id = draft.ma_don;
-        const next = { ...stored, orderId: id };
+        const next = { ...stored, orderId: id, requestKey: requestKey.current };
         sessionStorage.setItem(storageKey, JSON.stringify(next));
         setStored(next);
       }

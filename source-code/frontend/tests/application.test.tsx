@@ -70,6 +70,7 @@ function response(data: unknown, status = 200, code = 'TEST_ERROR') {
   );
 }
 function installApi() {
+  const draftRequests = new Map<string, { body: string; order: any }>();
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: string, options: RequestInit = {}) => {
@@ -175,8 +176,13 @@ function installApi() {
         return response(saved);
       }
       if (path === '/orders/drafts') {
+        const key = (options.headers as any)?.['Idempotency-Key'];
+        const previous = draftRequests.get(key);
+        if (previous) return previous.body === JSON.stringify(body)
+          ? response(previous.order)
+          : response('Idempotency-Key đã được dùng cho yêu cầu khác.', 409, 'IDEMPOTENCY_CONFLICT');
         order = {
-          ma_don: '55555555-5555-4555-8555-555555555555',
+          ma_don: crypto.randomUUID(),
           ma_ca: body.ma_ca,
           da_xac_nhan: false,
           da_thanh_toan: false,
@@ -194,18 +200,18 @@ function installApi() {
           })),
           payments: [],
         };
+        draftRequests.set(key, { body: JSON.stringify(body), order });
         return response(order);
       }
-      if (path === '/orders' || path === '/orders/history')
-        return response(order && order.da_xac_nhan ? [order] : []);
+      if (path === '/orders' || path === '/orders/history') {
+        if (path === '/orders/history' && activeUser?.vai_tro !== 'Quản lý') return response('Bạn không có quyền truy cập.', 403);
+        const status = url.searchParams.get('status');
+        return response(order && order.da_xac_nhan
+          && (path !== '/orders/history' || order.trang_thai_pha_che === 'Hoàn tất pha chế')
+          && (!status || order.trang_thai_pha_che === status) ? [order] : []);
+      }
       if (path.startsWith('/orders/')) {
         if (!order) return response('Không tìm thấy đơn.', 404);
-        if (
-          method === 'GET' &&
-          order.trang_thai_pha_che === 'Hoàn tất pha chế' &&
-          activeUser?.vai_tro === 'Nhân viên'
-        )
-          return response('Lịch sử đơn hàng chỉ dành cho quản lý.', 403);
         if (path.endsWith('/confirm')) {
           order.da_xac_nhan = true;
           order.ma_don_hien_thi = 'ME-000001';
@@ -1412,6 +1418,65 @@ describe('native application architecture', () => {
       screen.getByRole('heading', { name: 'Tổng quan', exact: true }),
     ).toBe(heading);
     expect(location.hash).toBe('#/reports');
+  });
+  it.each(['cash', 'QR'])('keeps %s preparation changes visible in tracking and completed details', async (method) => {
+    vi.stubGlobal('URL', class extends URL {
+      static createObjectURL() { return 'blob:test'; }
+      static revokeObjectURL() {}
+    });
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    qrEnabled = true;
+    const user = await startSale(); await checkSale(user);
+    if (method === 'cash') {
+      await user.click(screen.getByRole('button', { name: 'Tiền mặt', exact: true }));
+      await user.type(screen.getByRole('spinbutton', { name: 'Số tiền nhận được' }), '50000');
+      await user.click(screen.getByRole('button', { name: 'Xác nhận số tiền', exact: true }));
+    } else {
+      await user.click(screen.getByRole('button', { name: 'QR', exact: true }));
+      await user.click(await screen.findByRole('button', { name: 'Đối soát thành công', exact: true }));
+    }
+    await screen.findByRole('button', { name: 'Xuất hóa đơn', exact: true });
+    const track = async (status: string) => {
+      await user.click(screen.getByRole('link', { name: 'Quản lý đơn hàng', exact: true }));
+      const code = await screen.findByRole('button', { name: '#' + order.ma_don_hien_thi, exact: true });
+      await waitFor(() => expect(within(code.closest('tr')!).getByText(status)).toBeTruthy());
+    };
+    await track('Chưa pha chế');
+    await user.click(screen.getByRole('link', { name: 'Bán hàng', exact: true }));
+    await user.click(await screen.findByRole('button', { name: 'Xuất hóa đơn', exact: true }));
+    await user.click(screen.getByRole('button', { name: 'Xuất hóa đơn', exact: true }));
+    await screen.findByRole('button', { name: 'Hoàn tất pha chế', exact: true });
+    await track('Bắt đầu pha chế');
+    await user.click(screen.getByRole('link', { name: 'Bán hàng', exact: true }));
+    await user.click(await screen.findByRole('button', { name: 'Hoàn tất pha chế', exact: true }));
+    await screen.findByText('Đã ghi nhận hoàn tất pha chế cho đơn #ME-000001');
+    await track('Hoàn tất pha chế');
+    await user.click(screen.getByRole('button', { name: '#' + order.ma_don_hien_thi, exact: true }));
+    const detail = await screen.findByRole('dialog', { name: 'Chi tiết đơn hàng' });
+    await within(detail).findByText('Đơn đã hoàn tất pha chế. Thông tin chỉ để xem.');
+    expect(screen.queryByText('Lịch sử đơn hàng chỉ dành cho quản lý.')).toBeNull();
+  });
+  it.each(['restored order', 'legacy key without order'])('starts a fresh same-item sale after a completed %s', async (savedState) => {
+    const user = await startSale(); await checkSale(user);
+    const oldId = order.ma_don;
+    const oldKey = calls.find(c => c.path === '/orders/drafts')!.key;
+    order.da_thanh_toan = true;
+    order.trang_thai_pha_che = 'Hoàn tất pha chế';
+    cleanup();
+    if (savedState === 'legacy key without order') sessionStorage.setItem(
+      'me-cafe-checkout-state:' + employee.ma_nguoi_dung,
+      JSON.stringify({ cart: [], requestKey: oldKey }),
+    );
+    render(<App />);
+    await screen.findByRole('heading', { name: 'Chọn món', exact: true });
+    await user.click(await screen.findByRole('button', { name: 'Thêm Cà phê từ DB' }));
+    await checkSale(user);
+    expect(order.ma_don).not.toBe(oldId);
+    expect(order.da_thanh_toan).toBe(false);
+    const drafts = calls.filter(c => c.path === '/orders/drafts');
+    expect(drafts.at(-1)!.key).not.toBe(oldKey);
+    expect(drafts).toHaveLength(savedState === 'restored order' ? 2 : 3);
+    expect(screen.queryByText('Lịch sử đơn hàng chỉ dành cho quản lý.')).toBeNull();
   });
   it('prints and completes a paid order, keeping its summary until the next sale', async () => {
     vi.stubGlobal(

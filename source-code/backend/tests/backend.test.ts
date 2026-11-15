@@ -297,6 +297,34 @@ test('price snapshots, insufficient cash, one payment, and preparation state ord
  await orders.phase(employee,order.ma_don,'Bắt đầu pha chế');await orders.phase(employee,order.ma_don,'Hoàn tất pha chế');
  assert.equal(Number((await orders.list({page:1,limit:20},true))[0].tong_tien),50000);
 });
+for(const method of ['cash','QR'])test(`${method} preparation updates stay in tracking and assigned staff can read completed orders`,async()=>{
+ const orders=ordersService(db),payments=paymentsService(db,gateway,secret,true);
+ const oldKey=randomUUID(),order=await orders.create(employee,items(),false,oldKey);
+ await orders.confirm(employee,order.ma_don);
+ if(method==='cash')await payments.cash(employee,order.ma_don,25000);
+ else {const qr=await payments.qr(employee,order.ma_don);await payments.confirmQr(employee,qr.ma_giao_dich);}
+ const agent=request.agent(app);
+ await agent.post('/api/auth/login').set('Origin',origin).send({ten_dang_nhap:'employee',mat_khau:'test-password'});
+ for(const [endpoint,status] of [['start-preparing','Bắt đầu pha chế'],['complete','Hoàn tất pha chế']]){
+   const updated=await agent.post(`/api/orders/${order.ma_don}/${endpoint}`).set('Origin',origin);
+   assert.equal(updated.status,200);assert.equal(updated.body.data.trang_thai_pha_che,status);
+   const tracked=await agent.get('/api/orders');assert.equal(tracked.status,200);
+   assert.equal(tracked.body.data.find((item:any)=>item.ma_don===order.ma_don).trang_thai_pha_che,status);
+   const filtered=await agent.get('/api/orders').query({status});assert.equal(filtered.status,200);
+   assert.equal(filtered.body.data[0].ma_don,order.ma_don);
+ }
+ const detail=await agent.get(`/api/orders/${order.ma_don}`);
+ assert.equal(detail.status,200);assert.equal(detail.body.data.items.length,1);
+ assert.equal(detail.body.data.trang_thai_pha_che,'Hoàn tất pha chế');
+ assert.equal((await agent.get('/api/orders/history')).status,403);
+ await assert.rejects(orders.get(colleague,order.ma_don),(e:any)=>e.code==='FORBIDDEN');
+ assert.equal((await orders.list({page:1,limit:20},true))[0].ma_don,order.ma_don);
+ assert.equal((await orders.create(employee,items(),false,oldKey)).ma_don,order.ma_don);
+ const next=await orders.create(employee,items(),false,randomUUID());assert.notEqual(next.ma_don,order.ma_don);
+ assert.equal(next.da_xac_nhan,false);assert.equal((await orders.get(employee,next.ma_don)).da_thanh_toan,false);
+ assert.equal((await one('SELECT count(*)::int AS n FROM giao_dich_thanh_toan')).n,1);
+});
+
 test('QR requires a signed matching successful event and is reconciled only once',async()=>{
  const orders=ordersService(db),payments=paymentsService(db,gateway,secret);const order=await orders.create(employee,items(),true);
  const qr=await payments.qr(employee,order.ma_don);

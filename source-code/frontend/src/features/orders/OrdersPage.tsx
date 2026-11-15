@@ -94,6 +94,7 @@ export default function OrdersPage() {
               <option value="">Tất cả</option>
               <option>Chưa pha chế</option>
               <option>Bắt đầu pha chế</option>
+              <option>Hoàn tất pha chế</option>
             </SelectField>
           )}
           <Button type="submit" variant="primary">

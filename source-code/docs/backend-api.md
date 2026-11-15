@@ -49,7 +49,7 @@ Tạo đơn/nháp cần header Idempotency-Key (UUID). Body:
 
 Các chuỗi `<UUID ...>` trong ví dụ cần thay bằng ID thật được trả về khi tạo dữ liệu.
 
-NV cần được phân công vào ca đang diễn ra. Tổng tiền và định mức được tính ở máy chủ. Không có API sửa đơn đã xác nhận; hủy đơn chưa thanh toán để tạo lại nếu cần. NV truy cập đơn thuộc ca được phân công; lịch sử hoàn tất dành cho QL.
+NV cần được phân công vào ca đang diễn ra. Tổng tiền và định mức được tính ở máy chủ. Không có API sửa đơn đã xác nhận; hủy đơn chưa thanh toán để tạo lại nếu cần. Màn theo dõi qua GET /orders giữ cả đơn đã hoàn tất và hỗ trợ lọc đủ ba trạng thái pha chế. NV được xem chi tiết đơn hoàn tất thuộc ca được phân công; GET /orders/history vẫn chỉ dành cho QL. Quyền cập nhật, thanh toán và xuất hóa đơn không được mở rộng cho đơn hoàn tất.
 
 Tra cứu đơn: page (mặc định 1), limit (mặc định 20, tối đa 100), code, from/to (YYYY-MM-DD), method (Tiền mặt/Chuyển khoản qua QR). Đơn đang xử lý hỗ trợ status (Chưa pha chế/Bắt đầu pha chế). Giá và tên món lúc lập đơn được lưu cố định.
 

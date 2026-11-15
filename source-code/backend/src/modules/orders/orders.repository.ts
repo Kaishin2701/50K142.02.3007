@@ -22,7 +22,7 @@ export const ordersRepository={
  phase:(db:Database,id:string,phase:string)=>first(db,'UPDATE don_hang SET trang_thai_pha_che=$2 WHERE ma_don=$1 RETURNING *',[id,phase]),
  list:(db:Database,v:any,history:boolean)=>rows(db,`SELECT d.*,u.ho_ten AS nhan_vien_lap,t.phuong_thuc,count(*) OVER()::int AS total FROM don_hang d
  JOIN nguoi_dung u ON u.ma_nguoi_dung=d.ma_nhan_vien_lap LEFT JOIN giao_dich_thanh_toan t ON t.ma_don=d.ma_don AND t.trang_thai='Thành công'
- WHERE d.da_xac_nhan AND (($1 AND d.trang_thai_pha_che='Hoàn tất pha chế') OR (NOT $1 AND d.trang_thai_pha_che<>'Hoàn tất pha chế'))
+ WHERE d.da_xac_nhan AND (NOT $1 OR d.trang_thai_pha_che='Hoàn tất pha chế')
  AND ($2::text IS NULL OR d.ma_don_hien_thi ILIKE '%'||$2||'%')
  AND ($3::date IS NULL OR d.thoi_gian_lap >= $3::date AT TIME ZONE 'Asia/Ho_Chi_Minh')
  AND ($4::date IS NULL OR d.thoi_gian_lap < ($4::date+1) AT TIME ZONE 'Asia/Ho_Chi_Minh')

@@ -24,6 +24,8 @@ Session state is supplied by the backend through an HttpOnly cookie. Permission 
 
 Checkout state lives above the page outlet. Unchecked cart contents and pending order identifiers are stored per user in session storage. Checked orders are restored from server snapshots, including data saved by the previous frontend. Creating an order and retrying its creation use the same idempotency key.
 
+Completing a sale or discarding a completed/unavailable restored order rotates its creation key. If an older saved key replays a completed draft, checkout retries once with a fresh key and the unchanged cart; ambiguous failures keep the current key for safe retries. Tracking retains completed orders and allows assigned staff to view their read-only details, while the manager history endpoint remains restricted.
+
 Each data resource cancels obsolete requests. Existing cached data remains visible during background refresh. SSE events trigger refreshes without replacing the page. A stock-count submission keeps its payload and idempotency key until the count and closing report are saved.
 
 ## Single Figma layout
