@@ -275,8 +275,8 @@ export default function AccountsPage() {
                   onChange={(event) => field('vai_tro', event.target.value)}
                 >
                   <option value="" disabled></option>
-                  <option>Nhân viên</option>
                   <option>Quản lý</option>
+                  <option>Nhân viên</option>
                 </SelectField>
                 {editing !== 'new' && <SelectField label="Trạng thái tài khoản" value={form.trang_thai} onChange={event => field('trang_thai', event.target.value)} className="account-status-field">
                   <option>Đang hoạt động</option><option>Đã khóa</option>

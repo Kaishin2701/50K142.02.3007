@@ -418,6 +418,24 @@ async function checkSale(user: ReturnType<typeof userEvent.setup>) {
   await screen.findByRole('button', { name: 'Tiền mặt', exact: true });
 }
 
+async function chooseOption(user: ReturnType<typeof userEvent.setup>, field: HTMLElement, value: string) {
+  await user.click(field);
+  const option = screen.getAllByRole('option').find(item => item.getAttribute('data-value') === value || item.textContent === value);
+  if (!option) throw new Error('Option not found: ' + value);
+  await user.click(option);
+}
+
+async function startCount(items = [material]) {
+  activeUser = employee; location.hash = '/count';
+  shifts[0].gio_ket_thuc = '12:00';
+  const previousFetch = vi.mocked(fetch).getMockImplementation()!;
+  vi.mocked(fetch).mockImplementation(async (input, options) => String(input).includes('/inventory/counts/preview')
+    ? response({ ma_ca: shifts[0].ma_ca, doanh_thu: 0, items }) : previousFetch(input, options));
+  render(<App />);
+  await screen.findByRole('spinbutton', { name: 'Tồn thực tế ' + items[0].ten_nguyen_lieu });
+  return userEvent.setup();
+}
+
 describe('native application architecture', () => {
   it('highlights only low-stock records while retaining the actual status and STT headings', async () => {
     location.hash = '/stock';
@@ -443,7 +461,7 @@ describe('native application architecture', () => {
     await user.click(screen.getByRole('button', { name: 'Tiếp tục lập hóa đơn', exact: true }));
     const quantity = screen.getByLabelText('Số lượng ' + menu[0].ten_mon);
     await user.clear(quantity); await user.type(quantity, '2');
-    await user.selectOptions(screen.getByRole('combobox', { name: 'Tên món dòng 1' }), alternative.ma_mon);
+    await chooseOption(user, screen.getByRole('combobox', { name: 'Tên món dòng 1' }), alternative.ma_mon);
     expect(screen.queryByRole('combobox', { name: 'Tên món dòng 2' })).toBeNull();
     expect((screen.getByLabelText('Số lượng Cacao') as HTMLInputElement).value).toBe('3');
     await user.click(screen.getByRole('button', { name: 'Kiểm tra đơn', exact: true }));
@@ -569,9 +587,96 @@ describe('native application architecture', () => {
     expect(actual.getAttribute('aria-invalid')).toBe('true');
     await user.clear(actual); await user.type(actual, '9');
     await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
-    expect(screen.getByText('Có 1 nguyên liệu lệch vượt ngưỡng cho phép.')).toBeTruthy();
+    expect(screen.getByText('Vui lòng chọn lý do chênh lệch cho nguyên liệu Cà phê kiểm kê.')).toBeTruthy();
+    expect(screen.queryByText('Có 1 nguyên liệu lệch vượt ngưỡng cho phép.')).toBeNull();
     expect(actual.closest('tr')?.className).toBe('discrepancy-row');
     expect(calls.some(c => c.path === '/inventory/counts' && c.method === 'POST')).toBe(false);
+  });
+  it('locates missing money separately and reports only the first empty stock item in displayed order', async () => {
+    const second = { ...material, ma_nguyen_lieu: 'second-material', ten_nguyen_lieu: 'Sữa tươi' };
+    const user = await startCount([material, second]);
+    await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+    expect(screen.getByText('Vui lòng nhập tiền thực thu.').closest('.count-money-panel')).toBeTruthy();
+    expect(screen.getByText('Vui lòng nhập tồn thực tế cho nguyên liệu Cà phê kiểm kê.').closest('.count-stock-panel')).toBeTruthy();
+    expect(screen.queryByText('Vui lòng nhập tồn thực tế cho nguyên liệu Sữa tươi.')).toBeNull();
+    expect(screen.queryByText('Tồn thực tế phải là số không âm, tối đa 3 chữ số thập phân.')).toBeNull();
+    await user.type(screen.getByRole('spinbutton', { name: 'Tồn thực tế Cà phê kiểm kê' }), '10');
+    expect(screen.getByText('Vui lòng nhập tồn thực tế cho nguyên liệu Sữa tươi.')).toBeTruthy();
+    expect(screen.queryByText(/Có \d+ nguyên liệu lệch vượt ngưỡng/)).toBeNull();
+    expect((screen.getByRole('button', { name: 'Lưu phiếu kiểm kho' }) as HTMLButtonElement).disabled).toBe(true);
+  });
+  it('shows invalid money below its reason and keeps storage disabled until corrected', async () => {
+    const user = await startCount();
+    await user.type(screen.getByRole('spinbutton', { name: 'Tiền mặt thực thu' }), '-1');
+    await user.type(screen.getByRole('spinbutton', { name: 'Chuyển khoản thực thu' }), '0');
+    await user.type(screen.getByRole('spinbutton', { name: 'Tồn thực tế Cà phê kiểm kê' }), '10');
+    await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+    const error = screen.getByText('Tiền thực thu phải là số nguyên không âm.');
+    expect(error.closest('.count-money-panel')).toBeTruthy();
+    expect(screen.getByRole('spinbutton', { name: 'Tiền mặt thực thu' }).getAttribute('aria-invalid')).toBe('true');
+    expect(screen.queryByText(/Có \d+ nguyên liệu lệch vượt ngưỡng/)).toBeNull();
+    expect(calls.some(c => c.path === '/inventory/counts' && c.method === 'POST')).toBe(false);
+  });
+  it('reports each missing discrepancy reason in row order, requires the compact Other note and saves it', async () => {
+    const second = { ...material, ma_nguyen_lieu: 'second-material', ten_nguyen_lieu: 'Sữa tươi' };
+    const user = await startCount([material, second]);
+    await user.type(screen.getByRole('spinbutton', { name: 'Tiền mặt thực thu' }), '0');
+    await user.type(screen.getByRole('spinbutton', { name: 'Chuyển khoản thực thu' }), '0');
+    await user.type(screen.getByRole('spinbutton', { name: 'Tồn thực tế Cà phê kiểm kê' }), '9');
+    await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+    expect(screen.queryByText(/Có \d+ nguyên liệu lệch vượt ngưỡng/)).toBeNull();
+    await user.type(screen.getByRole('spinbutton', { name: 'Tồn thực tế Sữa tươi' }), '8');
+    await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+    expect(screen.getByText('Vui lòng chọn lý do chênh lệch cho nguyên liệu Cà phê kiểm kê.')).toBeTruthy();
+    await chooseOption(user, screen.getByRole('combobox', { name: 'Lý do chênh lệch Cà phê kiểm kê' }), 'Hao hụt');
+    expect(screen.getByText('Vui lòng chọn lý do chênh lệch cho nguyên liệu Sữa tươi.')).toBeTruthy();
+    await chooseOption(user, screen.getByRole('combobox', { name: 'Lý do chênh lệch Sữa tươi' }), 'Khác');
+    expect(screen.getByText('Vui lòng nhập ghi chú cho lý do Khác.')).toBeTruthy();
+    const note = screen.getByRole('textbox', { name: 'Ghi chú Sữa tươi' });
+    expect(note.tagName).toBe('INPUT');
+    await user.type(note, 'Sai lệch kiểm đếm');
+    expect(screen.getByText('Có 2 nguyên liệu lệch vượt ngưỡng cho phép.')).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+    await user.click(screen.getByRole('button', { name: 'Lưu phiếu kiểm kho' }));
+    await screen.findByRole('dialog', { name: 'Báo cáo cuối ca' });
+    const payload = calls.find(c => c.path === '/inventory/counts' && c.method === 'POST')!.body;
+    expect(payload.items[1].ghi_chu).toBe('Sai lệch kiểm đếm');
+    expect(payload.items[1].ly_do_chenh_lech).toBe('Khác');
+  });
+  it('uses the Figma money discrepancy notice without stacking stock totals and still requires its reason', async () => {
+    const user = await startCount();
+    await user.type(screen.getByRole('spinbutton', { name: 'Tiền mặt thực thu' }), '1');
+    await user.type(screen.getByRole('spinbutton', { name: 'Chuyển khoản thực thu' }), '0');
+    await user.type(screen.getByRole('spinbutton', { name: 'Tồn thực tế Cà phê kiểm kê' }), '9');
+    await chooseOption(user, screen.getByRole('combobox', { name: 'Lý do chênh lệch Cà phê kiểm kê' }), 'Hao hụt');
+    await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+    expect(screen.getByText('Tiền thực thu lệch so với doanh số trên hệ thống.').closest('.count-money-panel')).toBeTruthy();
+    expect(screen.queryByText('Vui lòng nhập lý do chênh lệch tiền.')).toBeNull();
+    expect(screen.queryByText(/Có \d+ nguyên liệu lệch vượt ngưỡng/)).toBeNull();
+    expect((screen.getByRole('button', { name: 'Lưu phiếu kiểm kho' }) as HTMLButtonElement).disabled).toBe(true);
+    await user.type(screen.getByRole('textbox', { name: 'Lý do chênh lệch tiền' }), 'Đếm lại tiền mặt');
+    await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+    expect((screen.getByRole('button', { name: 'Lưu phiếu kiểm kho' }) as HTMLButtonElement).disabled).toBe(false);
+  });
+  it('shows only shift names in loss history and keeps first-page pagination disabled', async () => {
+    location.hash = '/losses';
+    const previousFetch = vi.mocked(fetch).getMockImplementation()!;
+    vi.mocked(fetch).mockImplementation(async (input, options) => String(input).includes('/inventory/losses')
+      ? response(Array.from({ length: 20 }, (_, i) => ({ ...material, ma_phieu: 'loss-' + i,
+        ngay_kiem_ke: today(), gio_bat_dau: '16:00', gio_ket_thuc: '20:00', ton_thuc_te: 8,
+        ton_ly_thuyet_luc_kiem_ke: 10, chenh_lech: -2, ly_do_chenh_lech: 'Hao hụt', nguoi_ghi_nhan: employee.ho_ten })))
+      : previousFetch(input, options));
+    render(<App />); const user = userEvent.setup();
+    await screen.findAllByText('Ca chiều', { exact: true });
+    expect(screen.queryByText(/Ca chiều ·/)).toBeNull();
+    const previous = screen.getByRole('button', { name: 'Trang trước', exact: true });
+    expect((previous as HTMLButtonElement).disabled).toBe(true);
+    const callsBefore = calls.filter(c => c.path === '/inventory/losses').length;
+    await user.click(previous);
+    expect(calls.filter(c => c.path === '/inventory/losses')).toHaveLength(callsBefore);
+    await user.click(screen.getByRole('button', { name: 'Trang sau', exact: true }));
+    await screen.findByLabelText('Trang 2');
+    expect((screen.getByRole('button', { name: 'Trang trước', exact: true }) as HTMLButtonElement).disabled).toBe(false);
   });
   it('shows inline login errors for both empty fields and never submits an incomplete login', async () => {
     activeUser = null;
@@ -615,7 +720,7 @@ describe('native application architecture', () => {
     await user.type(within(dialog).getByLabelText('Tên đăng nhập'), 'test_user');
     await user.type(within(dialog).getByLabelText('Họ và tên'), 'Tài khoản thử');
     await user.type(within(dialog).getByLabelText('Số điện thoại'), '0900000003');
-    await user.selectOptions(within(dialog).getByLabelText('Vai trò'), 'Nhân viên');
+    await chooseOption(user, within(dialog).getByLabelText('Vai trò'), 'Nhân viên');
     await user.type(within(dialog).getByLabelText('Mật khẩu', { exact: true }), 'safe-password');
     await user.type(within(dialog).getByLabelText('Xác nhận mật khẩu'), 'other-password');
     await user.click(submit);
@@ -635,7 +740,7 @@ describe('native application architecture', () => {
     const dialog = screen.getByRole('dialog', { name: 'Tạo tài khoản' });
     for (const [name, value] of [['Tên đăng nhập', 'new_employee'], ['Họ và tên', 'Tài khoản thử'], ['Số điện thoại', '0900000003'], ['Mật khẩu', 'safe-password'], ['Xác nhận mật khẩu', 'safe-password']])
       await user.type(within(dialog).getByLabelText(name, { exact: true }), value);
-    await user.selectOptions(within(dialog).getByLabelText('Vai trò'), 'Nhân viên');
+    await chooseOption(user, within(dialog).getByLabelText('Vai trò'), 'Nhân viên');
     const submit = within(dialog).getByRole('button', { name: 'Tạo tài khoản', exact: true });
     await user.click(submit);
     await user.click(within(screen.getByRole('dialog', { name: 'Xác nhận tạo tài khoản' })).getByRole('button', { name: 'Tạo tài khoản', exact: true }));
@@ -664,7 +769,7 @@ describe('native application architecture', () => {
       screen.getByRole('button', { name: 'Tạo tài khoản', exact: true }),
     );
     const dialog = screen.getByRole('dialog', { name: 'Tạo tài khoản' });
-    await user.selectOptions(within(dialog).getByLabelText('Vai trò'), 'Nhân viên');
+    await chooseOption(user, within(dialog).getByLabelText('Vai trò'), 'Nhân viên');
     await user.type(
       within(dialog).getByRole('textbox', { name: 'Tên đăng nhập' }),
       'new_employee',
@@ -987,9 +1092,11 @@ describe('native application architecture', () => {
     await user.click(within(detail).getByRole('button', { name: 'Đổi hoặc xoay ca', exact: true }));
     const change = screen.getByRole('dialog', { name: 'Gửi yêu cầu đổi hoặc xoay ca' });
     expect(within(change).queryByRole('button', { name: 'Hủy', exact: true })).toBeNull();
+    await user.click(within(change).getByRole('combobox', { name: 'Đồng nghiệp' }));
     await within(change).findByRole('option', { name: 'Partner' });
-    await user.selectOptions(within(change).getByLabelText('Loại yêu cầu'), 'Nhờ nhân viên khác làm thay');
-    await user.selectOptions(within(change).getByLabelText('Đồng nghiệp'), 'colleague');
+    await user.keyboard('{Escape}');
+    await user.click(within(change).getByRole('radio', { name: 'Nhờ nhân viên khác làm thay' }));
+    await chooseOption(user, within(change).getByLabelText('Đồng nghiệp'), 'colleague');
     await user.type(within(change).getByLabelText('Lý do'), 'Busy');
     await user.click(within(change).getByRole('button', { name: 'Gửi yêu cầu' }));
     await waitFor(() => expect(calls.some(c => c.path === '/shifts/requests' && c.method === 'POST')).toBe(true));
@@ -1245,7 +1352,10 @@ describe('native application architecture', () => {
         doanh_thu_ca_luc_doi_chieu: 0,
         tien_mat_thuc_thu: 0,
         chuyen_khoan_thuc_thu: 0,
-        items: [{ ...material, ton_thuc_te: 10, chenh_lech: 0 }],
+        items: [
+          { ...material, ton_thuc_te: 10, chenh_lech: 0 },
+          { ...material, ma_nguyen_lieu: 'loss-item', ten_nguyen_lieu: 'Sữa tươi', ton_thuc_te: 8, chenh_lech: -2 },
+        ],
       },
     ];
     location.hash = '/closing';
@@ -1256,6 +1366,10 @@ describe('native application architecture', () => {
     );
     const table = screen.getAllByRole('table')[0];
     const dialog = screen.getByRole('dialog', { name: 'Báo cáo cuối ca' });
+    await within(dialog).findByText('Sữa tươi');
+    expect(within(dialog).getByText('-2').classList.contains('difference-value')).toBe(true);
+    const unchangedRow = within(dialog).getByText(material.ten_nguyen_lieu).closest('tr')!;
+    expect(unchangedRow.querySelector('.difference-value')).toBeNull();
     await user.click(
       await within(dialog).findByRole('button', {
         name: 'Xác nhận báo cáo',

@@ -150,38 +150,49 @@ export default function CountPage() {
   const invalidNumber = (value: string) =>
     value.trim() === '' || !Number.isFinite(Number(value)) || Number(value) < 0;
   const invalidStock = (value: string) => invalidNumber(value) || Math.abs(Number(value) * 1000 - Math.round(Number(value) * 1000)) > 0.000001;
+  const invalidMoney = (value: string) => invalidNumber(value) || !Number.isSafeInteger(Number(value)) || Number(value) > 99999999999999;
   const differing = (preview.data?.items ?? []).filter(item => !invalidStock(entries[item.ma_nguyen_lieu]?.actual ?? '') && Math.abs(stockDifference(entries[item.ma_nguyen_lieu]?.actual, item.ton_ly_thuyet)) > Number(item.nguong_chenh_lech));
+  const firstInvalidStock = preview.data?.items.find(item => invalidStock(entries[item.ma_nguyen_lieu]?.actual ?? ''));
+  const stockInputError = attempted && firstInvalidStock
+    ? !(entries[firstInvalidStock.ma_nguyen_lieu]?.actual ?? '').trim()
+      ? `Vui lòng nhập tồn thực tế cho nguyên liệu ${firstInvalidStock.ten_nguyen_lieu}.`
+      : 'Tồn thực tế phải là số không âm, tối đa 3 chữ số thập phân.'
+    : '';
+  const moneyError = !attempted ? '' : !cash.trim() || !transfer.trim()
+    ? 'Vui lòng nhập tiền thực thu.'
+    : invalidMoney(cash) || invalidMoney(transfer)
+      ? 'Tiền thực thu phải là số nguyên không âm.'
+      : compared && cashDifference !== 0 ? 'Tiền thực thu lệch so với doanh số trên hệ thống.' : '';
+  const firstMissingReason = compared && !firstInvalidStock
+    ? differing.find(item => !entries[item.ma_nguyen_lieu]?.reason ||
+      entries[item.ma_nguyen_lieu]?.reason === 'Khác' && !entries[item.ma_nguyen_lieu]?.note.trim())
+    : undefined;
+  const stockReasonError = firstMissingReason
+    ? !entries[firstMissingReason.ma_nguyen_lieu]?.reason
+      ? `Vui lòng chọn lý do chênh lệch cho nguyên liệu ${firstMissingReason.ten_nguyen_lieu}.`
+      : 'Vui lòng nhập ghi chú cho lý do Khác.'
+    : '';
+  const stockMessage = stockInputError || stockReasonError ||
+    (compared && !moneyError && !firstInvalidStock && differing.length
+      ? `Có ${differing.length} nguyên liệu lệch vượt ngưỡng cho phép.` : '');
   const reconcile = () => {
     task.setError('');
     setAttempted(true);
+    setChecked(false);
+    setCompared(false);
     if (!preview.data?.items.length) return;
-    if (!cash.trim() || !transfer.trim()) { task.setError('Vui lòng nhập tiền thực thu.'); return; }
-    if (
-      !Number.isInteger(Number(cash)) ||
-      !Number.isInteger(Number(transfer)) || invalidNumber(cash) || invalidNumber(transfer)
-    ) {
-      task.setError('Số tiền phải là số nguyên không âm.');
-      return;
-    }
-    if (preview.data.items.some(item => invalidStock(entries[item.ma_nguyen_lieu]?.actual ?? ''))) {
-      task.setError('Tồn thực tế phải là số không âm, tối đa 3 chữ số thập phân.'); return;
-    }
+    if (invalidMoney(cash) || invalidMoney(transfer) || firstInvalidStock) return;
     setCompared(true);
-    if (cashDifference !== 0 && !cashReason.trim()) {
-      task.setError('Vui lòng nhập lý do chênh lệch tiền.');
-      return;
-    }
+    if (cashDifference !== 0 && !cashReason.trim()) return;
     for (const item of preview.data.items) {
       const entry = entries[item.ma_nguyen_lieu];
       const different =
         Math.abs(stockDifference(entry.actual, item.ton_ly_thuyet)) >
         Number(item.nguong_chenh_lech);
       if (different && !entry.reason) {
-        task.setError('Vui lòng chọn lý do cho nguyên liệu lệch vượt ngưỡng.');
         return;
       }
       if (different && entry.reason === 'Khác' && !entry.note.trim()) {
-        task.setError('Vui lòng nhập ghi chú cho lý do Khác.');
         return;
       }
     }
@@ -317,7 +328,7 @@ export default function CountPage() {
                 />
                 <Field
                   label="Tiền mặt thực thu"
-                  aria-invalid={attempted && invalidNumber(cash) || undefined}
+                  aria-invalid={attempted && invalidMoney(cash) || undefined}
                   type="number"
                   min={0}
                   max={99999999999999}
@@ -332,7 +343,7 @@ export default function CountPage() {
                 />
                 <Field
                   label="Chuyển khoản thực thu"
-                  aria-invalid={attempted && invalidNumber(transfer) || undefined}
+                  aria-invalid={attempted && invalidMoney(transfer) || undefined}
                   type="number"
                   min={0}
                   max={99999999999999}
@@ -351,7 +362,6 @@ export default function CountPage() {
                   readOnly
                 />
               </div>
-              {compared && cashDifference !== 0 && <p className="inline-form-error" role="status">Tiền thực thu lệch so với doanh số trên hệ thống.</p>}
               <TextField
                 label="Lý do chênh lệch tiền"
                 value={cashReason}
@@ -360,6 +370,7 @@ export default function CountPage() {
                   setChecked(false);
                 }}
               />
+              {moneyError && <p className="count-money-error" role="alert">{moneyError}</p>}
             </fieldset>
           </Panel>
           <Panel title="Nguyên liệu" className="count-stock-panel">
@@ -395,7 +406,7 @@ export default function CountPage() {
                     render: (item) => (
                       <Field
                         label={`Tồn thực tế ${item.ten_nguyen_lieu}`}
-                        aria-invalid={attempted && invalidStock(entries[item.ma_nguyen_lieu]?.actual ?? '') || undefined}
+                        aria-invalid={attempted && firstInvalidStock?.ma_nguyen_lieu === item.ma_nguyen_lieu || undefined}
                         type="number"
                         min={0}
                         step="0.001"
@@ -415,13 +426,12 @@ export default function CountPage() {
                     key: 'difference',
                     label: 'Chênh lệch',
                     render: (item) =>
-                      compared
-                        ? numberText(
+                      compared ? <span className={stockDifference(entries[item.ma_nguyen_lieu]?.actual, item.ton_ly_thuyet) !== 0 ? 'difference-value' : ''}>{numberText(
                             stockDifference(
                               entries[item.ma_nguyen_lieu]?.actual,
                               item.ton_ly_thuyet,
                             ),
-                          )
+                          )}</span>
                         : '—',
                   },
                   {
@@ -440,7 +450,7 @@ export default function CountPage() {
                             )
                           }
                         >
-                          <option value="">—</option>
+                          <option value=""></option>
                           {['Hao hụt', 'Đổ vỡ', 'Hết hạn', 'Khác'].map(
                             (reason) => (
                               <option key={reason}>{reason}</option>
@@ -448,24 +458,22 @@ export default function CountPage() {
                           )}
                         </SelectField>
                         {entries[item.ma_nguyen_lieu]?.reason === 'Khác' && (
-                          <TextField
-                            label={`Ghi chú ${item.ten_nguyen_lieu}`}
+                          <label className="count-reason-note"><span>Ghi chú:</span><input
+                            aria-label={`Ghi chú ${item.ten_nguyen_lieu}`}
                             value={entries[item.ma_nguyen_lieu]?.note ?? ''}
-                            onChange={(value) =>
-                              changeEntry(item.ma_nguyen_lieu, 'note', value)
-                            }
-                            required
-                          />
+                            onChange={event => changeEntry(item.ma_nguyen_lieu, 'note', event.target.value)}
+                            maxLength={500} required
+                          /></label>
                         )}
                       </>
                     ),
                   },
                 ]}
               />
-              {compared && differing.length > 0 && <p className="inline-form-error" role="status">Có {differing.length} nguyên liệu lệch vượt ngưỡng cho phép.</p>}
+              {stockMessage && <p className="count-stock-error" role="alert">{stockMessage}</p>}
             </fieldset>
             <ErrorMessage message={task.error} />
-            {checked && (
+            {checked && !differing.length && !moneyError && (
               <p role="status">Đã đối chiếu tiền thực thu và tồn thực tế.</p>
             )}
           </Panel>

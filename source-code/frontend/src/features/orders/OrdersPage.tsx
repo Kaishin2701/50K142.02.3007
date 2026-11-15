@@ -77,6 +77,7 @@ export default function OrdersPage() {
           {manager && (
             <SelectField
               label="Phương thức thanh toán"
+              chevronSrc="/assets/figma/261-56089/98c21.svg"
               value={form.method}
               onChange={(event) => field('method', event.target.value)}
             >

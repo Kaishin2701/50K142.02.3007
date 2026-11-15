@@ -37,8 +37,8 @@ export function InvoicePreview({ onPrinted }: { onPrinted(copies: number): void 
           {payment?.phuong_thuc === 'Tiền mặt' && <><div><dt>Số tiền nhận được</dt><dd>{money(payment.so_tien_nhan)}</dd></div><div><dt>Tiền thừa trả khách</dt><dd>{money(Number(payment.so_tien_nhan) - Number(order.tong_tien))}</dd></div></>}
         </dl>
         <h3>Thiết lập in</h3>
-        <SelectField label="Máy in" value="counter" onChange={() => {}}><option value="counter">Máy in hóa đơn tại quầy</option></SelectField>
-        <div className="invoice-print-grid"><SelectField label="Khổ giấy" value="80mm" onChange={() => {}}><option value="80mm">80 mm</option></SelectField>
+        <SelectField label="Máy in" leadingIcon="/assets/figma/261-53624/4c58b.svg" chevronSrc="/assets/figma/261-53624/8eef1.svg" value="counter" onChange={() => {}}><option value="counter">Máy in hóa đơn tại quầy</option></SelectField>
+        <div className="invoice-print-grid"><SelectField label="Khổ giấy" chevronSrc="/assets/figma/261-53624/8eef1.svg" value="80mm" onChange={() => {}}><option value="80mm">80 mm</option></SelectField>
           <div className="ui-field"><span>Số bản</span><div className="quantity-stepper"><Button aria-label="Giảm số bản" disabled={copies === 1} onClick={() => setCopies(n => n - 1)}>−</Button><output aria-label="Số bản">{copies}</output><Button aria-label="Tăng số bản" disabled={copies === 10} onClick={() => setCopies(n => n + 1)}>+</Button></div></div>
         </div>
         <p className="muted">Bấm Xuất hóa đơn để xuất hóa đơn và chuyển phiếu pha chế.</p>

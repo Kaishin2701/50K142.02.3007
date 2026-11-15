@@ -8,7 +8,6 @@ import {
   type ButtonHTMLAttributes,
   type InputHTMLAttributes,
   type ReactNode,
-  type SelectHTMLAttributes,
 } from 'react';
 import { dateText, parseDisplayDate } from '../app/format';
 
@@ -58,24 +57,7 @@ export function Field({
     </label>
   );
 }
-export function SelectField({
-  label,
-  children,
-  ...props
-}: SelectHTMLAttributes<HTMLSelectElement> & {
-  label: string;
-  children: ReactNode;
-}) {
-  const id = useId();
-  return (
-    <label className="ui-field" htmlFor={id}>
-      <span>{label}</span>
-      <select id={id} {...props}>
-        {children}
-      </select>
-    </label>
-  );
-}
+export { SelectField } from './SelectField';
 export function TextField({
   label,
   value,
