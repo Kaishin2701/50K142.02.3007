@@ -3204,3 +3204,47 @@ body, #root {
 .cash-payment .dialog-actions { gap: 14px; }
 .cash-payment .cash-confirm-action:disabled { opacity: 1; background: #e5d6c4; border-color: #e5d6c4; color: #7d6657; }
 .cash-payment .cash-choose-method { display: inline-flex; justify-content: center; color: #4a3525; background: #fff; }
+.order-detail-dialog.ui-dialog { width: min(860px, calc(100% - 32px)); }
+.order-detail-dialog::backdrop { background: rgba(31, 20, 14, .4); }
+.order-detail-dialog .dialog-surface { min-height: 608px; display: flex; flex-direction: column; }
+.order-detail-completed .dialog-surface { min-height: 631px; }
+.order-detail-dialog .dialog-header { position: relative; padding: 30px 30px 0; }
+.order-detail-dialog .dialog-header h2 { color: #1f140e; font-size: 24px; line-height: 36px; }
+.order-detail-dialog .dialog-header .ui-button {
+  position: absolute; top: 44px; right: 39px; width: 24px; height: 24px;
+  min-width: 24px; min-height: 24px; font-size: 0;
+  background: url('/assets/figma/261-54627/29c7a.svg') center / 11.6px 11.6px no-repeat;
+}
+.order-detail-dialog .dialog-body { padding: 0 30px; gap: 0; }
+.order-detail-description { margin: 4px 0 24px; color: #7d6657; font-size: 13px; line-height: 19.5px; }
+.order-detail-summary {
+  display: grid; grid-template-columns: 174px minmax(0, 1fr) 210px;
+  align-items: center; min-height: 89px; padding: 14px 17px; margin: 0;
+  border: 1px solid #e5d6c4; border-radius: 8px; background: white;
+}
+.order-detail-summary dt { color: #7d6657; font-size: 12px; line-height: 18px; margin-bottom: 5px; }
+.order-detail-summary dd { margin: 0; font-size: 14px; line-height: 21px; font-weight: 600; }
+.order-detail-summary > div:first-child dd { color: #1f140e; font-size: 20px; line-height: 30px; font-weight: 700; }
+.order-detail-status { display: inline-flex; gap: 5px; align-items: center; min-height: 28px; padding: 5px 10px; border-radius: 99px; background: #fcf1e6; color: #7a2e1d; font-size: 12px; font-weight: 700; line-height: 18px; white-space: nowrap; }
+.order-detail-status[data-value='Hoàn tất pha chế'] { background: #e5f2e8; color: #296e4d; }
+.order-detail-status img { flex: none; }
+.order-detail-people { display: flex; flex-wrap: wrap; gap: 12px 32px; margin: 22px 0 18px; font-size: 13px; line-height: 19.5px; }
+.order-detail-people > div { display: flex; gap: 8px; }
+.order-detail-people dt { color: #7d6657; }
+.order-detail-people dd { margin: 0; font-weight: 700; }
+.order-detail-dialog h3 { margin: 0 0 16px; font-size: 15px; line-height: 22.5px; }
+.order-detail-items { border: 1px solid #e5d6c4; border-radius: 8px; overflow: hidden; background: white; }
+.order-detail-items .ui-table { table-layout: fixed; font-size: 13px; }
+.order-detail-items .ui-table th { height: 41px; padding: 10px 16px; background: #fcf7f0; font-size: 12px; font-weight: 600; line-height: 18px; }
+.order-detail-items .ui-table td { height: 58px; padding: 16px; border-bottom: 0; border-top: 1px solid #e5d6c4; line-height: 19.5px; }
+.order-detail-items .ui-table [data-column='name'] { width: 51%; }
+.order-detail-items .ui-table [data-column='quantity'] { width: 12%; text-align: center; }
+.order-detail-items .ui-table [data-column='price'] { width: 19%; text-align: right; }
+.order-detail-items .ui-table [data-column='total'] { width: 18%; text-align: right; }
+.order-detail-items .ui-table td[data-column='name'] { font-weight: 600; }
+.order-detail-items .ui-table td[data-column='total'] { font-weight: 700; }
+.order-detail-dialog .order-total { min-height: 77px; padding: 16px 0; font-size: 14px; font-weight: 600; }
+.order-detail-dialog .order-total strong { color: #1f140e; font-size: 26px; line-height: 39px; font-weight: 700; }
+.order-detail-dialog .dialog-actions { margin: auto 30px 0; padding: 20px 0 32px; border-top: 1px solid #e5d6c4; gap: 16px; }
+.order-detail-dialog .dialog-actions p { margin: 0 auto 0 0; color: #7d6657; font-size: 12px; line-height: 18px; }
+.order-detail-dialog .dialog-actions .ui-button { flex: 0 0 77px; min-width: 77px; height: 44px; min-height: 44px; padding: 0 12px; color: #4a3525; background: white; font-size: 14px; }

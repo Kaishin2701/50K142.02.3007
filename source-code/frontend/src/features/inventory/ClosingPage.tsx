@@ -9,7 +9,7 @@ import {
   shiftLabel,
   shortId,
 } from '../../app/format';
-import { api, type RecordData } from '../../services/api';
+import { api } from '../../services/api';
 import type { ClosingReport } from '../../services/models';
 import {
   Badge,
@@ -39,7 +39,6 @@ export default function ClosingPage() {
   return (
     <>
       <PageHeader title="Báo cáo cuối ca" />
-      <LowStockMessages manager={manager} onReport={setSelected} />
       {!selected && (
         <Panel className="closing-list-panel">
           <Loading active={reports.loading} />
@@ -281,37 +280,4 @@ export function ClosingDetails({
       )}
     </>
   );
-}
-
-function LowStockMessages({ manager, onReport }: { manager: boolean; onReport(id: string): void }) {
-  const notifications = useResource<RecordData[]>('/notifications?limit=100', []);
-  const [selected, setSelected] = useState<RecordData | null>(null);
-  const task = useTask();
-  const notice = useNotice();
-  const { refresh } = useDataStore();
-  const messages = notifications.data.filter(item => manager ? item.loai === 'CAN_NHAP_HANG' : item.loai === 'YEU_CAU_GUI_LAI_NGUYEN_LIEU');
-  const payload = (message: RecordData) => { try { return typeof message.du_lieu === 'string' ? JSON.parse(message.du_lieu) : message.du_lieu ?? {}; } catch { return {}; } };
-  const data = selected ? payload(selected) : null;
-  return <>
-    {messages.length > 0 && <Panel className="low-stock-messages" title={manager ? 'Thông tin nguyên liệu cần nhập' : 'Yêu cầu gửi lại thông tin nguyên liệu'}>
-      <ErrorMessage message={notifications.error || task.error} />
-      {messages.map(message => <div className="closing-report-row" key={message.ma_thong_bao}><span>{message.noi_dung}</span><span>{dateTimeText(message.tao_luc)}</span><Button onClick={() => {
-        if (manager) setSelected(message); else if (payload(message).ma_bao_cao) onReport(payload(message).ma_bao_cao);
-        void task.run(async () => { await api(`/notifications/${message.ma_thong_bao}/read`, { method: 'POST' }); refresh(); });
-      }}>Xem thông tin</Button></div>)}
-    </Panel>}
-    {selected && <Modal title={`Cần nhập ${(data.items ?? []).length} nguyên liệu`} className="low-stock-request-dialog" wide onClose={() => setSelected(null)} busy={task.pending}>
-      <div className="dialog-body"><div className="low-stock-sender"><strong>{data.nguoi_gui ?? '—'}</strong><p>{dateTimeText(data.thoi_gian_gui ?? selected.tao_luc)}</p></div>
-        <DataTable<RecordData> className="compact-table" rows={data.items ?? []} rowKey={item => item.ma_nguyen_lieu} columns={[
-          { key: 'code', label: 'Mã nguyên liệu', render: item => shortId(item.ma_nguyen_lieu) },
-          { key: 'name', label: 'Tên nguyên liệu', render: item => item.ten_nguyen_lieu },
-          { key: 'unit', label: 'Đơn vị tính', render: item => item.don_vi_tinh },
-          { key: 'actual', label: 'Tồn thực tế', render: item => numberText(item.ton_thuc_te) },
-          { key: 'minimum', label: 'Mức tồn tối thiểu', render: item => numberText(item.muc_ton_toi_thieu) },
-        ]} /><ErrorMessage message={task.error} />
-      </div><footer className="dialog-actions"><Button variant="primary" disabled={task.pending || !data.ma_bao_cao} onClick={() => void task.run(async () => {
-        await api(`/inventory/close-reports/${data.ma_bao_cao}/request-low-stock-resend`, { method: 'POST' }); notice('Đã yêu cầu gửi lại thông tin nguyên liệu cần nhập'); setSelected(null); refresh();
-      })}>Yêu cầu gửi lại</Button></footer>
-    </Modal>}
-  </>;
 }

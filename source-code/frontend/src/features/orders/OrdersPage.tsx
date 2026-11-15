@@ -186,40 +186,42 @@ export default function OrdersPage() {
 function OrderDetails({ id, onClose }: { id: string; onClose(): void }) {
   const detail = useResource<Order | null>('/orders/' + id, null);
   const order = detail.data;
+  const completed = order?.trang_thai_pha_che === 'Hoàn tất pha chế';
+  const payment = order?.payments?.find(item => item.trang_thai === 'Thành công')?.phuong_thuc
+    ?? order?.phuong_thuc ?? 'Chưa thanh toán';
   return (
     <>
       <Modal
-        title={
-          order?.ma_don_hien_thi
-            ? 'Chi tiết đơn #' + order.ma_don_hien_thi
-            : 'Chi tiết đơn hàng'
-        }
+        title="Chi tiết đơn hàng"
         onClose={onClose}
         wide
+        className={'order-detail-dialog' + (completed ? ' order-detail-completed' : '')}
       >
         <div className="dialog-body">
           <Loading active={detail.loading} />
           <ErrorMessage message={detail.error} />
           {order && (
             <>
-              <dl className="detail-grid">
-                <dt>Thời gian lập đơn</dt>
-                <dd>{dateTimeText(order.thoi_gian_lap)}</dd>
-                <dt>Nhân viên lập đơn</dt>
-                <dd>{order.nhan_vien_lap}</dd>
-                <dt>Phương thức thanh toán</dt>
-                <dd>
-                  {order.payments?.find(
-                    (payment) => payment.trang_thai === 'Thành công',
-                  )?.phuong_thuc ?? 'Chưa thanh toán'}
-                </dd>
-                <dt>Trạng thái</dt>
-                <dd>
-                  <Badge>{order.trang_thai_pha_che}</Badge>
-                </dd>
+              <p className="order-detail-description">{completed
+                ? 'Đơn đã hoàn tất pha chế. Thông tin chỉ để xem.'
+                : 'Thông tin chỉ để xem, không thay đổi trạng thái đơn hàng.'}</p>
+              <dl className="order-detail-summary">
+                <div><dt>Mã đơn</dt><dd>#{order.ma_don_hien_thi}</dd></div>
+                <div><dt>Thời gian lập đơn</dt><dd>{dateTimeText(order.thoi_gian_lap)}</dd></div>
+                <div><dt>{completed ? 'Trạng thái' : 'Trạng thái hiện tại'}</dt><dd>
+                  <span className="order-detail-status" data-value={order.trang_thai_pha_che}>
+                    {completed && <img src="/assets/figma/261-54627/410cf.svg" alt="" />}
+                    {order.trang_thai_pha_che}
+                  </span>
+                </dd></div>
+              </dl>
+              <dl className="order-detail-people">
+                <div><dt>Nhân viên lập đơn:</dt><dd>{order.nhan_vien_lap}</dd></div>
+                <div><dt>Phương thức thanh toán:</dt><dd>{payment === 'Chuyển khoản qua QR' ? 'Chuyển khoản' : payment}</dd></div>
               </dl>
               <h3>Danh sách món</h3>
               <DataTable
+                className="order-detail-items"
                 rows={order.items}
                 rowKey={(item) => item.ma_mon}
                 columns={[
@@ -256,6 +258,7 @@ function OrderDetails({ id, onClose }: { id: string; onClose(): void }) {
           )}
         </div>
         <footer className="dialog-actions">
+          <p>Đơn giá là giá tại thời điểm lập đơn.</p>
           <Button onClick={onClose}>
             Đóng
           </Button>

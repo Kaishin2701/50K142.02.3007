@@ -493,13 +493,29 @@ describe('native application architecture', () => {
     await screen.findByRole('heading', { name: 'Đăng nhập', exact: true });
     expect(screen.queryByRole('dialog')).toBeNull();
   });
-  it('keeps order details read-only even for paid employee orders', async () => {
+  it.each(['Chưa pha chế', 'Hoàn tất pha chế'] as const)('keeps %s order details read-only with their actual status', async (status) => {
     const user = await startSale();
     await checkSale(user);
     order.da_thanh_toan = true;
+    order.trang_thai_pha_che = status;
+    if (status === 'Hoàn tất pha chế') {
+      cleanup();
+      activeUser = manager;
+      location.hash = '/overview';
+      render(<App />);
+      await screen.findByRole('heading', { name: 'Báo cáo doanh thu', exact: true });
+    }
     await user.click(screen.getByRole('link', { name: 'Quản lý đơn hàng', exact: true }));
     await user.click(await screen.findByRole('button', { name: '#' + order.ma_don_hien_thi, exact: true }));
-    const detail = await screen.findByRole('dialog', { name: 'Chi tiết đơn #' + order.ma_don_hien_thi });
+    const detail = await screen.findByRole('dialog', { name: 'Chi tiết đơn hàng', exact: true });
+    await within(detail).findByText('#' + order.ma_don_hien_thi);
+    expect(within(detail).getByText(status === 'Hoàn tất pha chế'
+      ? 'Đơn đã hoàn tất pha chế. Thông tin chỉ để xem.'
+      : 'Thông tin chỉ để xem, không thay đổi trạng thái đơn hàng.')).toBeTruthy();
+    expect(detail.querySelector('.order-detail-status')?.textContent).toBe(status);
+    expect(within(detail).getByText('Đơn giá là giá tại thời điểm lập đơn.')).toBeTruthy();
+    expect(detail.querySelector('.order-detail-summary')?.textContent).toContain(order.ma_don_hien_thi);
+    expect(detail.querySelector('.order-detail-items table')).toBeTruthy();
     expect(within(detail).queryByRole('button', { name: 'Xuất hóa đơn', exact: true })).toBeNull();
     expect(within(detail).queryByRole('button', { name: 'Bắt đầu pha chế', exact: true })).toBeNull();
     expect(within(detail).queryByRole('button', { name: 'Hoàn tất pha chế', exact: true })).toBeNull();
@@ -526,16 +542,13 @@ describe('native application architecture', () => {
     await screen.findByText('Không có dữ liệu doanh thu trong khoảng thời gian đã chọn!');
     expect(screen.getAllByText('0 đ').length).toBeGreaterThan(0);
   });
-  it('lets managers inspect the actual materials attached to a low-stock message', async () => {
+  it('does not add a separate low-stock notification list to closing reports', async () => {
     notifications = [{ ma_thong_bao: 'notice-low-stock', loai: 'CAN_NHAP_HANG', noi_dung: 'Có nguyên liệu cần nhập thêm.', tao_luc: '2026-11-09T05:00:00Z', du_lieu: { ma_bao_cao: 'report-1', nguoi_gui: employee.ho_ten, items: [{ ...material, ton_thuc_te: 1 }] } }];
-    location.hash = '/closing'; render(<App />); const user = userEvent.setup();
-    await user.click(await screen.findByRole('button', { name: 'Xem thông tin' }));
-    const detail = screen.getByRole('dialog', { name: 'Cần nhập 1 nguyên liệu' });
-    expect(within(detail).getByText(material.ten_nguyen_lieu)).toBeTruthy();
-    expect(within(detail).getByText(employee.ho_ten)).toBeTruthy();
-    expect(within(detail).getByRole('button', { name: 'Yêu cầu gửi lại' })).toBeTruthy();
-    expect(within(detail).getAllByRole('button', { name: 'Đóng', exact: true })).toHaveLength(1); // Header × only.
-    await waitFor(() => expect(calls.some(c => c.path === '/notifications/notice-low-stock/read')).toBe(true));
+    location.hash = '/closing'; render(<App />);
+    await screen.findByText('Chưa có báo cáo cuối ca.');
+    expect(document.querySelector('.low-stock-messages')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Xem thông tin' })).toBeNull();
+    expect(calls.some(c => c.path === '/notifications/notice-low-stock/read')).toBe(false);
   });
   it('distinguishes stock-entry validation from discrepancies and never saves an invalid count', async () => {
     activeUser = employee; location.hash = '/count'; material.ton_ly_thuyet = 10;
