@@ -206,7 +206,7 @@ export function ClosingDetails({
                     {
                       key: 'difference',
                       label: 'Chênh lệch',
-                      render: (item) => numberText(item.chenh_lech),
+                      render: (item) => <span className={Number(item.chenh_lech) !== 0 ? 'difference-value' : ''}>{numberText(item.chenh_lech)}</span>,
                     },
                     {
                       key: 'reason',

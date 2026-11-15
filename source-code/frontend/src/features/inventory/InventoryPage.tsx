@@ -107,7 +107,7 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
             {
               key: 'status',
               label: 'Trạng thái thanh toán',
-              render: (row) => <Badge>{row.trang_thai_thanh_toan}</Badge>,
+              render: (row) => <span className={row.trang_thai_thanh_toan === 'Công nợ' ? 'receipt-debt' : ''}>{row.trang_thai_thanh_toan}</span>,
             },
             {
               key: 'method',
@@ -126,7 +126,7 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
               label: 'Ngày',
               render: (row) => dateText(row.ngay_kiem_ke),
             },
-            { key: 'shift', label: 'Ca', render: (row) => shiftLabel(row) },
+            { key: 'shift', label: 'Ca', render: (row) => shiftLabel(row).split(' · ')[0] },
             {
               key: 'name',
               label: 'Nguyên liệu',

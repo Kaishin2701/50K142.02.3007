@@ -313,23 +313,17 @@ function ShiftChangeForm({
             <SelectField label="Ca làm cần thay đổi" value={sourceId} onChange={event => { setSourceId(event.target.value); setForm(previous => ({ ...previous, otherShift: '' })); }}>
               {sourceShifts.map(item => <option key={item.ma_ca} value={item.ma_ca}>{shiftText(item)}</option>)}
             </SelectField>
-          ) : <><p>Ca làm cần thay đổi</p><strong>{shiftText(shift)}</strong></>}
+          ) : <Field label="Ca làm cần thay đổi" value={shiftText(shift)} readOnly />}
           <Loading active={colleagues.loading} />
           <ErrorMessage message={colleagues.error || task.error} />
-          <SelectField
-            label="Loại yêu cầu"
-            value={form.type}
-            onChange={(event) =>
-              setForm((previous) => ({
-                ...previous,
-                type: event.target.value,
-                otherShift: '',
-              }))
-            }
-          >
-            <option>Đổi ca hai chiều</option>
-            <option>Nhờ nhân viên khác làm thay</option>
-          </SelectField>
+          <fieldset className="radio-field shift-request-type">
+            <legend>Loại yêu cầu</legend>
+            <div className="radio-options">{['Đổi ca hai chiều', 'Nhờ nhân viên khác làm thay'].map(type => <label key={type}>
+              <input type="radio" name="shift-request-type" value={type} checked={form.type === type}
+                onChange={() => setForm(previous => ({ ...previous, type, otherShift: '' }))} />{type}
+            </label>)}</div>
+          </fieldset>
+          <div className="shift-change-people">
           <SelectField
             label="Đồng nghiệp"
             value={form.colleague}
@@ -371,6 +365,7 @@ function ShiftChangeForm({
                 ))}
             </SelectField>
           )}
+          </div>
           <TextField
             label="Lý do"
             value={form.reason}
