@@ -4,6 +4,7 @@ import { dateText, money, today } from '../../app/format';
 import { download, query } from '../../services/api';
 import {
   Button,
+  DateField,
   ErrorMessage,
   Field,
   Loading,
@@ -33,6 +34,7 @@ export default function ReportsPage() {
   const [method, setMethod] = useState('Tiền mặt');
   const [exporting, setExporting] = useState(false);
   const [format, setFormat] = useState('xlsx');
+  const [filterError, setFilterError] = useState('');
   const task = useTask();
   const notice = useNotice();
   const revenue = useResource<Revenue>(
@@ -40,6 +42,7 @@ export default function ReportsPage() {
     { doanh_thu: '0', so_ly: '0', tien_mat: '0', chuyen_khoan: '0' },
   );
   const changePeriod = (next: Period) => {
+    setFilterError('');
     setPeriod(next);
     setDate(
       next === 'year'
@@ -52,6 +55,8 @@ export default function ReportsPage() {
   };
   const showReport = (event: FormEvent) => {
     event.preventDefault();
+    if (!date || (period === 'year' && (!/^\d{4}$/.test(date) || Number(date) < 1900))) { setFilterError('Vui lòng chọn thời gian báo cáo hợp lệ.'); return; }
+    setFilterError('');
     setSelectedDate(
       period === 'year'
         ? date + '-01-01'
@@ -83,7 +88,7 @@ export default function ReportsPage() {
         }
       />
       <Panel title="Báo cáo doanh thu" className="report-filter-panel">
-        <form className="report-toolbar" onSubmit={showReport}>
+        <form className="report-toolbar" onSubmit={showReport} noValidate>
           <div className="segmented" aria-label="Khoảng thời gian">
             {periods.map((item) => (
               <Button
@@ -95,21 +100,16 @@ export default function ReportsPage() {
               </Button>
             ))}
           </div>
-          <Field
+          {period === 'year' ? <Field
+            label="Ngày báo cáo" error={filterError} type="number" min={1900} max={9999} value={date} onChange={event => { setDate(event.target.value); setFilterError(''); }} required
+          /> : <DateField
             label="Ngày báo cáo"
-            type={
-              period === 'year'
-                ? 'number'
-                : period === 'month'
-                  ? 'month'
-                  : 'date'
-            }
-            min={period === 'year' ? 1900 : undefined}
-            max={period === 'year' ? 9999 : undefined}
+            month={period === 'month'}
+            error={filterError}
             value={date}
-            onChange={(event) => setDate(event.target.value)}
+            onChange={value => { setDate(value); setFilterError(''); }}
             required
-          />
+          />}
           <Button type="submit" variant="primary">
             Xem báo cáo
           </Button>
@@ -131,6 +131,7 @@ export default function ReportsPage() {
           <strong>{revenue.data.so_ly}</strong>
         </div>
       </div>
+      {!revenue.loading && !revenue.error && Number(revenue.data.so_ly) === 0 && Number(revenue.data.doanh_thu) === 0 && <p className="revenue-empty" role="status">Không có dữ liệu doanh thu trong khoảng thời gian đã chọn!</p>}
       <Panel
         title="Doanh thu theo phương thức thanh toán"
         className="report-payment-panel"
@@ -225,7 +226,7 @@ export default function ReportsPage() {
                     `me-ca-phe-${selectedDate}.${format}`,
                   );
                   setExporting(false);
-                  notice('Xuất báo cáo thành công.');
+                  notice('Xuất file thành công');
                 })
               }
             >

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useResource } from '../../app/data';
-import { dateText, money, numberText, shortId } from '../../app/format';
+import { dateText, money, numberText, shortId, shiftLabel } from '../../app/format';
 import type { Page } from '../../app/router';
 import type { RecordData } from '../../services/api';
 import {
@@ -9,7 +9,6 @@ import {
   DataTable,
   ErrorMessage,
   Loading,
-  Modal,
   PageHeader,
   Panel,
   Pagination,
@@ -71,7 +70,7 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
           {
             key: 'status',
             label: 'Trạng thái',
-            render: (row) => <Badge>{row.trang_thai}</Badge>,
+            render: (row) => <Badge>{row.trang_thai === 'Đủ tồn' ? 'Bình thường' : row.trang_thai}</Badge>,
           },
         ]
       : mode === 'receipts'
@@ -127,7 +126,7 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
               label: 'Ngày',
               render: (row) => dateText(row.ngay_kiem_ke),
             },
-            { key: 'shift', label: 'Ca', render: (row) => shortId(row.ma_ca) },
+            { key: 'shift', label: 'Ca', render: (row) => shiftLabel(row) },
             {
               key: 'name',
               label: 'Nguyên liệu',
@@ -151,7 +150,7 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
             {
               key: 'difference',
               label: 'Chênh lệch',
-              render: (row) => numberText(row.chenh_lech),
+              render: (row) => <span className={Number(row.chenh_lech) !== 0 ? 'difference-value' : ''}>{numberText(row.chenh_lech)}</span>,
             },
             {
               key: 'reason',
@@ -170,7 +169,7 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
   return (
     <>
       <PageHeader title={title} />
-      {mode === 'stock' && (
+      {mode === 'stock' && !result.loading && !result.error && result.data.length > 0 && (
         <p
           className={
             'stock-alert' +
@@ -179,11 +178,10 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
               : '')
           }
         >
-          Có {result.data.filter((row) => row.trang_thai === 'Sắp hết').length}{' '}
-          nguyên liệu dưới mức tồn tối thiểu
+          {result.data.some(row => row.trang_thai === 'Sắp hết') ? `Có ${result.data.filter(row => row.trang_thai === 'Sắp hết').length} nguyên liệu dưới mức tồn tối thiểu` : 'Tất cả nguyên liệu đều trên mức tồn tối thiểu.'}
         </p>
       )}
-      <Panel
+      {!receipt && <Panel
         title={
           mode === 'stock'
             ? undefined
@@ -225,7 +223,7 @@ export default function InventoryPage({ page: mode }: { page: Page }) {
             onChange={setPage}
           />
         )}
-      </Panel>
+      </Panel>}
       <p className="breadcrumb">KHO / {title.toLocaleUpperCase('vi-VN')}</p>
       {receipt && (
         <ReceiptDetails
@@ -244,25 +242,21 @@ function ReceiptDetails({ id, onClose }: { id: string; onClose(): void }) {
   );
   const receipt = result.data;
   return (
-    <Modal title="Chi tiết nhập hàng" onClose={onClose} wide>
-      <div className="dialog-body">
+    <section className="receipt-detail">
+      <Button onClick={onClose}>Quay lại</Button>
+      <Panel title="Chi tiết nhập hàng">
         <Loading active={result.loading} />
         <ErrorMessage message={result.error} />
         {receipt && (
           <>
-            <dl className="detail-grid">
-              <dt>Mã nhập hàng</dt>
-              <dd>{shortId(receipt.ma_po)}</dd>
-              <dt>Nhà cung cấp</dt>
-              <dd>{receipt.ten_nha_cung_cap}</dd>
-              <dt>Ngày nhập</dt>
-              <dd>{dateText(receipt.ngay_nhap)}</dd>
-              <dt>Người xác nhận nhập hàng</dt>
-              <dd>{receipt.nguoi_xac_nhan}</dd>
-              <dt>Trạng thái thanh toán</dt>
-              <dd>{receipt.trang_thai_thanh_toan}</dd>
-              <dt>Hình thức thanh toán</dt>
-              <dd>{receipt.hinh_thuc_thanh_toan ?? 'Chưa có'}</dd>
+            <dl className="receipt-metadata">
+              <div><dt>Mã PO</dt><dd>{shortId(receipt.ma_po)}</dd></div>
+              <div><dt>Nhà cung cấp</dt><dd>{receipt.ten_nha_cung_cap}</dd></div>
+              <div><dt>Ngày nhập</dt><dd>{dateText(receipt.ngay_nhap)}</dd></div>
+              <div><dt>Người xác nhận nhập hàng</dt><dd>{receipt.nguoi_xac_nhan}</dd></div>
+              <div><dt>Trạng thái thanh toán</dt><dd>{receipt.trang_thai_thanh_toan}</dd></div>
+              <div><dt>Hình thức thanh toán</dt><dd>{receipt.hinh_thuc_thanh_toan ?? 'Chưa có'}</dd></div>
+              <div><dt>Tổng tiền</dt><dd>{money(receipt.tong_tien)}</dd></div>
             </dl>
             <DataTable<RecordData>
               rows={receipt.items}
@@ -300,16 +294,9 @@ function ReceiptDetails({ id, onClose }: { id: string; onClose(): void }) {
                 },
               ]}
             />
-            <div className="order-total">
-              <span>Tổng tiền</span>
-              <strong>{money(receipt.tong_tien)}</strong>
-            </div>
           </>
         )}
-      </div>
-      <footer className="dialog-actions">
-        <Button onClick={onClose}>Đóng</Button>
-      </footer>
-    </Modal>
+      </Panel>
+    </section>
   );
 }

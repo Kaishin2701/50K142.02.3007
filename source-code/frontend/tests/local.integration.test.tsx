@@ -2,7 +2,7 @@ import React from 'react';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { afterEach, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../src/app/App';
 
@@ -125,12 +125,10 @@ it.skipIf(!localBase)(
     await user.click(
       screen.getByRole('button', { name: 'Kiểm tra đơn', exact: true }),
     );
-    await user.click(
-      await screen.findByRole('button', { name: 'Xác nhận đơn', exact: true }),
-    );
-    await user.click(
-      await screen.findByRole('button', { name: 'Tiền mặt', exact: true }),
-    );
+    await waitFor(() => expect((screen.getByRole('button', { name: 'Xác nhận đơn', exact: true }) as HTMLButtonElement).disabled).toBe(false));
+    await user.click(screen.getByRole('button', { name: 'Xác nhận đơn', exact: true }));
+    await waitFor(() => expect((screen.getByRole('button', { name: 'Tiền mặt', exact: true }) as HTMLButtonElement).disabled).toBe(false));
+    await user.click(screen.getByRole('button', { name: 'Tiền mặt', exact: true }));
     const cash = screen.getByRole('dialog', { name: 'Thanh toán tiền mặt' });
     await user.type(
       within(cash).getByRole('spinbutton', { name: 'Số tiền nhận được' }),
@@ -142,6 +140,7 @@ it.skipIf(!localBase)(
     await user.click(
       await screen.findByRole('button', { name: 'Xuất hóa đơn', exact: true }),
     );
+    await user.click(screen.getByRole('button', { name: 'Xuất hóa đơn', exact: true }));
     await user.click(
       await screen.findByRole('button', {
         name: 'Hoàn tất pha chế',

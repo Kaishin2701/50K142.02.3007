@@ -10,6 +10,7 @@ import {
   timeText,
   today,
   weekStart,
+  weekText,
 } from '../../app/format';
 import type { CalendarData, Registration, Shift } from '../../services/models';
 import {
@@ -103,7 +104,7 @@ export default function ShiftsPage() {
             ‹
           </Button>
           <strong>
-            {dateText(week)} – {dateText(addDays(week, 6))}
+            {weekText(week)}
           </strong>
           <Button
             aria-label="Tuần sau"
@@ -260,6 +261,7 @@ export default function ShiftsPage() {
             );
           })}
         </div>
+        {!calendar.loading && !calendar.error && !availability.length && !calendar.data.shifts.some(shift => manager || calendarTime(shift.ngay_lam, shift.gio_ket_thuc) > now) && <p className="calendar-empty-week">{manager ? 'Chưa có ca làm trong tuần này' : 'Chưa có lịch làm việc hoặc đăng ký trong tuần này'}</p>}
         {manager && (
           <div className="ui-actions calendar-footer">
             <Button onClick={() => setDialog({ kind: 'requests' })}>

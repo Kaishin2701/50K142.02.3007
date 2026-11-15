@@ -1,7 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useResource } from '../../app/data';
 import { addDays, money, shiftTime, weekStart } from '../../app/format';
-import { useRouter } from '../../app/router';
 import type { CalendarData, MenuItem, OrderLine } from '../../services/models';
 import {
   Badge,
@@ -16,6 +15,7 @@ import {
   Panel,
 } from '../../components/ui';
 import { useCheckout } from './CheckoutContext';
+import { InvoicePreview } from './InvoicePreview';
 
 const categories = [
   'Cà phê',
@@ -33,7 +33,6 @@ const categories = [
 
 export default function SalesPage() {
   const checkout = useCheckout();
-  const { go } = useRouter();
   const menu = useResource<MenuItem[]>('/menu', []);
   const from = weekStart();
   const calendar = useResource<CalendarData>(
@@ -46,6 +45,9 @@ export default function SalesPage() {
   const [cash, setCash] = useState('');
   const [qrOpen, setQrOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
+  const [cashAttempted, setCashAttempted] = useState(false);
+  const [printedCopies, setPrintedCopies] = useState(1);
   const order = checkout.order;
   const total = order
     ? Number(order.tong_tien)
@@ -62,8 +64,9 @@ export default function SalesPage() {
   const immutable = checkout.held || Boolean(order);
   const paid = order?.da_thanh_toan;
   useEffect(() => {
-    if (paid) setQrOpen(false);
+    if (paid) { setQrOpen(false); setCashOpen(false); }
   }, [paid]);
+  useEffect(() => { setCashOpen(false); setQrOpen(false); setCashAttempted(false); setInvoiceOpen(false); }, [order?.ma_don]);
   const items = menu.data.filter(
     (item) =>
       item.danh_muc === category &&
@@ -73,11 +76,16 @@ export default function SalesPage() {
   );
   const submitCash = async (event: FormEvent) => {
     event.preventDefault();
+    setCashAttempted(true);
+    if (!cash.trim() || !Number.isInteger(Number(cash)) || Number(cash) < total) return;
     if (await checkout.payCash(Number(cash))) setCashOpen(false);
   };
+  const cashError = cashAttempted ? !cash.trim() ? 'Vui lòng nhập số tiền nhận được' : !Number.isInteger(Number(cash)) || Number(cash) < 0 ? 'Số tiền phải là số nguyên không âm' : Number(cash) < total ? 'Số tiền nhận được nhỏ hơn tổng tiền đơn hàng' : '' : '';
+  if (invoiceOpen && paid && !completed) return <InvoicePreview onPrinted={copies => { setPrintedCopies(copies); setInvoiceOpen(false); }} />;
   return (
     <>
       <PageHeader title="Lập đơn bán hàng" />
+      {paid && !completed && <p className="sale-payment-notice"><span className="asset-overlay" aria-hidden="true"><img src="/assets/figma/261-53473/df0aa.svg" alt="" /><img src="/assets/figma/261-53473/471e8.svg" alt="" /></span>Đã ghi nhận thanh toán thành công cho đơn #{order.ma_don_hien_thi}</p>}
       <Loading
         active={menu.loading || calendar.loading || checkout.restoring}
       />
@@ -89,7 +97,7 @@ export default function SalesPage() {
         }
       >
         <Panel
-          title={!checkout.reviewing && !immutable ? 'Chọn món' : 'Đơn hàng'}
+          title={!checkout.reviewing && !immutable ? 'Chọn món' : completed ? `Đơn hàng #${order.ma_don_hien_thi}` : 'Đơn hàng'}
           className="sales-main"
         >
           {!checkout.reviewing && !immutable ? (
@@ -146,10 +154,12 @@ export default function SalesPage() {
             <>
               <p className="muted">
                 {immutable
-                  ? 'Đơn đã được kiểm tra. Món và số lượng chỉ đọc tại bước này.'
+                  ? order?.da_xac_nhan ? 'Đơn đã xác nhận, không thể chỉnh sửa' : 'Đã kiểm tra - Đã giữ tồn. Món và số lượng chỉ đọc tại bước này.'
                   : 'Chọn món và số lượng khách gọi, sau đó bấm Kiểm tra đơn.'}
               </p>
+              {order?.da_xac_nhan && <Badge>{completed ? 'Hoàn tất pha chế' : 'Đơn đã xác nhận, không thể chỉnh sửa'}</Badge>}
               <DataTable<OrderLine>
+                className="sale-table"
                 rows={
                   order?.items ??
                   checkout.cart.map((item) => ({
@@ -198,7 +208,7 @@ export default function SalesPage() {
                   {
                     key: 'price',
                     label: 'Đơn giá',
-                    render: (item) => money(item.don_gia_luc_lap),
+                    render: (item) => order ? money(item.don_gia_luc_lap) : '—',
                   },
                   {
                     key: 'total',
@@ -215,14 +225,15 @@ export default function SalesPage() {
                     ? [
                         {
                           key: 'remove',
-                          label: 'Thao tác',
+                          label: '',
                           render: (item: { ma_mon: string }) => (
                             <Button
                               variant="quiet"
+                              aria-label={`Xóa món ${item.ma_mon}`}
                               disabled={checkout.task.pending}
                               onClick={() => checkout.remove(item.ma_mon)}
                             >
-                              Xóa món
+                              <img src="/assets/figma/261-50834/3fee3.svg" alt="" />
                             </Button>
                           ),
                         },
@@ -230,9 +241,11 @@ export default function SalesPage() {
                     : []),
                 ]}
               />
+              {completed && <p className="completed-order-count">{order.items.length} món / {order.items.reduce((sum, item) => sum + Number(item.so_luong), 0)} số lượng <span>Bán tại quầy</span></p>}
+              {paid && order.trang_thai_pha_che !== 'Chưa pha chế' && <div className="printed-invoice-state"><img src="/assets/figma/261-52174/6e55f.svg" alt="" /><div><strong>Đã xuất hóa đơn giấy</strong><p>Giấy in nhiệt 80 mm · {printedCopies} bản</p></div><span>Đã xuất</span></div>}
               {!immutable && (
                 <Button onClick={() => checkout.setReviewing(false)}>
-                  Thêm món
+                  + Thêm món
                 </Button>
               )}
               <div className="order-total sale-check-footer">
@@ -241,14 +254,14 @@ export default function SalesPage() {
                 <Button
                   variant="primary"
                   disabled={
-                    immutable ||
+                    (!paid && immutable) || completed ||
                     checkout.task.pending ||
                     checkout.restoring ||
-                    !checkout.cart.length
+                    (!paid && !checkout.cart.length)
                   }
-                  onClick={() => void checkout.check(currentShift?.ma_ca)}
+                  onClick={() => paid ? setInvoiceOpen(true) : void checkout.check(currentShift?.ma_ca)}
                 >
-                  Kiểm tra đơn
+                  {paid ? completed ? 'Đã thanh toán' : 'Xuất hóa đơn' : <><img src="/assets/figma/261-51236/337ff.svg" alt="" />Kiểm tra đơn</>}
                 </Button>
               </div>
             </>
@@ -263,7 +276,7 @@ export default function SalesPage() {
           {!checkout.reviewing && !immutable && <Badge>Chưa kiểm tra</Badge>}
           {(checkout.reviewing || immutable) && (
             <p className="checkout-help">
-              Xác nhận, thanh toán hoặc hủy đơn đang lập.
+              {completed ? 'Đồ uống sẵn sàng giao' : paid ? 'Thanh toán thành công' : 'Xác nhận, thanh toán hoặc hủy đơn đang lập.'}
             </p>
           )}
           {(checkout.reviewing || immutable) && (
@@ -326,7 +339,7 @@ export default function SalesPage() {
                         disabled={checkout.task.pending}
                         onClick={() => checkout.remove(item.ma_mon)}
                       >
-                        <img src="/assets/figma/261-51236/337ff.svg" alt="" />
+                        <img src="/assets/figma/261-50834/3fee3.svg" alt="" />
                       </Button>
                     </div>
                     <div className="cart-quantity">
@@ -391,6 +404,7 @@ export default function SalesPage() {
                   để bỏ món; đơn cần ít nhất một món.
                 </p>
               )}
+              {!checkout.cart.length && <div className="empty-cart-total"><span>Tổng tiền</span><strong>—</strong><p>Chưa kiểm tra tồn, chưa giữ tồn và chưa chốt thành tiền.</p><Button variant="primary" disabled>Tiếp tục lập hóa đơn</Button></div>}
               {!!checkout.cart.length && (
                 <Button
                   className="continue-sale-action"
@@ -398,7 +412,7 @@ export default function SalesPage() {
                   disabled={!checkout.cart.length}
                   onClick={() => checkout.setReviewing(true)}
                 >
-                  Tiếp tục lập hóa đơn
+                  Tiếp tục lập hóa đơn <img src="/assets/figma/261-50834/91bfc.svg" alt="" />
                 </Button>
               )}
             </>
@@ -409,6 +423,7 @@ export default function SalesPage() {
                 Nhập món và số lượng, sau đó bấm Kiểm tra đơn để hệ thống tính
                 tổng tiền.
               </p>
+              <Button variant="primary" disabled><img src="/assets/figma/261-51236/c3ec6.svg" alt="" />Xác nhận đơn</Button>
             </>
           )}
           {immutable && !order && (
@@ -430,21 +445,23 @@ export default function SalesPage() {
                 disabled={checkout.task.pending}
                 onClick={() => void checkout.confirm()}
               >
-                Xác nhận đơn
+                <img src="/assets/figma/261-51236/c3ec6.svg" alt="" />Xác nhận đơn
               </Button>
             </>
           )}
-          {order?.da_xac_nhan && !paid && !cashOpen && !qrOpen && (
+          {(checkout.reviewing || immutable) && !paid && !cashOpen && !qrOpen && (
             <>
+              {order?.da_xac_nhan && <p>Đơn đã có mã và đang giữ tồn kho. Chọn phương thức thanh toán của khách.</p>}
               <h3>Phương thức thanh toán</h3>
               <div className="payment-methods">
                 <Button
-                  disabled={checkout.task.pending}
+                  disabled={checkout.task.pending || !order?.da_xac_nhan}
                   className="cash-method"
                   aria-label="Tiền mặt"
                   onClick={() => {
                     checkout.task.setError('');
                     setCash('');
+                    setCashAttempted(false);
                     setCashOpen(true);
                   }}
                 >
@@ -459,7 +476,7 @@ export default function SalesPage() {
                 <Button
                   className="qr-method"
                   aria-label="QR"
-                  disabled={checkout.task.pending}
+                  disabled={checkout.task.pending || !order?.da_xac_nhan}
                   onClick={async () => {
                     if (
                       checkout.payment?.qrImageUrl ||
@@ -484,7 +501,7 @@ export default function SalesPage() {
               </div>
             </>
           )}
-          {cashOpen && (
+          {cashOpen && order?.da_xac_nhan && !paid && (
             <Modal
               inline
               className="payment-inline"
@@ -492,14 +509,11 @@ export default function SalesPage() {
               onClose={() => setCashOpen(false)}
               busy={checkout.task.pending}
             >
-              <form onSubmit={submitCash}>
+              <form onSubmit={submitCash} noValidate>
                 <div className="dialog-body">
-                  <div className="order-total">
-                    <span>Tổng tiền</span>
-                    <strong>{money(total)}</strong>
-                  </div>
                   <Field
                     label="Số tiền nhận được"
+                    error={cashError}
                     type="number"
                     inputMode="numeric"
                     min={0}
@@ -507,13 +521,14 @@ export default function SalesPage() {
                     step={1}
                     disabled={checkout.task.pending}
                     value={cash}
-                    onChange={(event) => setCash(event.target.value)}
+                    onChange={(event) => { setCash(event.target.value); checkout.task.setError(''); }}
                     required
                   />
-                  <div className="order-total">
+                  {!cashError && <div className="order-total cash-change">
                     <span>Tiền thừa trả khách</span>
                     <strong>{money(Math.max(0, Number(cash) - total))}</strong>
-                  </div>
+                  </div>}
+                  {cashError && <p className="muted">Hoàn trả số tiền đã nhận cho khách, sau đó chọn lại phương thức thanh toán.</p>}
                   <ErrorMessage message={checkout.task.error} />
                 </div>
                 <footer className="dialog-actions">
@@ -521,20 +536,20 @@ export default function SalesPage() {
                     onClick={() => setCashOpen(false)}
                     disabled={checkout.task.pending}
                   >
-                    Hủy
+                    Chọn lại phương thức
                   </Button>
                   <Button
                     variant="primary"
                     type="submit"
                     disabled={checkout.task.pending}
                   >
-                    Xác nhận số tiền
+                    <img src="/assets/figma/261-53147/c3ec6.svg" alt="" />Xác nhận số tiền
                   </Button>
                 </footer>
               </form>
             </Modal>
           )}
-          {qrOpen && !paid && (
+          {qrOpen && order?.da_xac_nhan && !paid && (
             <Modal
               inline
               className="payment-inline"
@@ -543,18 +558,17 @@ export default function SalesPage() {
               busy={checkout.task.pending}
             >
               <div className="dialog-body qr-payment">
-                <strong>{money(total)}</strong>
                 {checkout.payment?.qrImageUrl && (
                   <img src={checkout.payment.qrImageUrl} alt="QR thanh toán" />
                 )}
-                <p>{checkout.payment?.ma_tham_chieu_qr}</p>
+                <p>Khách quét mã để thanh toán</p>
+                <strong>{money(total)}</strong>
                 {checkout.payment?.autoConfirm && (
                   <p role="status">Đang chờ ngân hàng xác nhận thanh toán…</p>
                 )}
                 <ErrorMessage message={checkout.task.error} />
               </div>
               <footer className="dialog-actions">
-                <Button onClick={() => setQrOpen(false)}>Đóng</Button>
                 <Button
                   variant="primary"
                   disabled={checkout.task.pending}
@@ -562,26 +576,15 @@ export default function SalesPage() {
                     if (await checkout.reconcile()) setQrOpen(false);
                   }}
                 >
-                  Đối soát thành công
+                  <img src="/assets/figma/261-51236/c3ec6.svg" alt="" />Đối soát thành công
                 </Button>
+                <Button onClick={() => { setQrOpen(false); checkout.task.setError('Đối soát chưa thành công. Vui lòng chọn lại phương thức thanh toán.'); }}>× Đối soát chưa thành công</Button>
               </footer>
             </Modal>
           )}
           {paid && !completed && (
             <>
-              <Badge>Thanh toán thành công</Badge>
-              <p>
-                Đã ghi nhận thanh toán thành công cho đơn #
-                {order.ma_don_hien_thi}
-              </p>
-              <p className="muted">{checkout.payment?.phuong_thuc}</p>
-              <Button
-                variant="primary"
-                disabled={checkout.task.pending}
-                onClick={() => void checkout.print()}
-              >
-                Xuất hóa đơn
-              </Button>
+              <div className="payment-success-panel"><span className="asset-overlay" aria-hidden="true"><img src="/assets/figma/261-53473/eac73.svg" alt="" /><img src="/assets/figma/261-53473/be167.svg" alt="" /></span><strong>Thanh toán thành công</strong><p>Vui lòng xuất hóa đơn cho khách trước khi chuyển phiếu pha chế.</p><strong>{money(total)}</strong></div>
               {order.trang_thai_pha_che === 'Bắt đầu pha chế' && (
                 <Button
                   variant="primary"
@@ -595,19 +598,17 @@ export default function SalesPage() {
           )}
           {completed && (
             <>
-              <Badge>Hoàn tất pha chế</Badge>
-              <p>
-                Đã ghi nhận hoàn tất pha chế cho đơn #{order.ma_don_hien_thi}
-              </p>
+              <div className="payment-success-panel"><img src="/assets/figma/261-52174/61733.svg" alt="" /><strong>Hoàn tất pha chế</strong><p>Đã ghi nhận hoàn tất pha chế cho đơn #{order.ma_don_hien_thi}</p></div>
+              <div className="checkout-order-metadata"><span>Tổng tiền</span><strong>{money(total)}</strong></div>
+              <p>Đã ghi nhận đồ uống sẵn sàng giao. Bạn có thể tiếp tục theo dõi đơn hàng hoặc lập đơn mới.</p>
               <Button variant="primary" onClick={checkout.clear}>
                 Lập đơn mới
               </Button>
-              <Button onClick={() => go('orders')}>Theo dõi đơn hàng</Button>
             </>
           )}
           {!paid && (
             <Button
-              className="checkout-cancel"
+              className={'checkout-cancel' + (order?.da_xac_nhan ? ' is-confirmed' : '')}
               disabled={checkout.task.pending || checkout.restoring}
               onClick={() => {
                 checkout.task.setError('');
@@ -615,7 +616,7 @@ export default function SalesPage() {
               }}
             >
               <img src="/assets/figma/261-50660/a79ec.svg" alt="" />
-              {immutable ? 'Hủy đơn' : 'Dừng đặt hàng'}
+              {order?.da_xac_nhan ? 'Hủy đơn' : 'Dừng đặt hàng'}
             </Button>
           )}
           <ErrorMessage message={checkout.task.error} />
@@ -623,7 +624,7 @@ export default function SalesPage() {
       </div>
       {cancelOpen && (
         <Confirm
-          title={immutable ? 'Hủy đơn' : 'Dừng đặt hàng'}
+          title={order?.da_xac_nhan ? 'Hủy đơn' : 'Dừng đặt hàng'}
           confirmLabel="Xác nhận"
           pending={checkout.task.pending}
           error={checkout.task.error}
@@ -633,7 +634,7 @@ export default function SalesPage() {
           }}
         >
           Bạn có chắc chắn muốn{' '}
-          {immutable ? 'hủy đơn đang lập' : 'dừng đặt hàng'} không?
+          {order?.da_xac_nhan ? 'hủy đơn đang lập' : 'dừng đặt hàng'} không?
         </Confirm>
       )}
       <p className="breadcrumb">BÁN HÀNG / LẬP ĐƠN BÁN HÀNG</p>

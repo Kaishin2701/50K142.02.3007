@@ -6,7 +6,7 @@ import {
   dateText,
   money,
   numberText,
-  shiftText,
+  shiftLabel,
   shiftTime,
   stockDifference,
   today,
@@ -83,6 +83,8 @@ export default function CountPage() {
   const [cash, setCash] = useState('');
   const [transfer, setTransfer] = useState('');
   const [cashReason, setCashReason] = useState('');
+  const [attempted, setAttempted] = useState(false);
+  const [compared, setCompared] = useState(false);
   const [checkedPreview, setCheckedPreview] = useState<CountPreview | null>(
     null,
   );
@@ -128,11 +130,13 @@ export default function CountPage() {
     setCash('');
     setTransfer('');
     setCashReason('');
+    setAttempted(false); setCompared(false);
     setChecked(false);
     task.setError('');
   };
   const changeEntry = (id: string, field: keyof Entry, value: string) => {
     setChecked(false);
+    if (field === 'actual') setCompared(false);
     setEntries((previous) => ({
       ...previous,
       [id]: {
@@ -145,28 +149,24 @@ export default function CountPage() {
     Number(cash) + Number(transfer) - Number(preview.data?.doanh_thu ?? 0);
   const invalidNumber = (value: string) =>
     value.trim() === '' || !Number.isFinite(Number(value)) || Number(value) < 0;
+  const invalidStock = (value: string) => invalidNumber(value) || Math.abs(Number(value) * 1000 - Math.round(Number(value) * 1000)) > 0.000001;
+  const differing = (preview.data?.items ?? []).filter(item => !invalidStock(entries[item.ma_nguyen_lieu]?.actual ?? '') && Math.abs(stockDifference(entries[item.ma_nguyen_lieu]?.actual, item.ton_ly_thuyet)) > Number(item.nguong_chenh_lech));
   const reconcile = () => {
     task.setError('');
-    if (
-      !preview.data?.items.length ||
-      invalidNumber(cash) ||
-      invalidNumber(transfer) ||
-      preview.data.items.some((item) =>
-        invalidNumber(entries[item.ma_nguyen_lieu]?.actual ?? ''),
-      )
-    ) {
-      task.setError(
-        'Vui lòng nhập đầy đủ tiền thực thu và tồn thực tế hợp lệ.',
-      );
-      return;
-    }
+    setAttempted(true);
+    if (!preview.data?.items.length) return;
+    if (!cash.trim() || !transfer.trim()) { task.setError('Vui lòng nhập tiền thực thu.'); return; }
     if (
       !Number.isInteger(Number(cash)) ||
-      !Number.isInteger(Number(transfer))
+      !Number.isInteger(Number(transfer)) || invalidNumber(cash) || invalidNumber(transfer)
     ) {
       task.setError('Số tiền phải là số nguyên không âm.');
       return;
     }
+    if (preview.data.items.some(item => invalidStock(entries[item.ma_nguyen_lieu]?.actual ?? ''))) {
+      task.setError('Tồn thực tế phải là số không âm, tối đa 3 chữ số thập phân.'); return;
+    }
+    setCompared(true);
     if (cashDifference !== 0 && !cashReason.trim()) {
       task.setError('Vui lòng nhập lý do chênh lệch tiền.');
       return;
@@ -293,7 +293,7 @@ export default function CountPage() {
                 <option value="">Chọn ca làm</option>
                 {shifts.map((shift) => (
                   <option key={shift.ma_ca} value={shift.ma_ca}>
-                    {shiftText(shift)}
+                    {shiftLabel(shift)}
                   </option>
                 ))}
               </SelectField>
@@ -317,6 +317,7 @@ export default function CountPage() {
                 />
                 <Field
                   label="Tiền mặt thực thu"
+                  aria-invalid={attempted && invalidNumber(cash) || undefined}
                   type="number"
                   min={0}
                   max={99999999999999}
@@ -325,11 +326,13 @@ export default function CountPage() {
                   onChange={(event) => {
                     setCash(event.target.value);
                     setChecked(false);
+                    setCompared(false);
                   }}
                   required
                 />
                 <Field
                   label="Chuyển khoản thực thu"
+                  aria-invalid={attempted && invalidNumber(transfer) || undefined}
                   type="number"
                   min={0}
                   max={99999999999999}
@@ -338,15 +341,17 @@ export default function CountPage() {
                   onChange={(event) => {
                     setTransfer(event.target.value);
                     setChecked(false);
+                    setCompared(false);
                   }}
                   required
                 />
                 <Field
                   label="Chênh lệch tiền"
-                  value={checked ? money(cashDifference) : ''}
+                  value={compared ? money(cashDifference) : ''}
                   readOnly
                 />
               </div>
+              {compared && cashDifference !== 0 && <p className="inline-form-error" role="status">Tiền thực thu lệch so với doanh số trên hệ thống.</p>}
               <TextField
                 label="Lý do chênh lệch tiền"
                 value={cashReason}
@@ -360,6 +365,7 @@ export default function CountPage() {
           <Panel title="Nguyên liệu" className="count-stock-panel">
             <fieldset disabled={task.pending || Boolean(pendingCount)}>
               <DataTable
+                rowClassName={item => compared && differing.some(line => line.ma_nguyen_lieu === item.ma_nguyen_lieu) ? 'discrepancy-row' : ''}
                 rows={preview.data?.items ?? []}
                 rowKey={(item) => item.ma_nguyen_lieu}
                 columns={[
@@ -389,6 +395,7 @@ export default function CountPage() {
                     render: (item) => (
                       <Field
                         label={`Tồn thực tế ${item.ten_nguyen_lieu}`}
+                        aria-invalid={attempted && invalidStock(entries[item.ma_nguyen_lieu]?.actual ?? '') || undefined}
                         type="number"
                         min={0}
                         step="0.001"
@@ -408,7 +415,7 @@ export default function CountPage() {
                     key: 'difference',
                     label: 'Chênh lệch',
                     render: (item) =>
-                      checked
+                      compared
                         ? numberText(
                             stockDifference(
                               entries[item.ma_nguyen_lieu]?.actual,
@@ -455,6 +462,7 @@ export default function CountPage() {
                   },
                 ]}
               />
+              {compared && differing.length > 0 && <p className="inline-form-error" role="status">Có {differing.length} nguyên liệu lệch vượt ngưỡng cho phép.</p>}
             </fieldset>
             <ErrorMessage message={task.error} />
             {checked && (

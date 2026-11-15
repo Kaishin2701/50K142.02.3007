@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { useSession } from '../../app/auth';
 import { useTask } from '../../app/data';
-import { Button, ErrorMessage, Field } from '../../components/ui';
+import { Button, Field } from '../../components/ui';
+import { ApiError } from '../../services/api';
 
 export default function LoginPage() {
   const session = useSession();
@@ -9,10 +10,20 @@ export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    setSubmitted(true);
+    task.setError('');
+    if (!username.trim() || !password) return;
     void task.run(async () => {
-      await session.login(username.trim(), password);
+      try {
+        await session.login(username.trim(), password);
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401)
+          throw new Error('Tài khoản hoặc mật khẩu không chính xác');
+        throw error;
+      }
     });
   };
   return (
@@ -23,13 +34,14 @@ export default function LoginPage() {
         <p>Hệ thống quản lý</p>
       </section>
       <section className="login-form-region">
-        <form className="login-form" onSubmit={submit}>
+        <form className="login-form" onSubmit={submit} noValidate>
           <h2>Đăng nhập</h2>
           <Field
             label="Tên tài khoản"
             autoComplete="username"
             value={username}
-            onChange={(event) => setUsername(event.target.value)}
+            onChange={(event) => { setUsername(event.target.value); task.setError(''); }}
+            error={submitted && !username.trim() ? 'Vui lòng nhập tên tài khoản.' : undefined}
             required
             maxLength={50}
           />
@@ -39,7 +51,8 @@ export default function LoginPage() {
               type={showPassword ? 'text' : 'password'}
               autoComplete="current-password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) => { setPassword(event.target.value); task.setError(''); }}
+              error={submitted && !password ? 'Vui lòng nhập mật khẩu.' : undefined}
               required
               maxLength={128}
             />
@@ -54,7 +67,7 @@ export default function LoginPage() {
               <img src="/assets/figma/261-28311/b18d2.svg" alt="" />
             </button>
           </div>
-          <ErrorMessage message={task.error || session.error} />
+          {(task.error || session.error) && <p className="login-error" role="alert">{task.error || session.error}</p>}
           <Button variant="primary" type="submit" disabled={task.pending}>
             Đăng nhập
           </Button>

@@ -10,6 +10,21 @@ import {
   type ReactNode,
   type SelectHTMLAttributes,
 } from 'react';
+import { dateText, parseDisplayDate } from '../app/format';
+
+export function DateField({ value, onChange, month = false, onBlur, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> & { label: string; value: string; onChange(value: string): void; month?: boolean; error?: string }) {
+  const display = (value: string) => month ? (value ? `${value.slice(5, 7)}/${value.slice(0, 4)}` : '') : (value ? dateText(value) : '');
+  const [draft, setDraft] = useState(() => display(value));
+  const emitted = useRef(value);
+  useEffect(() => { if (value !== emitted.current) { emitted.current = value; setDraft(display(value)); } }, [value, month]);
+  return <Field {...props} type="text" inputMode="numeric" placeholder={month ? 'MM/YYYY' : 'DD/MM/YYYY'} value={draft} onBlur={event => { if (value) setDraft(display(value)); onBlur?.(event); }} onChange={event => {
+    const text = event.target.value;
+    setDraft(text);
+    const parsed = month ? (/^(0[1-9]|1[0-2])\/\d{4}$/.test(text) ? `${text.slice(3)}-${text.slice(0, 2)}` : /^\d{4}-(0[1-9]|1[0-2])$/.test(text) ? text : '') : parseDisplayDate(text);
+    emitted.current = parsed;
+    onChange(parsed);
+  }} />;
+}
 
 export function Button({
   variant = 'secondary',
@@ -30,14 +45,16 @@ export function Button({
 export function Field({
   label,
   hint,
+  error,
   ...props
-}: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string }) {
+}: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string; error?: string }) {
   const id = useId();
   return (
     <label className="ui-field" htmlFor={id}>
-      <span>{label}</span>
-      <input id={id} {...props} />
+      <span id={id + '-label'}>{label}</span>
+      <input id={id} aria-labelledby={id + '-label'} aria-invalid={error ? true : undefined} aria-describedby={error ? id + '-error' : undefined} {...props} />
       {hint && <small>{hint}</small>}
+      {error && <small className="field-error" id={id + '-error'} role="alert">{error}</small>}
     </label>
   );
 }
@@ -222,25 +239,29 @@ export function Confirm({
   title,
   children,
   confirmLabel = 'Xác nhận',
+  cancelLabel = 'Hủy',
   onConfirm,
   onClose,
   pending,
   error,
+  className = '',
 }: {
   title: string;
   children: ReactNode;
   confirmLabel?: string;
+  cancelLabel?: string;
   onConfirm(): void;
   onClose(): void;
   pending?: boolean;
   error?: string;
+  className?: string;
 }) {
   return (
     <Modal
       title={title}
       onClose={onClose}
       busy={pending}
-      className="confirm-dialog"
+      className={'confirm-dialog ' + className}
     >
       <div className="dialog-body">
         {children}
@@ -248,7 +269,7 @@ export function Confirm({
       </div>
       <footer className="dialog-actions">
         <Button onClick={onClose} disabled={pending}>
-          Hủy
+          {cancelLabel}
         </Button>
         <Button variant="primary" onClick={onConfirm} disabled={pending}>
           {confirmLabel}
@@ -268,15 +289,17 @@ export function DataTable<T>({
   rowKey,
   empty = 'Không có dữ liệu.',
   rowClassName,
+  className = '',
 }: {
   columns: Column<T>[];
   rows: T[];
   rowKey(row: T): string;
   empty?: string;
   rowClassName?(row: T): string;
+  className?: string;
 }) {
   return (
-    <div className="ui-table-scroll">
+    <div className={'ui-table-scroll ' + className}>
       <table className="ui-table">
         <thead>
           <tr>
@@ -342,13 +365,6 @@ export function NoticeProvider({ children }: { children: ReactNode }) {
       {message && (
         <div className="ui-notice" role="status">
           {message}
-          <button
-            type="button"
-            aria-label="Đóng thông báo"
-            onClick={() => setMessage('')}
-          >
-            ×
-          </button>
         </div>
       )}
     </NoticeContext.Provider>

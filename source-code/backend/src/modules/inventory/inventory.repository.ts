@@ -31,8 +31,9 @@ export const inventoryRepository={
  LEFT JOIN nguoi_dung x ON x.ma_nguoi_dung=b.ma_nguoi_xac_nhan WHERE ma_bao_cao=$1`,[id]),
  reportForCount:(db:Database,id:string)=>first(db,'SELECT * FROM bao_cao_cuoi_ca WHERE ma_phieu=$1',[id]),
  createReport:(db:Database,count:any)=>first(db,'INSERT INTO bao_cao_cuoi_ca(ma_phieu,ma_ca) VALUES($1,$2) RETURNING *',[count.ma_phieu,count.ma_ca]),
- reports:(db:Database,user:string|null)=>rows(db,`SELECT b.*,k.ngay_kiem_ke,k.doanh_thu_ca_luc_doi_chieu,k.ma_nguoi_kiem_ke,u.ho_ten AS ho_ten_nguoi_lap
+ reports:(db:Database,user:string|null)=>rows(db,`SELECT b.*,k.ngay_kiem_ke,k.doanh_thu_ca_luc_doi_chieu,k.ma_nguoi_kiem_ke,c.ngay_lam,c.gio_bat_dau,c.gio_ket_thuc,u.ho_ten AS ho_ten_nguoi_lap
  FROM bao_cao_cuoi_ca b JOIN phieu_kiem_kho k USING(ma_phieu) JOIN nguoi_dung u ON u.ma_nguoi_dung=k.ma_nguoi_kiem_ke
+ JOIN ca_lam c ON c.ma_ca=b.ma_ca
  WHERE ($1::uuid IS NULL OR k.ma_nguoi_kiem_ke=$1) ORDER BY k.thoi_gian_kiem_ke DESC`,[user]),
  sendReport:(db:Database,id:string)=>first(db,`UPDATE bao_cao_cuoi_ca SET trang_thai='Chờ xác nhận',thoi_gian_gui=now() WHERE ma_bao_cao=$1 RETURNING *`,[id]),
  confirmReport:(db:Database,id:string,user:string)=>first(db,`UPDATE bao_cao_cuoi_ca SET trang_thai='Đã xác nhận',ma_nguoi_xac_nhan=$2,thoi_gian_xac_nhan=now() WHERE ma_bao_cao=$1 RETURNING *`,[id,user]),
@@ -41,7 +42,8 @@ export const inventoryRepository={
  WHERE ma_nguyen_lieu=$1 AND n.ton_ly_thuyet+($2::numeric-$3::numeric)>=coalesce((SELECT sum(g.so_luong_giu) FROM giu_ton_don_hang g WHERE g.ma_nguyen_lieu=n.ma_nguyen_lieu AND NOT g.da_tieu_hao),0) RETURNING n.*`,[line.ma_nguyen_lieu,line.ton_thuc_te,line.ton_ly_thuyet_luc_kiem_ke]);
    if(updated)await db.query(`INSERT INTO bien_dong_kho(ma_nguyen_lieu,so_luong,loai,ma_tham_chieu) VALUES($1,$2::numeric-$3::numeric,'Kiểm kê',$4)`,[line.ma_nguyen_lieu,line.ton_thuc_te,line.ton_ly_thuyet_luc_kiem_ke,report]);return updated;
  },
- lossHistory:(db:Database,limit:number,offset:number)=>rows(db,`SELECT c.*,n.ten_nguyen_lieu,n.don_vi_tinh,k.ngay_kiem_ke,k.ma_ca,u.ho_ten AS nguoi_ghi_nhan,c.ton_thuc_te-c.ton_ly_thuyet_luc_kiem_ke AS chenh_lech,count(*) OVER()::int AS total
+ lossHistory:(db:Database,limit:number,offset:number)=>rows(db,`SELECT c.*,n.ten_nguyen_lieu,n.don_vi_tinh,k.ngay_kiem_ke,k.ma_ca,ca.gio_bat_dau,ca.gio_ket_thuc,u.ho_ten AS nguoi_ghi_nhan,c.ton_thuc_te-c.ton_ly_thuyet_luc_kiem_ke AS chenh_lech,count(*) OVER()::int AS total
  FROM chi_tiet_phieu_kiem_kho c JOIN phieu_kiem_kho k USING(ma_phieu) JOIN bao_cao_cuoi_ca b USING(ma_phieu) JOIN nguyen_lieu n USING(ma_nguyen_lieu) JOIN nguoi_dung u ON u.ma_nguoi_dung=k.ma_nguoi_kiem_ke
+ JOIN ca_lam ca ON ca.ma_ca=k.ma_ca
  WHERE b.trang_thai='Đã xác nhận' AND c.ly_do_chenh_lech IS NOT NULL ORDER BY k.thoi_gian_kiem_ke DESC LIMIT $1 OFFSET $2`,[limit,offset]),
 };

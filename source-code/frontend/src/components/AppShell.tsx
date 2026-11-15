@@ -260,6 +260,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {loggingOut && (
         <Confirm
           title="Đăng xuất"
+          className="logout-dialog"
           onClose={() => setLoggingOut(false)}
           onConfirm={() => void task.run(logout)}
           pending={task.pending}

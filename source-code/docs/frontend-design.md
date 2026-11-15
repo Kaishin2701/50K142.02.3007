@@ -59,3 +59,11 @@ These checks verify application behavior. Visual comparison on desktop, tablet a
 To run the application interaction test against the real isolated local API, start `npm run dev:local -- --demo --qa` in `backend/` and set `ME_CAFE_LOCAL_API_BASE_URL=http://127.0.0.1:3000` when running frontend tests. This opt-in test reads the ignored QA credential file and uses only the local QA database. It exercises both roles and the full cash-sale flow through the application components.
 
 `ME_CAFE_LOCAL_CREDENTIAL_FILE` can override the QA credential-file path when running a separate disposable local server on another port. Keep the QA database separate from the preview database.
+
+## Account and authentication QA revision (local, 2026-11-15)
+
+The Word QA findings are addressed in login validation, the dedicated logout dialog, account-table column allocation, read-only account details, and account creation/confirmation. Field errors use the Figma messages and red borders; duplicate username/phone errors come from the database constraints through explicit API codes, including accounts outside the current list page. The account detail dialog uses a two-column form with full-width status. Desktop actions stay together when the table has room; narrower tables retain the existing card reflow.
+
+The subsequent full Word QA revision also covers checkout and QR state reset, cash validation, an invoice preview and 80 mm PDF copies, account status updates, shift forms and availability details, stock counts and deviations, closing-report notifications and resend requests, and empty revenue states. Existing active-shift sales rules and automatic payment verification remain in effect. No database migration is required.
+
+Validation: frontend and backend production builds succeeded; 43 frontend tests (including the real isolated local API sale integration) and 32 backend tests passed. Figma design contexts and existing assets were cross-checked. Browser comparison and actual viewport/overflow measurements remain pending because the browser host was unavailable. These automated checks do not establish pixel parity.

@@ -51,24 +51,17 @@ export function AssignmentDialog({
       title="Phân công nhân viên cho ca làm"
       onClose={onClose}
       busy={task.pending}
+      className="assignment-dialog"
     >
       <div className="dialog-body">
-        <dl className="detail-grid">
-          <dt>Ngày làm</dt>
-          <dd>{dateText(shift.ngay_lam)}</dd>
-          <dt>Giờ bắt đầu</dt>
-          <dd>{timeText(shift.gio_bat_dau)}</dd>
-          <dt>Giờ kết thúc</dt>
-          <dd>{timeText(shift.gio_ket_thuc)}</dd>
-          <dt>Số lượng nhân viên tối thiểu</dt>
-          <dd>{shift.so_nhan_vien_toi_thieu}</dd>
-          <dt>Số lượng nhân viên tối đa</dt>
-          <dd>{shift.so_nhan_vien_toi_da}</dd>
-          <dt>Nhân viên đã được phân công</dt>
-          <dd>
-            {shift.nhan_vien.map((person) => person.ho_ten).join(' · ') || '—'}
-          </dd>
+        <dl className="assignment-metadata">
+          <div><dt>Ngày làm</dt><dd>{dateText(shift.ngay_lam)}</dd></div>
+          <div><dt>Giờ bắt đầu</dt><dd>{timeText(shift.gio_bat_dau)}</dd></div>
+          <div><dt>Giờ kết thúc</dt><dd>{timeText(shift.gio_ket_thuc)}</dd></div>
+          <div><dt>Số lượng nhân viên tối thiểu</dt><dd>{shift.so_nhan_vien_toi_thieu}</dd></div>
+          <div><dt>Số lượng nhân viên tối đa</dt><dd>{shift.so_nhan_vien_toi_da}</dd></div>
         </dl>
+        <div className="assigned-staff"><p>Nhân viên đã được phân công</p><strong>{shift.nhan_vien.map(person => person.ho_ten).join(' · ') || '—'}</strong></div>
         <h3>Nhân viên có thể được phân công</h3>
         <Loading active={candidates.loading} />
         <ErrorMessage message={candidates.error || task.error} />

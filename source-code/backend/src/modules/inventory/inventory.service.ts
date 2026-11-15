@@ -81,7 +81,10 @@ export function inventoryService(db:Database){
   }),
   lowStock:(actor:Actor,id:string)=>db.transaction(async tx=>{await lock(tx,'kho');const found=await report(tx,id,actor);
     check(found.trang_thai!=='Nháp','Vui lòng gửi báo cáo trước.');const items=(await repo.countLines(tx,found.ma_phieu)).filter(i=>Number(i.ton_thuc_te)<Number(i.muc_ton_toi_thieu));
-    check(items.length>0,'Không có nguyên liệu dưới mức tồn tối thiểu.');await notifyManagers(tx,'CAN_NHAP_HANG','Có nguyên liệu cần nhập thêm.',{ma_bao_cao:id,items});return{da_gui:true,items};
+    check(items.length>0,'Không có nguyên liệu dưới mức tồn tối thiểu.');await notifyManagers(tx,'CAN_NHAP_HANG','Có nguyên liệu cần nhập thêm.',{ma_bao_cao:id,nguoi_gui:found.ho_ten_nguoi_lap,thoi_gian_gui:new Date().toISOString(),items});return{da_gui:true,items};
+  }),
+  requestLowStockResend:(actor:Actor,id:string)=>db.transaction(async tx=>{await lock(tx,'kho');const found=await report(tx,id,actor);
+    check(found.trang_thai!=='Nháp','Báo cáo chưa được gửi.');await notify(tx,found.ma_nguoi_kiem_ke,'YEU_CAU_GUI_LAI_NGUYEN_LIEU','Quản lý yêu cầu gửi lại thông tin nguyên liệu cần nhập.',{ma_bao_cao:id});return{da_gui:true};
   }),
  };
 }

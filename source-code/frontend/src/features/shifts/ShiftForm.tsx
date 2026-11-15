@@ -1,15 +1,15 @@
 import { useState, type FormEvent } from 'react';
 import { useDataStore, useTask } from '../../app/data';
-import { dateKey, today } from '../../app/format';
+import { dateKey, today, validTime } from '../../app/format';
 import { api } from '../../services/api';
 import type { Shift } from '../../services/models';
 import {
   Button,
+  DateField,
   Confirm,
   ErrorMessage,
   Field,
   Modal,
-  SelectField,
   useNotice,
 } from '../../components/ui';
 
@@ -34,11 +34,14 @@ export function ShiftForm({
     weeks: '2',
   });
   const [confirming, setConfirming] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const task = useTask();
   const { refresh } = useDataStore();
   const notice = useNotice();
-  const field = (key: keyof typeof form, value: string) =>
+  const field = (key: keyof typeof form, value: string) => {
     setForm((previous) => ({ ...previous, [key]: value }));
+    setErrors({}); task.setError('');
+  };
   const save = () =>
     void task.run(async () => {
       const body = {
@@ -62,14 +65,22 @@ export function ShiftForm({
       });
       refresh();
       onClose();
-      notice(shift ? 'Chỉnh sửa ca làm thành công.' : 'Tạo ca làm thành công.');
+      notice(shift ? 'Chỉnh sửa ca làm thành công' : 'Tạo ca làm thành công');
     });
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (form.start >= form.end || Number(form.max) < Number(form.min)) {
-      task.setError('Thời gian hoặc số lượng nhân viên không hợp lệ.');
-      return;
+    const next: Record<string, string> = {};
+    if (!form.date || form.date < today()) next.date = 'Ngày làm không hợp lệ.';
+    if (!validTime(form.start) || !validTime(form.end) || form.start >= form.end) next.time = 'Giờ bắt đầu phải trước giờ kết thúc';
+    if (![form.min, form.max].every(value => value.trim() && Number.isInteger(Number(value)) && Number(value) >= 1 && Number(value) <= 100)) next.staff = 'Số lượng nhân viên tối thiểu và tối đa phải là số nguyên từ 1 trở lên';
+    else if (Number(form.max) < Number(form.min)) next.staff = 'Số lượng nhân viên tối đa phải lớn hơn hoặc bằng số lượng nhân viên tối thiểu';
+    else if (shift && Number(form.max) < shift.nhan_vien.length) next.staff = 'Số lượng tối đa không được nhỏ hơn số nhân viên đã phân công';
+    if (!shift && form.recurrence === 'weekly') {
+      if (form.endType === 'date' && (!form.endDate || form.endDate < form.date)) next.recurrence = 'Ngày kết thúc phải từ ngày làm trở đi.';
+      if (form.endType === 'weeks' && (!/^\d+$/.test(form.weeks) || Number(form.weeks) < 1 || Number(form.weeks) > 52)) next.recurrence = 'Số tuần lặp phải từ 1 đến 52.';
     }
+    setErrors(next); task.setError('');
+    if (Object.keys(next).length) return;
     if (shift) setConfirming(true);
     else save();
   };
@@ -81,7 +92,7 @@ export function ShiftForm({
         busy={task.pending}
         className="shift-form-dialog"
       >
-        <form onSubmit={submit}>
+        <form onSubmit={submit} noValidate>
           <div className="dialog-body">
             {!shift && (
               <fieldset className="radio-field">
@@ -105,30 +116,34 @@ export function ShiftForm({
               </fieldset>
             )}
             <div className="form-grid">
-              <Field
+              <DateField
                 label="Ngày làm"
-                type="date"
-                min={today()}
+                error={errors.date}
                 value={form.date}
-                onChange={(event) => field('date', event.target.value)}
+                onChange={(value) => field('date', value)}
                 required
               />
               <Field
                 label="Giờ bắt đầu"
-                type="time"
+                type="text"
+                inputMode="numeric"
+                aria-invalid={Boolean(errors.time)}
                 value={form.start}
                 onChange={(event) => field('start', event.target.value)}
                 required
               />
               <Field
                 label="Giờ kết thúc"
-                type="time"
+                type="text"
+                inputMode="numeric"
+                error={errors.time}
                 value={form.end}
                 onChange={(event) => field('end', event.target.value)}
                 required
               />
               <Field
                 label="Số lượng nhân viên tối thiểu"
+                aria-invalid={Boolean(errors.staff)}
                 type="number"
                 min={1}
                 max={100}
@@ -139,6 +154,7 @@ export function ShiftForm({
               />
               <Field
                 label="Số lượng nhân viên tối đa"
+                error={errors.staff}
                 type="number"
                 min={1}
                 max={100}
@@ -149,26 +165,21 @@ export function ShiftForm({
               />
               {!shift && form.recurrence === 'weekly' && (
                 <>
-                  <SelectField
-                    label="Kết thúc lặp"
-                    value={form.endType}
-                    onChange={(event) => field('endType', event.target.value)}
-                  >
-                    <option value="date">Theo ngày</option>
-                    <option value="weeks">Theo số tuần</option>
-                  </SelectField>
+                  <fieldset className="radio-field recurrence-end"><legend>Cách kết thúc</legend><div className="radio-options">
+                    {['date', 'weeks'].map(value => <label key={value}><input type="radio" name="recurrence-end" checked={form.endType === value} onChange={() => field('endType', value)} />{value === 'date' ? 'Theo ngày' : 'Theo số tuần'}</label>)}
+                  </div></fieldset>
                   {form.endType === 'date' ? (
-                    <Field
+                    <DateField
                       label="Ngày kết thúc"
-                      type="date"
-                      min={form.date}
+                      error={errors.recurrence}
                       value={form.endDate}
-                      onChange={(event) => field('endDate', event.target.value)}
+                      onChange={(value) => field('endDate', value)}
                       required
                     />
                   ) : (
                     <Field
-                      label="Số tuần"
+                      label="Số tuần lặp"
+                      error={errors.recurrence}
                       type="number"
                       min={1}
                       max={52}
@@ -181,6 +192,7 @@ export function ShiftForm({
                 </>
               )}
             </div>
+            {shift && <div className="assigned-staff"><p>Nhân viên được phân công</p><strong>{shift.nhan_vien.map(person => person.ho_ten).join(' · ') || '—'}</strong></div>}
           </div>
           <div className="dialog-error">
             <ErrorMessage message={task.error} />

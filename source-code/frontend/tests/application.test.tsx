@@ -52,16 +52,18 @@ let registrations: any[];
 let reports: any[];
 let order: any;
 let calls: { path: string; method: string; body: any; key?: string }[];
-let errors: Map<string, { status: number; message: string }>;
+let errors: Map<string, { status: number; message: string; code?: string }>;
 let savedCount: any;
 let qrEnabled: boolean;
+let notifications: any[];
+let emptyRevenue: boolean;
 
-function response(data: unknown, status = 200) {
+function response(data: unknown, status = 200, code = 'TEST_ERROR') {
   return new Response(
     JSON.stringify(
       status < 400
         ? { data }
-        : { error: { code: 'TEST_ERROR', message: data } },
+        : { error: { code, message: data } },
     ),
     { status, headers: { 'Content-Type': 'application/json' } },
   );
@@ -83,7 +85,7 @@ function installApi() {
       const failure = errors.get(method + ' ' + path);
       if (failure) {
         errors.delete(method + ' ' + path);
-        return response(failure.message, failure.status);
+        return response(failure.message, failure.status, failure.code);
       }
       if (path === '/auth/me')
         return activeUser
@@ -98,6 +100,9 @@ function installApi() {
         return response({ da_dang_xuat: true });
       }
       if (path === '/menu') return response(menu);
+      if (path === '/notifications') return response(notifications);
+      if (path.startsWith('/notifications/')) return response({});
+      if (path === '/reports/revenue' && emptyRevenue) return response({ doanh_thu: '0', so_ly: '0', tien_mat: '0', chuyen_khoan: '0' });
       if (path === '/reports/revenue')
         return response({
           doanh_thu: '50000',
@@ -309,6 +314,7 @@ function installApi() {
   );
 }
 beforeEach(() => {
+  notifications = []; emptyRevenue = false;
   vi.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-11-09T07:00:00Z'));
   sessionStorage.clear();
   location.hash = '/reports';
@@ -391,13 +397,131 @@ async function checkSale(user: ReturnType<typeof userEvent.setup>) {
   await user.click(
     screen.getByRole('button', { name: 'Kiểm tra đơn', exact: true }),
   );
-  await user.click(
-    await screen.findByRole('button', { name: 'Xác nhận đơn', exact: true }),
-  );
+  await waitFor(() => expect((screen.getByRole('button', { name: 'Xác nhận đơn', exact: true }) as HTMLButtonElement).disabled).toBe(false));
+  await user.click(screen.getByRole('button', { name: 'Xác nhận đơn', exact: true }));
   await screen.findByRole('button', { name: 'Tiền mặt', exact: true });
 }
 
 describe('native application architecture', () => {
+  it('clears QR UI after cancelling an unpaid order and returning to an empty cart', async () => {
+    qrEnabled = true;
+    const user = await startSale(); await checkSale(user);
+    await user.click(screen.getByRole('button', { name: 'QR', exact: true }));
+    await screen.findByText('Đang chờ ngân hàng xác nhận thanh toán…');
+    await user.click(screen.getByRole('button', { name: 'Hủy đơn', exact: true }));
+    await user.click(within(screen.getByRole('dialog', { name: 'Hủy đơn' })).getByRole('button', { name: 'Xác nhận', exact: true }));
+    await screen.findByRole('heading', { name: 'Chọn món', exact: true });
+    expect(screen.queryByRole('dialog', { name: 'Thanh toán QR' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Đối soát thành công', exact: true })).toBeNull();
+    expect(screen.queryByAltText('QR thanh toán')).toBeNull();
+  });
+  it('shows the empty revenue message after applying a period with no transactions', async () => {
+    emptyRevenue = true;
+    render(<App />);
+    await screen.findByText('Không có dữ liệu doanh thu trong khoảng thời gian đã chọn!');
+    expect(screen.getAllByText('0 đ').length).toBeGreaterThan(0);
+  });
+  it('lets managers inspect the actual materials attached to a low-stock message', async () => {
+    notifications = [{ ma_thong_bao: 'notice-low-stock', loai: 'CAN_NHAP_HANG', noi_dung: 'Có nguyên liệu cần nhập thêm.', tao_luc: '2026-11-09T05:00:00Z', du_lieu: { ma_bao_cao: 'report-1', nguoi_gui: employee.ho_ten, items: [{ ...material, ton_thuc_te: 1 }] } }];
+    location.hash = '/closing'; render(<App />); const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: 'Xem thông tin' }));
+    const detail = screen.getByRole('dialog', { name: 'Cần nhập 1 nguyên liệu' });
+    expect(within(detail).getByText(material.ten_nguyen_lieu)).toBeTruthy();
+    expect(within(detail).getByText(employee.ho_ten)).toBeTruthy();
+    expect(within(detail).getByRole('button', { name: 'Yêu cầu gửi lại' })).toBeTruthy();
+    await waitFor(() => expect(calls.some(c => c.path === '/notifications/notice-low-stock/read')).toBe(true));
+  });
+  it('distinguishes stock-entry validation from discrepancies and never saves an invalid count', async () => {
+    activeUser = employee; location.hash = '/count'; material.ton_ly_thuyet = 10;
+    shifts[0].gio_ket_thuc = '12:00';
+    render(<App />); const user = userEvent.setup();
+    await user.type(await screen.findByRole('spinbutton', { name: 'Tiền mặt thực thu' }), '0');
+    await user.type(screen.getByRole('spinbutton', { name: 'Chuyển khoản thực thu' }), '0');
+    const actual = await screen.findByRole('spinbutton', { name: 'Tồn thực tế ' + material.ten_nguyen_lieu });
+    await user.type(actual, '-1');
+    await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+    expect(screen.getByText('Tồn thực tế phải là số không âm, tối đa 3 chữ số thập phân.')).toBeTruthy();
+    expect(actual.getAttribute('aria-invalid')).toBe('true');
+    await user.clear(actual); await user.type(actual, '9');
+    await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+    expect(screen.getByText('Có 1 nguyên liệu lệch vượt ngưỡng cho phép.')).toBeTruthy();
+    expect(actual.closest('tr')?.className).toBe('discrepancy-row');
+    expect(calls.some(c => c.path === '/inventory/counts' && c.method === 'POST')).toBe(false);
+  });
+  it('shows inline login errors for both empty fields and never submits an incomplete login', async () => {
+    activeUser = null;
+    render(<App />);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: 'Đăng nhập', exact: true }));
+    expect(screen.getByText('Vui lòng nhập tên tài khoản.')).toBeTruthy();
+    expect(screen.getByText('Vui lòng nhập mật khẩu.')).toBeTruthy();
+    const username = screen.getByRole('textbox', { name: 'Tên tài khoản' });
+    const password = screen.getByLabelText('Mật khẩu', { exact: true });
+    expect(username.getAttribute('aria-invalid')).toBe('true');
+    expect(password.getAttribute('aria-invalid')).toBe('true');
+    await user.type(username, 'quanly');
+    await user.click(screen.getByRole('button', { name: 'Đăng nhập', exact: true }));
+    expect(screen.queryByText('Vui lòng nhập tên tài khoản.')).toBeNull();
+    expect(screen.getByText('Vui lòng nhập mật khẩu.')).toBeTruthy();
+    expect(calls.some(c => c.path === '/auth/login')).toBe(false);
+  });
+  it('shows account details as read-only fields without changing the account', async () => {
+    location.hash = '/accounts';
+    render(<App />);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: 'Chi tiết', exact: true }));
+    const dialog = screen.getByRole('dialog', { name: 'Chi tiết tài khoản' });
+    const fields = within(dialog).getAllByRole('textbox') as HTMLInputElement[];
+    expect(fields).toHaveLength(5);
+    expect(fields.every(field => field.readOnly)).toBe(true);
+    expect((within(dialog).getByLabelText('Tên đăng nhập') as HTMLInputElement).value).toBe(employee.ten_dang_nhap);
+    expect(calls.some(c => c.method === 'PATCH')).toBe(false);
+  });
+  it('marks missing account fields and mismatched passwords before requesting confirmation', async () => {
+    location.hash = '/accounts';
+    render(<App />);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: 'Tạo tài khoản', exact: true }));
+    const dialog = screen.getByRole('dialog', { name: 'Tạo tài khoản' });
+    const submit = within(dialog).getByRole('button', { name: 'Tạo tài khoản', exact: true });
+    await user.click(submit);
+    expect(within(dialog).getByText('Vui lòng điền đầy đủ thông tin bắt buộc')).toBeTruthy();
+    expect(dialog.querySelectorAll('[aria-invalid="true"]')).toHaveLength(6);
+    await user.type(within(dialog).getByLabelText('Tên đăng nhập'), 'test_user');
+    await user.type(within(dialog).getByLabelText('Họ và tên'), 'Tài khoản thử');
+    await user.type(within(dialog).getByLabelText('Số điện thoại'), '0900000003');
+    await user.selectOptions(within(dialog).getByLabelText('Vai trò'), 'Nhân viên');
+    await user.type(within(dialog).getByLabelText('Mật khẩu', { exact: true }), 'safe-password');
+    await user.type(within(dialog).getByLabelText('Xác nhận mật khẩu'), 'other-password');
+    await user.click(submit);
+    expect(within(dialog).getByText('Vui lòng xác nhận lại mật khẩu')).toBeTruthy();
+    expect(screen.queryByRole('dialog', { name: 'Xác nhận tạo tài khoản' })).toBeNull();
+    expect(calls.some(c => c.path === '/users' && c.method === 'POST')).toBe(false);
+  });
+  it.each([
+    ['DUPLICATE_USERNAME', 'Tên đăng nhập', 'Tên đăng nhập đã tồn tại. Vui lòng kiểm tra lại'],
+    ['DUPLICATE_PHONE', 'Số điện thoại', 'Số điện thoại đã tồn tại. Vui lòng kiểm tra lại'],
+  ])('returns %s from confirmation to the correct account field and allows correction', async (code, label, message) => {
+    location.hash = '/accounts';
+    errors.set('POST /users', { status: 409, code, message });
+    render(<App />);
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: 'Tạo tài khoản', exact: true }));
+    const dialog = screen.getByRole('dialog', { name: 'Tạo tài khoản' });
+    for (const [name, value] of [['Tên đăng nhập', 'new_employee'], ['Họ và tên', 'Tài khoản thử'], ['Số điện thoại', '0900000003'], ['Mật khẩu', 'safe-password'], ['Xác nhận mật khẩu', 'safe-password']])
+      await user.type(within(dialog).getByLabelText(name, { exact: true }), value);
+    await user.selectOptions(within(dialog).getByLabelText('Vai trò'), 'Nhân viên');
+    const submit = within(dialog).getByRole('button', { name: 'Tạo tài khoản', exact: true });
+    await user.click(submit);
+    await user.click(within(screen.getByRole('dialog', { name: 'Xác nhận tạo tài khoản' })).getByRole('button', { name: 'Tạo tài khoản', exact: true }));
+    await within(dialog).findByText(message);
+    expect(screen.queryByRole('dialog', { name: 'Xác nhận tạo tài khoản' })).toBeNull();
+    expect(within(dialog).getByLabelText(label).getAttribute('aria-invalid')).toBe('true');
+    await user.type(within(dialog).getByLabelText(label), '4');
+    expect(within(dialog).queryByText(message)).toBeNull();
+    await user.click(submit);
+    expect(screen.getByRole('dialog', { name: 'Xác nhận tạo tài khoản' })).toBeTruthy();
+  });
   it('retains the shell and account list while creating an account in a dialog', async () => {
     render(<App />);
     const user = userEvent.setup();
@@ -415,6 +539,7 @@ describe('native application architecture', () => {
       screen.getByRole('button', { name: 'Tạo tài khoản', exact: true }),
     );
     const dialog = screen.getByRole('dialog', { name: 'Tạo tài khoản' });
+    await user.selectOptions(within(dialog).getByLabelText('Vai trò'), 'Nhân viên');
     await user.type(
       within(dialog).getByRole('textbox', { name: 'Tên đăng nhập' }),
       'new_employee',
@@ -515,7 +640,7 @@ describe('native application architecture', () => {
       within(dialog).getByRole('button', { name: 'Xác nhận số tiền' }),
     );
     await within(dialog).findByText(
-      'Số tiền nhận được nhỏ hơn tổng tiền đơn hàng.',
+      'Số tiền nhận được nhỏ hơn tổng tiền đơn hàng',
     );
     expect(screen.getByRole('main')).toBe(main);
     await user.clear(
@@ -580,7 +705,7 @@ describe('native application architecture', () => {
     );
     render(<App />);
     await screen.findByRole('button', { name: 'Tiền mặt', exact: true });
-    expect(screen.getByText('#ME-000001')).toBeTruthy();
+    expect(await screen.findByText('#ME-000001')).toBeTruthy();
     expect(calls.some((call) => call.path === '/orders/drafts')).toBe(false);
   });
   it('keeps QR configuration errors on the order instead of navigating to a sample QR screen', async () => {
@@ -728,7 +853,7 @@ describe('native application architecture', () => {
     const user = userEvent.setup();
     await user.click(cards()[0]);
     const detail = screen.getByRole('dialog', {
-      name: 'Chi tiết đăng ký lịch làm việc',
+      name: 'Thông tin đăng ký',
     });
     expect(within(detail).getByText('12:00')).toBeTruthy();
     expect(within(detail).getByText('14:00')).toBeTruthy();
@@ -780,9 +905,8 @@ describe('native application architecture', () => {
     const dialog = screen.getByRole('dialog', {
       name: 'Đăng ký lịch rảnh hoặc ca muốn làm',
     });
-    await user.click(
-      within(dialog).getByRole('checkbox', { name: 'Đến hết ngày (24:00)' }),
-    );
+    await user.clear(within(dialog).getByLabelText('Giờ kết thúc'));
+    await user.type(within(dialog).getByLabelText('Giờ kết thúc'), '24:00');
     expect(
       (within(dialog).getByLabelText('Giờ kết thúc') as HTMLInputElement).value,
     ).toBe('24:00');
@@ -904,10 +1028,7 @@ describe('native application architecture', () => {
     await user.click(
       within(dialog).getByRole('radio', { name: 'Ca lặp lại hằng tuần' }),
     );
-    await user.selectOptions(
-      within(dialog).getByLabelText('Kết thúc lặp'),
-      'weeks',
-    );
+    await user.click(within(dialog).getByRole('radio', { name: 'Theo số tuần' }));
     await user.click(
       within(dialog).getByRole('button', { name: 'Lưu', exact: true }),
     );
@@ -1031,7 +1152,7 @@ describe('native application architecture', () => {
     await user.click(
       screen.getByRole('button', { name: 'Đăng nhập', exact: true }),
     );
-    await screen.findByText('Tên đăng nhập hoặc mật khẩu không đúng.');
+    await screen.findByText('Tài khoản hoặc mật khẩu không chính xác');
     expect(screen.getByRole('textbox', { name: 'Tên tài khoản' })).toBe(
       username,
     );
@@ -1066,7 +1187,7 @@ describe('native application architecture', () => {
     );
     await user.click(
       within(
-        screen.getByRole('dialog', { name: 'Xác nhận lưu thay đổi' }),
+        screen.getByRole('dialog', { name: 'Xác nhận thay đổi thông tin tài khoản' }),
       ).getByRole('button', { name: 'Lưu', exact: true }),
     );
     await screen.findByText('Họ tên đã sửa');
@@ -1133,6 +1254,10 @@ describe('native application architecture', () => {
     await user.click(
       await screen.findByRole('button', { name: 'Xuất hóa đơn', exact: true }),
     );
+    await user.click(screen.getByRole('button', { name: 'Tăng số bản' }));
+    expect(screen.getByLabelText('Số bản').textContent).toBe('2');
+    await user.click(screen.getByRole('button', { name: 'Xuất hóa đơn', exact: true }));
+    expect(calls.find(call => call.path.endsWith('/invoice.pdf'))).toBeTruthy();
     await user.click(
       await screen.findByRole('button', {
         name: 'Hoàn tất pha chế',

@@ -19,4 +19,5 @@ export function inventoryRoutes(service:ReturnType<typeof inventoryService>){con
  r.get('/close-reports/:id',controller(async req=>service.report(req.actor!,param(req))));
  r.post('/close-reports/:id/send',permit('Nhân viên'),controller(async req=>service.send(req.actor!,param(req))));
  r.post('/close-reports/:id/confirm',permit('Quản lý'),controller(async req=>service.confirm(req.actor!,param(req))));
- r.post('/close-reports/:id/low-stock',permit('Nhân viên'),controller(async req=>service.lowStock(req.actor!,param(req))));return r;}
+ r.post('/close-reports/:id/low-stock',permit('Nhân viên'),controller(async req=>service.lowStock(req.actor!,param(req))));
+ r.post('/close-reports/:id/request-low-stock-resend',permit('Quản lý'),controller(async req=>service.requestLowStockResend(req.actor!,param(req))));return r;}

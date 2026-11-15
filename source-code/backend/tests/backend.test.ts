@@ -48,6 +48,53 @@ test('migrations are repeatable and all application tables have row security',as
  assert.equal(result.count,4);
 });
 
+test('account writes identify duplicate username and phone without modifying existing profiles',async()=>{
+ const service=usersService(db);
+ const profile={ten_dang_nhap:'MANAGER',ho_ten:'Tài khoản thử',so_dien_thoai:'0900000004',vai_tro:'Nhân viên' as const};
+ await assert.rejects(service.create({...profile,mat_khau:'test-password',xac_nhan_mat_khau:'test-password'}),(e:any)=>e.status===409&&e.code==='DUPLICATE_USERNAME');
+ await assert.rejects(service.create({...profile,ten_dang_nhap:'new_user',so_dien_thoai:'0900000002',mat_khau:'test-password',xac_nhan_mat_khau:'test-password'}),(e:any)=>e.code==='DUPLICATE_PHONE');
+ await assert.rejects(service.update(employee.id,profile),(e:any)=>e.code==='DUPLICATE_USERNAME');
+ await assert.rejects(service.update(employee.id,{...profile,ten_dang_nhap:'employee',so_dien_thoai:'0900000001'}),(e:any)=>e.code==='DUPLICATE_PHONE');
+ const existing=await service.get(employee.id);
+ assert.equal(existing.ten_dang_nhap,'employee');assert.equal(existing.so_dien_thoai,'0900000002');
+});
+
+test('profile and status edits are atomic, revoke locked sessions and protect the last manager',async()=>{
+ const service=usersService(db);
+ const profile={ten_dang_nhap:'employee',ho_ten:'Đã sửa',so_dien_thoai:'0900000002',vai_tro:'Nhân viên' as const,trang_thai:'Đã khóa' as const};
+ await db.query(`INSERT INTO phien_dang_nhap(ma_nguoi_dung,token_bam,het_han_luc) VALUES($1,'locked-test',now()+interval '1 day')`,[employee.id]);
+ await service.update(employee.id,profile);
+ assert.equal((await service.get(employee.id)).trang_thai,'Đã khóa');
+ assert.ok((await one(`SELECT thu_hoi_luc FROM phien_dang_nhap WHERE token_bam='locked-test'`)).thu_hoi_luc);
+ await assert.rejects(service.update(manager.id,{...profile,ten_dang_nhap:'manager_new',so_dien_thoai:'0900000001',vai_tro:'Quản lý'}),(e:any)=>e.code==='LAST_MANAGER');
+ assert.equal((await service.get(manager.id)).ten_dang_nhap,'manager');
+ await assert.rejects(service.update(employee.id,{...profile,so_dien_thoai:'0900000001',trang_thai:'Đang hoạt động'}),(e:any)=>e.code==='DUPLICATE_PHONE');
+ assert.equal((await service.get(employee.id)).trang_thai,'Đã khóa');
+});
+
+test('low stock messages preserve materials and sender, and resend requests reach the reporting employee',async()=>{
+ await endShift();const inventory=inventoryService(db);
+ const count=await inventory.count(employee,{ma_ca:shift,tien_mat_thuc_thu:0,chuyen_khoan_thuc_thu:0,items:[{ma_nguyen_lieu:material,ton_ly_thuyet:10,ton_thuc_te:1,ly_do_chenh_lech:'Hao hụt'}]});
+ const report=await inventory.createReport(employee,count.ma_phieu);
+ await assert.rejects(inventory.lowStock(employee,report.ma_bao_cao));
+ await inventory.send(employee,report.ma_bao_cao);await inventory.lowStock(employee,report.ma_bao_cao);
+ const message=await one(`SELECT * FROM thong_bao WHERE ma_nguoi_dung=$1 AND loai='CAN_NHAP_HANG'`,[manager.id]);
+ assert.equal(message.du_lieu.nguoi_gui,'employee');assert.equal(message.du_lieu.items[0].ten_nguyen_lieu,'Nguyên liệu thử');assert.equal(Number(message.du_lieu.items[0].ton_thuc_te),1);
+ await inventory.requestLowStockResend(manager,report.ma_bao_cao);
+ const resend=await one(`SELECT * FROM thong_bao WHERE ma_nguoi_dung=$1 AND loai='YEU_CAU_GUI_LAI_NGUYEN_LIEU'`,[employee.id]);assert.equal(resend.du_lieu.ma_bao_cao,report.ma_bao_cao);
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),10);
+});
+
+test('thermal invoices produce the requested copies without starting preparation during preview/export',async()=>{
+ const orders=ordersService(db);const order=await orders.create(employee,items(),true);
+ await assert.rejects(orders.invoice(employee,order.ma_don),(e:any)=>e.code==='UNPAID_ORDER');
+ await paymentsService(db,gateway).cash(employee,order.ma_don,50000);
+ const pdf=await orders.invoice(employee,order.ma_don,2);const source=pdf.toString('latin1');
+ assert.equal(pdf.subarray(0,4).toString(),'%PDF');assert.equal((source.match(/\/Type \/Page\b/g)??[]).length,2);assert.ok(source.includes('/MediaBox [0 0 226.771654'));
+ assert.equal((await orders.get(employee,order.ma_don)).trang_thai_pha_che,'Chưa pha chế');
+ await assert.rejects(orders.invoice(employee,order.ma_don,11),(e:any)=>e.code==='INVALID_COPIES');
+});
+
 test('SePay verifies account and authentication, deduplicates events, and requires sufficient funds before reconciliation',async()=>{
  const service=paymentsService(db,sepayGateway('MBBank','0123456789'));
  const order=await ordersService(db).create(employee,items(2),true);

@@ -288,10 +288,10 @@ function useCheckoutModel() {
       storeOrder(await api<Order>(`/orders/${stored.orderId}`));
       refresh();
     });
-  const print = () =>
+  const print = (copies = 1) =>
     task.run(async () => {
       await download(
-        `/orders/${stored.orderId}/invoice.pdf`,
+        `/orders/${stored.orderId}/invoice.pdf?copies=${copies}&paper=80mm`,
         `hoa-don-${order?.ma_don_hien_thi}.pdf`,
       );
       if (order?.trang_thai_pha_che === 'Chưa pha chế')

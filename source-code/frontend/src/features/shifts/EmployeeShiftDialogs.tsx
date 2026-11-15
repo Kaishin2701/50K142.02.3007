@@ -9,12 +9,14 @@ import {
   timeText,
   today,
   weekStart,
+  validTime,
 } from '../../app/format';
 import { api } from '../../services/api';
 import type { Registration, Shift } from '../../services/models';
 import {
   Button,
   Confirm,
+  DateField,
   ErrorMessage,
   Field,
   Loading,
@@ -44,8 +46,9 @@ export function AvailabilityForm({
     setForm((previous) => ({ ...previous, [key]: value }));
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (form.start >= form.end) {
-      task.setError('Giờ kết thúc phải sau giờ bắt đầu.');
+    if (!form.date || form.date < today()) { task.setError('Vui lòng nhập đầy đủ thông tin bắt buộc'); return; }
+    if (!validTime(form.start) || !validTime(form.end, true) || form.start >= form.end) {
+      task.setError('Giờ bắt đầu phải trước giờ kết thúc');
       return;
     }
     void task.run(async () => {
@@ -70,42 +73,31 @@ export function AvailabilityForm({
       busy={task.pending}
       className="availability-dialog"
     >
-      <form onSubmit={submit}>
+      <form onSubmit={submit} noValidate>
         <div className="dialog-body">
           <div className="form-grid">
-            <Field
+            <DateField
               label="Ngày"
-              type="date"
-              min={today()}
               value={form.date}
-              onChange={(event) => field('date', event.target.value)}
+              onChange={(value) => field('date', value)}
               required
             />
             <Field
               label="Giờ bắt đầu"
-              type="time"
+              type="text"
+              inputMode="numeric"
               value={form.start}
               onChange={(event) => field('start', event.target.value)}
               required
             />
             <Field
               label="Giờ kết thúc"
-              type={form.end === '24:00' ? 'text' : 'time'}
-              readOnly={form.end === '24:00'}
+              type="text"
+              inputMode="numeric"
               value={form.end}
               onChange={(event) => field('end', event.target.value)}
               required
             />
-            <label className="end-of-day-option">
-              <input
-                type="checkbox"
-                checked={form.end === '24:00'}
-                onChange={(event) =>
-                  field('end', event.target.checked ? '24:00' : '23:59')
-                }
-              />
-              Đến hết ngày (24:00)
-            </label>
             <fieldset className="radio-field">
               <legend>Trạng thái</legend>
               <div className="radio-options">
@@ -123,7 +115,7 @@ export function AvailabilityForm({
               </div>
             </fieldset>
           </div>
-          <ErrorMessage message={task.error} />
+          {task.error && <p className="inline-form-error" role="alert">{task.error}</p>}
         </div>
         <footer className="dialog-actions">
           <Button onClick={onClose} disabled={task.pending}>
@@ -153,7 +145,8 @@ export function RegistrationDetails({
   return (
     <>
       <Modal
-        title="Chi tiết đăng ký lịch làm việc"
+        title="Thông tin đăng ký"
+        className="registration-detail-dialog"
         onClose={onClose}
         busy={task.pending}
       >
@@ -188,7 +181,8 @@ export function RegistrationDetails({
       </Modal>
       {canceling && (
         <Confirm
-          title="Hủy đăng ký lịch làm việc"
+          title="Bạn có chắc chắn muốn hủy đăng ký này không?"
+          cancelLabel="Không"
           pending={task.pending}
           error={task.error}
           onClose={() => setCanceling(false)}
@@ -204,7 +198,7 @@ export function RegistrationDetails({
             })
           }
         >
-          Bạn có chắc chắn muốn hủy đăng ký này không?
+          {null}
         </Confirm>
       )}
     </>
@@ -221,26 +215,22 @@ export function EmployeeShiftDetails({
   const [requesting, setRequesting] = useState(false);
   return (
     <>
-      <Modal title="Chi tiết ca làm" onClose={onClose}>
+      <Modal title="Thông tin ca làm" className="employee-shift-dialog" onClose={onClose}>
         <div className="dialog-body">
-          <dl className="detail-grid">
-            <dt>Ngày làm</dt>
-            <dd>{dateText(shift.ngay_lam)}</dd>
-            <dt>Giờ bắt đầu</dt>
-            <dd>{timeText(shift.gio_bat_dau)}</dd>
-            <dt>Giờ kết thúc</dt>
-            <dd>{timeText(shift.gio_ket_thuc)}</dd>
-            <dt>Nhân viên làm cùng ca</dt>
-            <dd>
+          <div className="form-grid">
+            <Field label="Ngày làm" value={dateText(shift.ngay_lam)} readOnly />
+            <Field label="Giờ bắt đầu" value={timeText(shift.gio_bat_dau)} readOnly />
+            <Field label="Giờ kết thúc" value={timeText(shift.gio_ket_thuc)} readOnly />
+          </div>
+          <div className="assigned-staff"><p>Nhân viên làm cùng ca</p><strong>
               {shift.nhan_vien
                 .filter((person) => person.ma_nhan_vien !== user!.ma_nguoi_dung)
                 .map((person) => person.ho_ten)
                 .join(' · ') || '—'}
-            </dd>
-          </dl>
+          </strong></div>
         </div>
         <footer className="dialog-actions">
-          <Button onClick={onClose}>Đóng</Button>
+          <Button onClick={onClose}>Hủy</Button>
           <Button
             variant="primary"
             disabled={shiftTime(shift) <= Date.now()}

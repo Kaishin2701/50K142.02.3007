@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useDataStore, useResource, useTask } from '../../app/data';
-import { api, query } from '../../services/api';
+import { api, ApiError, query } from '../../services/api';
 import type { User } from '../../services/models';
 import {
   Badge,
@@ -22,17 +22,19 @@ type AccountForm = {
   ten_dang_nhap: string;
   ho_ten: string;
   so_dien_thoai: string;
-  vai_tro: User['vai_tro'];
+  vai_tro: User['vai_tro'] | '';
   mat_khau: string;
   xac_nhan_mat_khau: string;
+  trang_thai: User['trang_thai'];
 };
 const emptyForm: AccountForm = {
   ten_dang_nhap: '',
   ho_ten: '',
   so_dien_thoai: '',
-  vai_tro: 'Nhân viên',
+  vai_tro: '',
   mat_khau: '',
   xac_nhan_mat_khau: '',
+  trang_thai: 'Đang hoạt động',
 };
 
 export default function AccountsPage() {
@@ -44,6 +46,8 @@ export default function AccountsPage() {
   const [status, setStatus] = useState<User | null>(null);
   const [form, setForm] = useState<AccountForm>(emptyForm);
   const [confirming, setConfirming] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof AccountForm, string>>>({});
+  const [formError, setFormError] = useState('');
   const task = useTask();
   const { refresh } = useDataStore();
   const notice = useNotice();
@@ -54,6 +58,8 @@ export default function AccountsPage() {
   const openEditor = (user: User | 'new') => {
     setEditing(user);
     setConfirming(false);
+    setFieldErrors({});
+    setFormError('');
     task.setError('');
     setForm(
       user === 'new'
@@ -64,37 +70,73 @@ export default function AccountsPage() {
             ho_ten: user.ho_ten,
             so_dien_thoai: user.so_dien_thoai,
             vai_tro: user.vai_tro,
+            trang_thai: user.trang_thai,
           },
     );
   };
-  const field = (key: keyof AccountForm, value: string) =>
+  const field = (key: keyof AccountForm, value: string) => {
     setForm((previous) => ({ ...previous, [key]: value }));
+    setFieldErrors((previous) => {
+      const next = { ...previous };
+      delete next[key];
+      if (key === 'mat_khau') delete next.xac_nhan_mat_khau;
+      return next;
+    });
+    setFormError('');
+    task.setError('');
+  };
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (editing === 'new' && form.mat_khau !== form.xac_nhan_mat_khau) {
-      task.setError('Mật khẩu xác nhận không khớp.');
-      return;
+    const errors: Partial<Record<keyof AccountForm, string>> = {};
+    const required: (keyof AccountForm)[] = ['ten_dang_nhap', 'ho_ten', 'so_dien_thoai', 'vai_tro'];
+    if (editing === 'new') required.push('mat_khau', 'xac_nhan_mat_khau');
+    for (const key of required) if (!form[key].trim()) errors[key] = '';
+    const missing = Object.keys(errors).length > 0;
+    if (!missing) {
+      if (!/^[a-zA-Z0-9_.-]{3,50}$/.test(form.ten_dang_nhap))
+        errors.ten_dang_nhap = 'Tên đăng nhập không hợp lệ (3–50 ký tự).';
+      if (!/^\+?[0-9]{9,15}$/.test(form.so_dien_thoai))
+        errors.so_dien_thoai = 'Số điện thoại không hợp lệ.';
+      if (editing === 'new' && (form.mat_khau.length < 8 || form.mat_khau.length > 128))
+        errors.mat_khau = 'Mật khẩu phải có từ 8 đến 128 ký tự.';
+      if (editing === 'new' && form.mat_khau !== form.xac_nhan_mat_khau)
+        errors.xac_nhan_mat_khau = 'Vui lòng xác nhận lại mật khẩu';
     }
+    setFieldErrors(errors);
+    setFormError(missing ? 'Vui lòng điền đầy đủ thông tin bắt buộc' : '');
     task.setError('');
+    if (Object.keys(errors).length) return;
     setConfirming(true);
   };
   const save = () =>
     void task.run(async () => {
       const { mat_khau, xac_nhan_mat_khau, ...profile } = form;
-      await api(
+      const { trang_thai, ...newProfile } = profile;
+      try { await api(
         '/users' + (editing === 'new' ? '' : '/' + editing!.ma_nguoi_dung),
         {
           method: editing === 'new' ? 'POST' : 'PATCH',
-          body: editing === 'new' ? form : profile,
+          body: editing === 'new' ? { ...newProfile, mat_khau, xac_nhan_mat_khau } : profile,
         },
-      );
+      ); } catch (error) {
+        const key = error instanceof ApiError
+          ? error.code === 'DUPLICATE_USERNAME' ? 'ten_dang_nhap'
+            : error.code === 'DUPLICATE_PHONE' ? 'so_dien_thoai' : null
+          : null;
+        if (!key) throw error;
+        setFieldErrors({ [key]: key === 'ten_dang_nhap'
+          ? 'Tên đăng nhập đã tồn tại. Vui lòng kiểm tra lại'
+          : 'Số điện thoại đã tồn tại. Vui lòng kiểm tra lại' });
+        setConfirming(false);
+        return;
+      }
       setEditing(null);
       setConfirming(false);
       refresh();
       notice(
         editing === 'new'
-          ? 'Tạo tài khoản thành công.'
-          : 'Lưu thay đổi thành công.',
+          ? 'Tạo tài khoản thành công'
+          : 'Cập nhật thông tin tài khoản thành công',
       );
     });
   return (
@@ -189,11 +231,13 @@ export default function AccountsPage() {
           busy={task.pending}
           className="account-form-dialog"
         >
-          <form onSubmit={submit}>
+          <form onSubmit={submit} noValidate>
             <div className="dialog-body">
               <div className="form-grid">
                 <Field
                   label="Tên đăng nhập"
+                  aria-invalid={'ten_dang_nhap' in fieldErrors || undefined}
+                  error={fieldErrors.ten_dang_nhap}
                   value={form.ten_dang_nhap}
                   onChange={(event) =>
                     field('ten_dang_nhap', event.target.value)
@@ -204,6 +248,8 @@ export default function AccountsPage() {
                 />
                 <Field
                   label="Họ và tên"
+                  aria-invalid={'ho_ten' in fieldErrors || undefined}
+                  error={fieldErrors.ho_ten}
                   value={form.ho_ten}
                   onChange={(event) => field('ho_ten', event.target.value)}
                   maxLength={100}
@@ -211,6 +257,8 @@ export default function AccountsPage() {
                 />
                 <Field
                   label="Số điện thoại"
+                  aria-invalid={'so_dien_thoai' in fieldErrors || undefined}
+                  error={fieldErrors.so_dien_thoai}
                   type="tel"
                   value={form.so_dien_thoai}
                   onChange={(event) =>
@@ -221,16 +269,24 @@ export default function AccountsPage() {
                 />
                 <SelectField
                   label="Vai trò"
+                  required
+                  aria-invalid={'vai_tro' in fieldErrors || undefined}
                   value={form.vai_tro}
                   onChange={(event) => field('vai_tro', event.target.value)}
                 >
+                  <option value="" disabled></option>
                   <option>Nhân viên</option>
                   <option>Quản lý</option>
                 </SelectField>
+                {editing !== 'new' && <SelectField label="Trạng thái tài khoản" value={form.trang_thai} onChange={event => field('trang_thai', event.target.value)} className="account-status-field">
+                  <option>Đang hoạt động</option><option>Đã khóa</option>
+                </SelectField>}
                 {editing === 'new' && (
                   <>
                     <Field
                       label="Mật khẩu"
+                      aria-invalid={'mat_khau' in fieldErrors || undefined}
+                      error={fieldErrors.mat_khau}
                       type="password"
                       autoComplete="new-password"
                       minLength={8}
@@ -243,6 +299,8 @@ export default function AccountsPage() {
                     />
                     <Field
                       label="Xác nhận mật khẩu"
+                      aria-invalid={'xac_nhan_mat_khau' in fieldErrors || undefined}
+                      error={fieldErrors.xac_nhan_mat_khau}
                       type="password"
                       autoComplete="new-password"
                       required
@@ -254,6 +312,7 @@ export default function AccountsPage() {
                   </>
                 )}
               </div>
+              {formError && <p className="account-form-error" role="alert">{formError}</p>}
             </div>
             <div className="dialog-error">
               <ErrorMessage message={task.error} />
@@ -268,10 +327,11 @@ export default function AccountsPage() {
       )}
       {editing && confirming && (
         <Confirm
+          className="account-confirm-dialog"
           title={
             editing === 'new'
               ? 'Xác nhận tạo tài khoản'
-              : 'Xác nhận lưu thay đổi'
+              : 'Xác nhận thay đổi thông tin tài khoản'
           }
           confirmLabel={editing === 'new' ? 'Tạo tài khoản' : 'Lưu'}
           onClose={() => setConfirming(false)}
@@ -283,20 +343,15 @@ export default function AccountsPage() {
         </Confirm>
       )}
       {detail && (
-        <Modal title="Chi tiết tài khoản" onClose={() => setDetail(null)}>
+        <Modal title="Chi tiết tài khoản" className="account-detail-dialog" onClose={() => setDetail(null)}>
           <div className="dialog-body">
-            <dl className="detail-grid">
-              <dt>Tên đăng nhập</dt>
-              <dd>{detail.ten_dang_nhap}</dd>
-              <dt>Họ và tên</dt>
-              <dd>{detail.ho_ten}</dd>
-              <dt>Số điện thoại</dt>
-              <dd>{detail.so_dien_thoai}</dd>
-              <dt>Vai trò</dt>
-              <dd>{detail.vai_tro}</dd>
-              <dt>Trạng thái tài khoản</dt>
-              <dd>{detail.trang_thai}</dd>
-            </dl>
+            <div className="form-grid">
+              <Field label="Tên đăng nhập" value={detail.ten_dang_nhap} readOnly />
+              <Field label="Họ và tên" value={detail.ho_ten} readOnly />
+              <Field label="Số điện thoại" value={detail.so_dien_thoai} readOnly />
+              <Field label="Vai trò" value={detail.vai_tro} readOnly />
+              <Field label="Trạng thái tài khoản" value={detail.trang_thai} readOnly />
+            </div>
           </div>
         </Modal>
       )}
@@ -324,11 +379,11 @@ export default function AccountsPage() {
               });
               setStatus(null);
               refresh();
-              notice('Cập nhật trạng thái tài khoản thành công.');
+              notice(status.trang_thai === 'Đã khóa' ? 'Kích hoạt tài khoản thành công' : 'Khóa tài khoản thành công');
             })
           }
         >
-          {status.ho_ten} · {status.ten_dang_nhap}
+          <div className="account-status-summary"><span>Tên đăng nhập</span><strong>{status.ten_dang_nhap}</strong></div>
         </Confirm>
       )}
     </>

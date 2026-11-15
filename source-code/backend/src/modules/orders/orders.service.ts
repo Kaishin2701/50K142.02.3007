@@ -51,19 +51,24 @@ export function ordersService(db:Database,fontPath?:string){return{
    check(order.da_thanh_toan,'Đơn hàng chưa thanh toán thành công.','UNPAID_ORDER');
    check(order.trang_thai_pha_che===(phase==='Bắt đầu pha chế'?'Chưa pha chế':'Bắt đầu pha chế'),'Thứ tự trạng thái pha chế không hợp lệ.');
    const result=await repo.phase(tx,id,phase);await notifyShift(tx,order.ma_ca,'DON_HANG','Trạng thái pha chế đã thay đổi.',{ma_don:id});return result;}),
- invoice:async(actor:Actor,id:string)=>{
+ invoice:async(actor:Actor,id:string,copies=1)=>{
+   check(Number.isInteger(copies)&&copies>=1&&copies<=10,'Số bản phải từ 1 đến 10.','INVALID_COPIES',422);
    const order=await accessibleOrder(db,id,actor);check(order.da_thanh_toan,'Chỉ xuất hóa đơn sau khi thanh toán thành công.','UNPAID_ORDER');
    const lines=await repo.lines(db,id),payment=(await repo.payments(db,id)).find(p=>p.trang_thai==='Thành công');
    check(payment,'Không tìm thấy giao dịch thanh toán thành công.','PAYMENT_NOT_FOUND');
    const format=(value:unknown)=>new Intl.NumberFormat('vi-VN').format(BigInt(String(value)))+' đ';
    return renderPdf(doc=>{
-     doc.fontSize(20).text('Mê Cà Phê');doc.fontSize(11).text('106 Trần Cao Vân, Đà Nẵng');doc.moveDown();
-     doc.fontSize(16).text('Hóa đơn bán hàng');doc.fontSize(11).text(`Mã đơn: ${order.ma_don_hien_thi}`);
+     for(let copy=0;copy<copies;copy++){
+     if(copy)doc.addPage();
+     doc.fontSize(16).text('MÊ',{align:'center'});doc.fontSize(10).text('HÓA ĐƠN GIẤY',{align:'center'});doc.moveDown();
+     doc.fontSize(9).text(`Mã đơn: ${order.ma_don_hien_thi}`);
      doc.text(`Ngày: ${new Date(order.thoi_gian_lap).toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh'})}`);doc.moveDown();
      for(const line of lines)doc.text(`${line.ten_mon_luc_lap} × ${line.so_luong} | ${format(line.don_gia_luc_lap)} | ${format(line.thanh_tien)}`);
-     doc.moveDown();doc.fontSize(13).text(`Tổng tiền: ${format(order.tong_tien)}`);doc.fontSize(11).text(`Thanh toán: ${payment.phuong_thuc}`);
+     doc.moveDown();doc.fontSize(11).text(`TỔNG TIỀN: ${format(order.tong_tien)}`);doc.fontSize(9).text(`Thanh toán: ${payment.phuong_thuc}`);
      if(payment.phuong_thuc==='Tiền mặt'){doc.text(`Tiền nhận: ${format(payment.so_tien_nhan)}`);doc.text(`Tiền thừa: ${format(BigInt(payment.so_tien_nhan)-BigInt(order.tong_tien))}`);}
-   },fontPath);
+     doc.moveDown();doc.text('ĐÃ THANH TOÁN',{align:'center'});doc.text('Cảm ơn bạn đã ghé Mê!',{align:'center'});doc.text('Hẹn gặp lại bạn.',{align:'center'});
+     }
+   },fontPath,{size:[80*72/25.4,Math.min(14000,Math.max(420,300+lines.length*60))],margin:18});
  },
  ticket:async(actor:Actor,id:string)=>{const order=await accessibleOrder(db,id,actor);check(order.da_thanh_toan,'Đơn chưa thanh toán.','UNPAID_ORDER');
    return{ma_don:order.ma_don,ma_don_hien_thi:order.ma_don_hien_thi,trang_thai_pha_che:order.trang_thai_pha_che,items:(await repo.lines(db,id)).map(i=>({ten_mon:i.ten_mon_luc_lap,so_luong:i.so_luong}))};},
