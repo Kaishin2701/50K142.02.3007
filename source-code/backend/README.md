@@ -53,7 +53,7 @@ Doanh thu đã thanh toán được trả theo thời gian thực; `doanh_thu_da
 
 ## QR, PDF và cập nhật trực tiếp
 
-QR mặc định chưa hoạt động, trả PAYMENT_NOT_CONFIGURED. Cấu hình QR_GATEWAY_URL/TOKEN và QR_WEBHOOK_SECRET theo hợp đồng trong tài liệu API. Đây là adapter chung, chưa được gắn với ngân hàng hoặc nhà cung cấp thanh toán cụ thể. API không nhận cờ thanh toán thành công tùy ý từ FrontEnd.
+Tạo QR cần cấu hình SePay hoặc cổng QR theo tài liệu triển khai; nếu thiếu cấu hình sẽ trả PAYMENT_NOT_CONFIGURED. Nút Đối soát thành công gọi API xác nhận thủ công dành cho nhân viên được phân công trong ca đang diễn ra, ghi nhận thanh toán ngay mà không cần sự kiện ngân hàng. API lấy số tiền từ đơn, lưu người xác nhận và trừ kho một lần trong cùng transaction. Luồng webhook và API đối soát sự kiện ngân hàng vẫn xác minh chữ ký, tham chiếu và số tiền như trước.
 
 PDF cần font Unicode TTF/OTF. Windows tự dùng Arial trong thư mục Fonts; hệ điều hành khác cần PDF_FONT_PATH. Excel/PDF báo cáo lấy cùng bộ lọc và cùng dữ liệu tổng hợp. Hóa đơn PDF dùng giá đã lưu trong đơn hàng.
 

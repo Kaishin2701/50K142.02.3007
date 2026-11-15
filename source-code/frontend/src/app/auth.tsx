@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -13,6 +14,8 @@ type Session = {
   user: User | null;
   ready: boolean;
   error: string;
+  locked: boolean;
+  dismissLockedNotice(): void;
   login(username: string, password: string): Promise<User>;
   logout(): Promise<void>;
 };
@@ -22,11 +25,22 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
+  const [locked, setLocked] = useState(false);
+  const lockAcknowledged = useRef(false);
+  const endSession = (code?: string) => {
+    setUser(null);
+    if (code === 'ACCOUNT_LOCKED' && !lockAcknowledged.current) setLocked(true);
+  };
+  const dismissLockedNotice = () => {
+    lockAcknowledged.current = true;
+    setLocked(false);
+  };
   useEffect(() => {
     const controller = new AbortController();
     api<User>('/auth/me', { signal: controller.signal })
       .then(setUser)
       .catch((error) => {
+        if (!controller.signal.aborted && error instanceof ApiError && error.code === 'ACCOUNT_LOCKED') endSession(error.code);
         if (
           !controller.signal.aborted &&
           !(error instanceof ApiError && error.status === 401)
@@ -36,7 +50,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       .finally(() => {
         if (!controller.signal.aborted) setReady(true);
       });
-    const expired = () => setUser(null);
+    const expired = (event: Event) => endSession((event as CustomEvent<{ code?: string }>).detail?.code);
     window.addEventListener('me-session-expired', expired);
     return () => {
       controller.abort();
@@ -48,14 +62,24 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const events = new EventSource(apiBase + '/events', {
       withCredentials: true,
     });
+    const controller = new AbortController();
     events.addEventListener('refresh', () =>
       window.dispatchEvent(new Event('me-data-changed')),
     );
-    events.addEventListener('session-ended', () => {
-      setUser(null);
+    events.addEventListener('session-ended', (event) => {
+      if (controller.signal.aborted) return;
+      let code: string | undefined;
+      try { code = JSON.parse((event as MessageEvent).data).code; } catch { /* Older servers only signal expiry. */ }
+      endSession(code);
       events.close();
     });
-    return () => events.close();
+    events.addEventListener('error', () => {
+      // An account may be locked before EventSource can finish connecting.
+      void api<User>('/auth/me', { signal: controller.signal }).catch(error => {
+        if (!controller.signal.aborted && error instanceof ApiError && error.status === 401) endSession(error.code);
+      });
+    });
+    return () => { controller.abort(); events.close(); };
   }, [user?.ma_nguoi_dung]);
   const login = async (username: string, password: string) => {
     const found = await api<User>('/auth/login', {
@@ -63,15 +87,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       body: { ten_dang_nhap: username, mat_khau: password },
     });
     setError('');
+    lockAcknowledged.current = false;
+    setLocked(false);
     setUser(found);
     return found;
   };
   const logout = async () => {
     await api('/auth/logout', { method: 'POST' });
+    lockAcknowledged.current = true;
+    setLocked(false);
     setUser(null);
   };
   return (
-    <Context.Provider value={{ user, ready, error, login, logout }}>
+    <Context.Provider value={{ user, ready, error, locked, dismissLockedNotice, login, logout }}>
       {children}
     </Context.Provider>
   );

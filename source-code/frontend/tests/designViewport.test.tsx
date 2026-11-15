@@ -8,7 +8,7 @@ afterEach(() => {
   document.documentElement.removeAttribute('style');
 });
 
-it('keeps the same Figma canvas on wide, narrow desktop and phone windows', () => {
+it('keeps desktop navigation at its Figma size and scales down only on narrow windows', () => {
   vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(1425);
   let width = 1440;
   vi.spyOn(window, 'innerWidth', 'get').mockImplementation(() => width);
@@ -18,8 +18,11 @@ it('keeps the same Figma canvas on wide, narrow desktop and phone windows', () =
     window.dispatchEvent(new Event('resize'));
     const style = document.documentElement.style;
     const scale = Number(style.getPropertyValue('--design-scale'));
-    expect(style.getPropertyValue('--design-viewport-width')).toBe('1440px');
-    expect(DESIGN_WIDTH * scale).toBeCloseTo(width - 15);
+    const canvas = Number.parseFloat(style.getPropertyValue('--design-viewport-width'));
+    expect(canvas).toBe(Math.max(DESIGN_WIDTH, width - 15));
+    expect(canvas * scale).toBeCloseTo(width - 15);
+    expect(scale).toBeLessThanOrEqual(1);
+    if (width - 15 >= DESIGN_WIDTH) expect(310 * scale).toBe(310);
     expect(parseFloat(style.getPropertyValue('--design-viewport-height')) * scale).toBeCloseTo(900);
   }
 });

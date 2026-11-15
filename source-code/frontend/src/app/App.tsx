@@ -6,6 +6,7 @@ import { AppShell } from '../components/AppShell';
 import { Button, ErrorMessage, NoticeProvider, Panel } from '../components/ui';
 import { CheckoutProvider } from '../features/sales/CheckoutContext';
 import LoginPage from '../features/auth/LoginPage';
+import { LockedAccountNotice } from '../features/auth/LockedAccountNotice';
 
 const ReportsPage = lazy(() => import('../features/reports/ReportsPage'));
 const SalesPage = lazy(() => import('../features/sales/SalesPage'));
@@ -69,7 +70,7 @@ function Workspace() {
   );
 }
 function SessionGate() {
-  const { user, ready } = useSession();
+  const { user, ready, locked, dismissLockedNotice } = useSession();
   if (!ready)
     return (
       <main className="session-loading" role="status">
@@ -77,7 +78,7 @@ function SessionGate() {
         <span>Đang tải…</span>
       </main>
     );
-  if (!user) return <LoginPage />;
+  if (!user) return <><LoginPage />{locked && <LockedAccountNotice onDismiss={dismissLockedNotice} />}</>;
   return (
     <DataProvider key={user.ma_nguoi_dung}>
       <RouterProvider>

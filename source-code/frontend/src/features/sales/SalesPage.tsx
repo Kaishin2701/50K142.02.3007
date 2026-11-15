@@ -13,6 +13,7 @@ import {
   Modal,
   PageHeader,
   Panel,
+  SelectField,
 } from '../../components/ui';
 import { useCheckout } from './CheckoutContext';
 import { InvoicePreview } from './InvoicePreview';
@@ -77,15 +78,16 @@ export default function SalesPage() {
   const submitCash = async (event: FormEvent) => {
     event.preventDefault();
     setCashAttempted(true);
-    if (!cash.trim() || !Number.isInteger(Number(cash)) || Number(cash) < total) return;
+    if (!cashValid) return;
     if (await checkout.payCash(Number(cash))) setCashOpen(false);
   };
-  const cashError = cashAttempted ? !cash.trim() ? 'Vui lòng nhập số tiền nhận được' : !Number.isInteger(Number(cash)) || Number(cash) < 0 ? 'Số tiền phải là số nguyên không âm' : Number(cash) < total ? 'Số tiền nhận được nhỏ hơn tổng tiền đơn hàng' : '' : '';
+  const cashValid = Boolean(cash.trim()) && Number.isSafeInteger(Number(cash)) && Number(cash) >= total && Number(cash) <= 99999999999999;
+  const cashError = cashAttempted || cash.trim() ? !cash.trim() ? 'Vui lòng nhập số tiền nhận được' : !Number.isSafeInteger(Number(cash)) || Number(cash) < 0 || Number(cash) > 99999999999999 ? 'Số tiền phải là số nguyên không âm' : Number(cash) < total ? 'Số tiền nhận được nhỏ hơn tổng tiền đơn hàng' : '' : '';
   if (invoiceOpen && paid && !completed) return <InvoicePreview onPrinted={copies => { setPrintedCopies(copies); setInvoiceOpen(false); }} />;
   return (
     <>
       <PageHeader title="Lập đơn bán hàng" />
-      {paid && !completed && <p className="sale-payment-notice"><span className="asset-overlay" aria-hidden="true"><img src="/assets/figma/261-53473/df0aa.svg" alt="" /><img src="/assets/figma/261-53473/471e8.svg" alt="" /></span>Đã ghi nhận thanh toán thành công cho đơn #{order.ma_don_hien_thi}</p>}
+      {paid && !completed && <p className="sale-payment-notice" role="status"><span className="asset-overlay" aria-hidden="true"><img src="/assets/figma/261-53473/df0aa.svg" alt="" /><img src="/assets/figma/261-53473/471e8.svg" alt="" /></span>Đã ghi nhận thanh toán thành công cho đơn #{order.ma_don_hien_thi}</p>}
       <Loading
         active={menu.loading || calendar.loading || checkout.restoring}
       />
@@ -157,7 +159,15 @@ export default function SalesPage() {
                   ? order?.da_xac_nhan ? 'Đơn đã xác nhận, không thể chỉnh sửa' : 'Đã kiểm tra - Đã giữ tồn. Món và số lượng chỉ đọc tại bước này.'
                   : 'Chọn món và số lượng khách gọi, sau đó bấm Kiểm tra đơn.'}
               </p>
-              {order?.da_xac_nhan && <Badge>{completed ? 'Hoàn tất pha chế' : 'Đơn đã xác nhận, không thể chỉnh sửa'}</Badge>}
+              {order?.da_xac_nhan && (completed ? <Badge>Hoàn tất pha chế</Badge> : (
+                <span className={'ui-badge sale-locked-badge' + (qrOpen ? ' is-qr' : '')}>
+                  <span className="sale-lock-icon" aria-hidden="true">
+                    <img className="sale-lock-body" src="/assets/figma/261-51396/0c41a.svg" alt="" />
+                    <img className="sale-lock-shackle" src="/assets/figma/261-51396/e4883.svg" alt="" />
+                  </span>
+                  Đơn đã xác nhận, không thể chỉnh sửa
+                </span>
+              ))}
               <DataTable<OrderLine>
                 className="sale-table"
                 rows={
@@ -180,19 +190,36 @@ export default function SalesPage() {
                   {
                     key: 'name',
                     label: 'Tên món',
-                    render: (item) => item.ten_mon_luc_lap,
+                    render: (item, index) => (
+                      <div className="sale-item-name">
+                        <SelectField
+                          label={`Tên món dòng ${index + 1}`}
+                          aria-label={`Tên món dòng ${index + 1}`}
+                          value={item.ma_mon}
+                          disabled={immutable || checkout.task.pending}
+                          onChange={event => {
+                            const selected = menu.data.find(option => option.ma_mon === event.target.value);
+                            if (selected) checkout.replaceItem(item.ma_mon, selected);
+                          }}
+                        >
+                          {immutable ? <option value={item.ma_mon}>{item.ten_mon_luc_lap}</option> : <>
+                            {!menu.data.some(option => option.ma_mon === item.ma_mon) && <option value={item.ma_mon}>{item.ten_mon_luc_lap}</option>}
+                            {menu.data.map(option => <option key={option.ma_mon} value={option.ma_mon}>{option.ten_mon}</option>)}
+                          </>}
+                        </SelectField>
+                        {!immutable && <img className="sale-item-chevron" src="/assets/figma/261-51059/1ba19.svg" alt="" />}
+                      </div>
+                    ),
                   },
                   {
                     key: 'quantity',
                     label: 'Số lượng',
-                    render: (item) =>
-                      immutable ? (
-                        item.so_luong
-                      ) : (
+                    render: (item) => (
                         <Field
                           label={`Số lượng ${item.ten_mon_luc_lap}`}
                           aria-label={`Số lượng ${item.ten_mon_luc_lap}`}
-                          type="number"
+                          type={immutable ? 'text' : 'number'}
+                          readOnly={immutable}
                           min={1}
                           max={1000}
                           step={1}
@@ -504,7 +531,7 @@ export default function SalesPage() {
           {cashOpen && order?.da_xac_nhan && !paid && (
             <Modal
               inline
-              className="payment-inline"
+              className="payment-inline cash-payment"
               title="Thanh toán tiền mặt"
               onClose={() => setCashOpen(false)}
               busy={checkout.task.pending}
@@ -513,7 +540,10 @@ export default function SalesPage() {
                 <div className="dialog-body">
                   <Field
                     label="Số tiền nhận được"
-                    error={cashError}
+                    error={cashError ? <>
+                      <span className="cash-warning-icon asset-overlay" aria-hidden="true"><img src="/assets/figma/261-53305/70c3f.svg" alt="" /><img src="/assets/figma/261-53305/bc055.svg" alt="" /></span>
+                      <span>{cashError}</span>
+                    </> : undefined}
                     type="number"
                     inputMode="numeric"
                     min={0}
@@ -524,7 +554,7 @@ export default function SalesPage() {
                     onChange={(event) => { setCash(event.target.value); checkout.task.setError(''); }}
                     required
                   />
-                  {!cashError && <div className="order-total cash-change">
+                  {cashValid && <div className="order-total cash-change">
                     <span>Tiền thừa trả khách</span>
                     <strong>{money(Math.max(0, Number(cash) - total))}</strong>
                   </div>}
@@ -533,17 +563,19 @@ export default function SalesPage() {
                 </div>
                 <footer className="dialog-actions">
                   <Button
-                    onClick={() => setCashOpen(false)}
+                    variant="primary"
+                    className="cash-confirm-action"
+                    type="submit"
+                    disabled={checkout.task.pending || !cashValid}
+                  >
+                    <img src={cashValid ? '/assets/figma/261-53147/c3ec6.svg' : '/assets/figma/261-53305/f6dcf.svg'} alt="" />Xác nhận số tiền
+                  </Button>
+                  <Button
+                    className="cash-choose-method"
+                    onClick={() => { setCashOpen(false); setCash(''); setCashAttempted(false); checkout.task.setError(''); }}
                     disabled={checkout.task.pending}
                   >
                     Chọn lại phương thức
-                  </Button>
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    disabled={checkout.task.pending}
-                  >
-                    <img src="/assets/figma/261-53147/c3ec6.svg" alt="" />Xác nhận số tiền
                   </Button>
                 </footer>
               </form>
@@ -563,9 +595,6 @@ export default function SalesPage() {
                 )}
                 <p>Khách quét mã để thanh toán</p>
                 <strong>{money(total)}</strong>
-                {checkout.payment?.autoConfirm && (
-                  <p role="status">Đang chờ ngân hàng xác nhận thanh toán…</p>
-                )}
                 <ErrorMessage message={checkout.task.error} />
               </div>
               <footer className="dialog-actions">
@@ -598,7 +627,7 @@ export default function SalesPage() {
           )}
           {completed && (
             <>
-              <div className="payment-success-panel"><img src="/assets/figma/261-52174/61733.svg" alt="" /><strong>Hoàn tất pha chế</strong><p>Đã ghi nhận hoàn tất pha chế cho đơn #{order.ma_don_hien_thi}</p></div>
+              <div className="payment-success-panel preparation-success-panel"><img src="/assets/figma/261-52174/61733.svg" alt="" /><strong>Hoàn tất pha chế</strong><p>Đã ghi nhận hoàn tất pha chế cho đơn #{order.ma_don_hien_thi}</p></div>
               <div className="checkout-order-metadata"><span>Tổng tiền</span><strong>{money(total)}</strong></div>
               <p>Đã ghi nhận đồ uống sẵn sàng giao. Bạn có thể tiếp tục theo dõi đơn hàng hoặc lập đơn mới.</p>
               <Button variant="primary" onClick={checkout.clear}>

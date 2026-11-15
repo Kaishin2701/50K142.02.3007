@@ -28,7 +28,7 @@ Each data resource cancels obsolete requests. Existing cached data remains visib
 
 ## Single Figma layout
 
-Layout uses normal document flow, CSS Grid and Flexbox within one 1440px-wide composition matching the supplied desktop Figma reference. There are no narrow-desktop or mobile alternatives: the sidebar stays visible, tables keep their columns, calendars keep seven days in a row, and forms keep their desktop grids. Window resizing scales the whole document proportionally, including text, controls and native dialogs; it does not remount pages or reset checkout state. On phones this deliberately produces smaller text and controls rather than a separate mobile layout, as requested by the user.
+Layout uses normal document flow, CSS Grid and Flexbox within one composition based on the 1440px desktop Figma reference. There are no narrow-desktop or mobile alternatives: the sidebar stays visible, tables keep their columns, calendars keep seven days in a row, and forms keep their desktop grids. Narrow windows scale the whole document down proportionally; wide desktops use extra space for content without magnifying the 310px sidebar, text or controls. Resizing does not remount pages or reset checkout state. On phones this deliberately produces smaller text and controls rather than a separate mobile layout, as requested by the user.
 
 Horizontal scrolling remains prohibited for the page and nested content. The canvas scale reserves browser scrollbar space; document-height limits use the corresponding unscaled viewport height. Dynamic long content can wrap inside its original column. Page and nested list scrolling remain vertical. All width-based media queries and container queries that changed composition have been removed; the reduced-motion preference remains supported.
 
@@ -76,3 +76,21 @@ Confirmation actions use the dimensions and spacing of their individual Figma fr
 The low-stock message has one primary "Yêu cầu gửi lại" action. Order detail dialogs are read-only and retain "Đóng"; checkout and preparation actions stay in Sales. The shift-change form uses its close icon instead of an additional cancel action. Registration details use "Hủy" for cancellation and "Đổi hoặc xoay ca" for the existing request form. The request must reference an actual future shift assigned to the employee; when several exist, its source-shift field lets the employee choose. With no eligible assigned shift, the request action is disabled. Availability identifiers are never submitted as shift identifiers.
 
 Validation: frontend production build passed; 46 frontend tests passed, with the opt-in local API integration test skipped. Regression coverage includes read-only order details, the closing-confirmation close action, low-stock actions and registration-to-shift request routing. The existing local preview responds with HTTP 200. This revision is local only; browser visual comparison remains pending.
+
+## Employee QR confirmation (local, 2026-11-15)
+
+The sales button "Đối soát thành công" now calls the employee-confirmation endpoint `/payments/:id/confirm`. A successful click immediately records payment and enables invoice export without requiring a bank event. The QR panel no longer says that bank confirmation is required. Confirmed bank webhooks can still update the same order automatically; the existing stock lock and idempotent finalization prevent either path from charging stock twice. Manual confirmations are stored as employee events, not bank verification. Session, assignment, active-shift and matching order/payment amount checks remain required.
+
+Validation: both production builds passed, along with 36 backend and 47 frontend tests (one opt-in local API integration skipped). Tests cover confirmation without a bank event, employee authorization, retries, later callbacks, amount/shift checks and rollback of payment, audit and stock updates together. This change has not been published.
+
+## Locked-account sign-out notice (local, 2026-11-15)
+
+Figma frame `261:45207` supplies the lock artwork, exact copy and one "Đã hiểu" action over the login page. API errors, initial session checks, downloads and realtime session termination carry `ACCOUNT_LOCKED` separately from normal expiry. Acknowledgement dismisses the dialog once without restoring the workspace; delayed errors from the same revoked session do not reopen it. Logging in successfully resets that acknowledgement for the new session. Expired sessions and invalid login attempts do not show the locked-account notice. Reactivating an account requires a new login.
+
+Validation: both builds passed; 37 backend and 50 frontend tests passed, with one opt-in local API integration test skipped. Tests cover API/SSE lock reasons, normal expiry and revoked sessions, initial page load and acknowledgement. Assets are local original Figma SVGs. Browser visual comparison remains pending. This revision has not been published.
+
+## Dish selectors and display labels (local, 2026-11-15)
+
+Sales review rows use the bordered dish selector and original Figma chevron from `261:51059`. Changing an unchecked cart row preserves its quantity and uses the selected dish's price; selecting an existing dish merges quantities without duplicating its identifier. Checked/confirmed order rows show the stored name inside a disabled field, retaining the immutable price and inventory snapshot. Changing the menu is separate from the prohibited menu-administration feature.
+
+Generated ingredient and initial-stock labels no longer include demonstration markers. `backend/scripts/clean-display-labels.ts` previews a field allowlist, backs up original values under the ignored local directory before applying changes, then verifies a second run has no changes. It preserves identifiers, login names, prices, quantities and bank-event audit payloads. Production display data was cleaned at the user's request; the frontend changes remain local. Validation: both builds and 38 backend / 51 frontend tests passed (one opt-in integration skipped); visual browser comparison remains pending.

@@ -47,6 +47,27 @@ test('migrations are repeatable and all application tables have row security',as
  const result=await one(`SELECT count(*)::int AS count FROM pg_class WHERE relname IN ('nguoi_dung','phien_dang_nhap','don_hang','giao_dich_thanh_toan') AND relrowsecurity`);
  assert.equal(result.count,4);
 });
+test('display-label cleanup is repeatable and preserves amounts, stock, identities and bank audit data',async()=>{
+ const {cleanDisplayLabel,planDisplayLabelCleanup,applyDisplayLabelCleanup}=await import('../scripts/lib/clean-display-labels.js');
+ assert.equal(cleanDisplayLabel('Matcha latte'),'Matcha latte');
+ assert.equal(cleanDisplayLabel('TESTA'),'TESTA');
+ assert.equal(cleanDisplayLabel('Sữa tươi (DEMO)'),'Sữa tươi');
+ await db.query('UPDATE nguyen_lieu SET ten_nguyen_lieu=$2 WHERE ma_nguyen_lieu=$1',[material,'Đường (demo)']);
+ await db.query('UPDATE nguoi_dung SET ho_ten=$2 WHERE ma_nguoi_dung=$1',[employee.id,'Nhân viên thử nghiệm']);
+ await db.query('INSERT INTO thong_bao(ma_nguoi_dung,loai,noi_dung,du_lieu) VALUES($1,$2,$3,$4)',[manager.id,'CAN_NHAP_HANG','Nguyên liệu demo',JSON.stringify({items:[{ma_nguyen_lieu:material,ten_nguyen_lieu:'Đường (demo)',ton_thuc_te:3}],reference:'demo-token'})]);
+ await db.query('INSERT INTO su_kien_thanh_toan(ma_su_kien,noi_dung,noi_dung_bam) VALUES($1,$2,$3)',['audit-preserved',JSON.stringify({reference:'demo-token',amount:25000}),'unchanged-hash']);
+ const before=await one('SELECT * FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material]);
+ const changes=await planDisplayLabelCleanup(db);assert.equal(changes.length,4);
+ await applyDisplayLabelCleanup(db,changes);
+ const after=await one('SELECT * FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material]);
+ assert.deepEqual(after,{...before,ten_nguyen_lieu:'Đường'});
+ const user=await one('SELECT * FROM nguoi_dung WHERE ma_nguoi_dung=$1',[employee.id]);
+ assert.equal(user.ho_ten,'Nguyễn Văn B');assert.equal(user.ten_dang_nhap,'employee');
+ const notice=await one('SELECT du_lieu FROM thong_bao');assert.equal(notice.du_lieu.items[0].ten_nguyen_lieu,'Đường');assert.equal(notice.du_lieu.items[0].ton_thuc_te,3);assert.equal(notice.du_lieu.reference,'demo-token');
+ assert.equal((await one('SELECT noi_dung_bam FROM su_kien_thanh_toan')).noi_dung_bam,'unchanged-hash');
+ assert.equal((await planDisplayLabelCleanup(db)).length,0);
+ assert.equal((await one('SELECT don_gia_hien_tai FROM mon WHERE ma_mon=$1',[menu])).don_gia_hien_tai,'25000');
+});
 
 test('account writes identify duplicate username and phone without modifying existing profiles',async()=>{
  const service=usersService(db);
@@ -198,7 +219,22 @@ test('HTTP authentication, role boundaries, CSRF and immediate account locking',
  assert.equal((await session.get('/api/users')).status,403);
  assert.equal((await session.post('/api/auth/logout')).status,403);
  await usersService(db).status(employee.id,'Đã khóa');
- assert.equal((await session.get('/api/auth/me')).status,401);
+ const locked=await session.get('/api/auth/me');assert.equal(locked.status,401);assert.equal(locked.body.error.code,'ACCOUNT_LOCKED');
+});
+
+test('locked sessions are distinct from expired, revoked and unknown sessions',async()=>{
+ const session=request.agent(app);
+ await session.post('/api/auth/login').set('Origin',origin).send({ten_dang_nhap:'employee',mat_khau:'test-password'});
+ await usersService(db).status(employee.id,'Đã khóa');
+ assert.equal((await session.get('/api/orders')).body.error.code,'ACCOUNT_LOCKED');
+ await usersService(db).status(employee.id,'Đang hoạt động');
+ assert.equal((await session.get('/api/auth/me')).body.error.code,'UNAUTHENTICATED');
+ await session.post('/api/auth/login').set('Origin',origin).send({ten_dang_nhap:'employee',mat_khau:'test-password'});
+ assert.equal((await session.get('/api/auth/me')).status,200);
+ await usersService(db).status(employee.id,'Đã khóa');
+ await db.query("UPDATE phien_dang_nhap SET het_han_luc=now()-interval '1 minute' WHERE ma_nguoi_dung=$1",[employee.id]);
+ assert.equal((await session.get('/api/auth/me')).body.error.code,'UNAUTHENTICATED');
+ assert.equal((await request(app).get('/api/auth/me')).body.error.code,'UNAUTHENTICATED');
 });
 test('the refresh stream closes after the account session is revoked',async()=>{
  const login=await request(app).post('/api/auth/login').set('Origin',origin).send({ten_dang_nhap:'employee',mat_khau:'test-password'});
@@ -211,6 +247,7 @@ test('the refresh stream closes after the account session is revoked',async()=>{
    await usersService(db).status(employee.id,'Đã khóa');
    while(!text.includes('event: session-ended')){const chunk=await reader.read();if(chunk.done)break;text+=new TextDecoder().decode(chunk.value);}
    assert.ok(text.includes('event: session-ended'));
+   assert.ok(text.includes('"code":"ACCOUNT_LOCKED"'));
  }finally{clearTimeout(timeout);await reader?.cancel();abort.abort();server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
 });
 test('logout revokes the server session and bad passwords are rejected',async()=>{
@@ -270,6 +307,58 @@ test('QR requires a signed matching successful event and is reconciled only once
  const received=await request(app).post('/api/payments/webhook').set('Content-Type','application/json').set('X-Webhook-Signature',signature).send(raw.toString());assert.equal(received.status,200);
  await payments.webhook(raw,signature);await payments.reconcile(employee,qr.ma_giao_dich);await payments.reconcile(employee,qr.ma_giao_dich);
  assert.equal((await db.query('SELECT * FROM su_kien_thanh_toan')).rows.length,1);
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),9);
+});
+test('employee QR confirmation settles without bank events and later callbacks cannot consume stock twice',async()=>{
+ const order=await ordersService(db).create(employee,items(),true);
+ const payments=paymentsService(db,gateway,secret,true),qr=await payments.qr(employee,order.ma_don);
+ assert.equal((await db.query('SELECT * FROM su_kien_thanh_toan')).rows.length,0);
+ const first=await payments.confirmQr(employee,qr.ma_giao_dich);
+ assert.equal(first.trang_thai,'Thành công');
+ await payments.confirmQr(employee,qr.ma_giao_dich);
+ assert.equal((await ordersService(db).get(employee,order.ma_don)).da_thanh_toan,true);
+ const manual=await one('SELECT noi_dung FROM su_kien_thanh_toan WHERE ma_su_kien=$1',['employee-confirm:'+qr.ma_giao_dich]);
+ assert.equal(manual.noi_dung.source,'employee');assert.equal(manual.noi_dung.actorId,employee.id);
+ assert.equal(manual.noi_dung.status,'employee_confirmed');
+ const raw=Buffer.from(JSON.stringify({eventId:'bank-after-manual',paymentId:qr.ma_giao_dich,orderCode:order.ma_don_hien_thi,reference:qr.ma_tham_chieu_qr,amount:25000,status:'success'}));
+ await payments.webhook(raw,createHmac('sha256',secret).update(raw).digest('hex'));
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),9);
+ assert.equal((await one("SELECT count(*)::int AS count FROM giao_dich_thanh_toan WHERE trang_thai='Thành công'")).count,1);
+ assert.equal((await one("SELECT count(*)::int AS count FROM bien_dong_kho WHERE loai='Bán hàng'")).count,1);
+});
+test('manual QR confirmation retains authorization, active-shift, amount and one-payment guards',async()=>{
+ const order=await ordersService(db).create(employee,items(),true);
+ const payments=paymentsService(db,gateway),qr=await payments.qr(employee,order.ma_don),other=await payments.qr(employee,order.ma_don);
+ await assert.rejects(payments.confirmQr(colleague,qr.ma_giao_dich),(e:any)=>e.code==='FORBIDDEN');
+ await assert.rejects(payments.confirmQr(manager,qr.ma_giao_dich),(e:any)=>e.code==='FORBIDDEN');
+ await db.query('UPDATE giao_dich_thanh_toan SET so_tien_thanh_toan=1 WHERE ma_giao_dich=$1',[qr.ma_giao_dich]);
+ await assert.rejects(payments.confirmQr(employee,qr.ma_giao_dich),(e:any)=>e.code==='PAYMENT_MISMATCH');
+ await db.query('UPDATE giao_dich_thanh_toan SET so_tien_thanh_toan=25000 WHERE ma_giao_dich=$1',[qr.ma_giao_dich]);
+ await payments.confirmQr(employee,qr.ma_giao_dich);
+ await assert.rejects(payments.confirmQr(employee,other.ma_giao_dich),(e:any)=>e.code==='ALREADY_PAID');
+ const secondOrder=await ordersService(db).create(employee,items(),true),second=await payments.qr(employee,secondOrder.ma_don);
+ await endShift();await assert.rejects(payments.confirmQr(employee,second.ma_giao_dich));
+ assert.equal((await one("SELECT count(*)::int AS count FROM giao_dich_thanh_toan WHERE trang_thai='Thành công'")).count,1);
+});
+test('manual QR confirmation rolls back both its audit event and stock writes on failure',async()=>{
+ const order=await ordersService(db).create(employee,items(),true),payments=paymentsService(db,gateway),qr=await payments.qr(employee,order.ma_don);
+ await db.query('UPDATE nguyen_lieu SET ton_ly_thuyet=0 WHERE ma_nguyen_lieu=$1',[material]);
+ await assert.rejects(payments.confirmQr(employee,qr.ma_giao_dich));
+ assert.equal((await ordersService(db).get(employee,order.ma_don)).da_thanh_toan,false);
+ assert.equal((await db.query('SELECT * FROM su_kien_thanh_toan')).rows.length,0);
+ assert.equal((await db.query('SELECT * FROM bien_dong_kho')).rows.length,0);
+ await db.query('UPDATE nguyen_lieu SET ton_ly_thuyet=10 WHERE ma_nguyen_lieu=$1',[material]);
+ await payments.confirmQr(employee,qr.ma_giao_dich);
+ assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),9);
+});
+test('manual QR HTTP confirmation requires an employee session and is retry-safe',async()=>{
+ const order=await ordersService(db).create(employee,items(),true),qr=await paymentsService(db,gateway).qr(employee,order.ma_don);
+ const url='/api/payments/'+qr.ma_giao_dich+'/confirm';
+ assert.equal((await request(app).post(url).set('Origin',origin).send({})).status,401);
+ const session=request.agent(app);
+ assert.equal((await session.post('/api/auth/login').set('Origin',origin).send({ten_dang_nhap:'employee',mat_khau:'test-password'})).status,200);
+ assert.equal((await session.post(url).set('Origin',origin).send({})).status,200);
+ assert.equal((await session.post(url).set('Origin',origin).send({})).status,200);
  assert.equal(Number((await one('SELECT ton_ly_thuyet FROM nguyen_lieu WHERE ma_nguyen_lieu=$1',[material])).ton_ly_thuyet),9);
 });
 test('pending or underpaid QR events do not count as paid',async()=>{

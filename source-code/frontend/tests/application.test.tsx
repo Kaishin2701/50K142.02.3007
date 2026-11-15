@@ -2,6 +2,7 @@ import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   cleanup,
+  act,
   render,
   screen,
   waitFor,
@@ -188,8 +189,8 @@ function installApi() {
           nhan_vien_lap: employee.ho_ten,
           items: body.items.map((item: any) => ({
             ...item,
-            ten_mon_luc_lap: menu[0].ten_mon,
-            don_gia_luc_lap: 25000,
+            ten_mon_luc_lap: menu.find(option => option.ma_mon === item.ma_mon)!.ten_mon,
+            don_gia_luc_lap: menu.find(option => option.ma_mon === item.ma_mon)!.don_gia_hien_tai,
           })),
           payments: [],
         };
@@ -251,6 +252,13 @@ function installApi() {
           autoConfirm: true,
         };
         order.payments = [payment];
+        return response(payment);
+      }
+      if (/^\/payments\/[^/]+\/confirm$/.test(path) && method === 'POST') {
+        const payment = order.payments.find((p: any) => p.ma_giao_dich === path.split('/')[2]);
+        payment.trang_thai = 'Thành công';
+        payment.so_tien_nhan = order.tong_tien;
+        order.da_thanh_toan = true;
         return response(payment);
       }
       if (path === '/inventory/materials') return response([material]);
@@ -328,6 +336,7 @@ beforeEach(() => {
   savedCount = null;
   qrEnabled = false;
   material.ton_ly_thuyet = 10;
+  material.trang_thai = 'Bình thường';
   shifts = [
     {
       ma_ca: '44444444-4444-4444-8444-444444444444',
@@ -376,6 +385,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  menu.splice(1);
   sessionStorage.clear();
   vi.unstubAllGlobals();
 });
@@ -403,6 +413,86 @@ async function checkSale(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('native application architecture', () => {
+  it('highlights only low-stock records while retaining the actual status and STT headings', async () => {
+    location.hash = '/stock';
+    const previousFetch = vi.mocked(fetch).getMockImplementation()!;
+    vi.mocked(fetch).mockImplementation(async (input, options) => String(input).includes('/inventory/materials')
+      ? response([{ ...material, trang_thai: 'Sắp hết' }, { ...material, ma_nguyen_lieu: 'normal-material', ten_nguyen_lieu: 'Sữa tươi', trang_thai: 'Bình thường' }])
+      : previousFetch(input, options));
+    render(<App />);
+    await screen.findByText('Có 1 nguyên liệu dưới mức tồn tối thiểu');
+    expect(screen.getByRole('columnheader', { name: 'STT', exact: true }).textContent).toBe('STT');
+    const lowRow = screen.getByText(material.ten_nguyen_lieu).closest('tr')!;
+    const normalRow = screen.getByText('Sữa tươi', { exact: true }).closest('tr')!;
+    expect(lowRow.classList.contains('low-stock-row')).toBe(true);
+    expect(normalRow.classList.contains('low-stock-row')).toBe(false);
+    expect(within(lowRow).getByText('Sắp hết')).toBeTruthy();
+    expect(within(normalRow).getByText('Bình thường')).toBeTruthy();
+  });
+  it('changes dishes through the bordered selector, merges duplicate rows and locks the checked snapshot', async () => {
+    const alternative = { ...menu[0], ma_mon: '33333333-3333-4333-8333-333333333334', ten_mon: 'Cacao', don_gia_hien_tai: 30000 };
+    menu.push(alternative);
+    const user = await startSale();
+    await user.click(screen.getByRole('button', { name: 'Thêm Cacao', exact: true }));
+    await user.click(screen.getByRole('button', { name: 'Tiếp tục lập hóa đơn', exact: true }));
+    const quantity = screen.getByLabelText('Số lượng ' + menu[0].ten_mon);
+    await user.clear(quantity); await user.type(quantity, '2');
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Tên món dòng 1' }), alternative.ma_mon);
+    expect(screen.queryByRole('combobox', { name: 'Tên món dòng 2' })).toBeNull();
+    expect((screen.getByLabelText('Số lượng Cacao') as HTMLInputElement).value).toBe('3');
+    await user.click(screen.getByRole('button', { name: 'Kiểm tra đơn', exact: true }));
+    await waitFor(() => expect(calls.some(call => call.path === '/orders/drafts')).toBe(true));
+    expect(calls.find(call => call.path === '/orders/drafts')!.body.items).toEqual([{ ma_mon: alternative.ma_mon, so_luong: 3 }]);
+    await waitFor(() => expect((screen.getByRole('combobox', { name: 'Tên món dòng 1' }) as HTMLSelectElement).disabled).toBe(true));
+    const snapshotQuantity = screen.getByLabelText('Số lượng Cacao') as HTMLInputElement;
+    expect(snapshotQuantity.readOnly).toBe(true);
+    await user.type(snapshotQuantity, '4');
+    expect(snapshotQuantity.value).toBe('3');
+  });
+  it('shows the Figma forced sign-out dialog on a locked-account API response and acknowledges it once', async () => {
+    activeUser = employee; location.hash = '/sales'; render(<App />);
+    await screen.findByRole('heading', { name: 'Chọn món', exact: true });
+    const previousFetch = vi.mocked(fetch).getMockImplementation()!;
+    vi.mocked(fetch).mockImplementation(async (input, options) => {
+      if (String(input).includes('/orders')) return response('Tài khoản của bạn đã bị khóa.', 401, 'ACCOUNT_LOCKED');
+      return previousFetch(input, options);
+    });
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('link', { name: 'Quản lý đơn hàng', exact: true }));
+    const dialog = await screen.findByRole('dialog', { name: 'Bạn đã bị đăng xuất' });
+    expect(within(dialog).getByText(/Tài khoản của bạn đã bị khóa/)).toBeTruthy();
+    expect(within(dialog).getAllByRole('button').map(button => button.textContent)).toEqual(['Đã hiểu']);
+    expect(screen.getByRole('heading', { name: 'Đăng nhập', exact: true })).toBeTruthy();
+    expect(screen.queryByRole('navigation', { name: 'Điều hướng chính' })).toBeNull();
+    await user.click(within(dialog).getByRole('button', { name: 'Đã hiểu' }));
+    await act(async () => window.dispatchEvent(new CustomEvent('me-session-expired', { detail: { code: 'ACCOUNT_LOCKED' } })));
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+  it('shows the lock notice after a locked session is detected on initial page load', async () => {
+    const previousFetch = vi.mocked(fetch).getMockImplementation()!;
+    vi.mocked(fetch).mockImplementation(async (input, options) => String(input).endsWith('/auth/me')
+      ? response('Tài khoản của bạn đã bị khóa.', 401, 'ACCOUNT_LOCKED') : previousFetch(input, options));
+    render(<App />);
+    await screen.findByRole('dialog', { name: 'Bạn đã bị đăng xuất' });
+    expect(screen.getByRole('button', { name: 'Đăng nhập', exact: true })).toBeTruthy();
+  });
+  it('uses the account lock reason from realtime session termination but not from normal expiration', async () => {
+    const listeners = new Map<string, (event: MessageEvent) => void>();
+    vi.stubGlobal('EventSource', class {
+      addEventListener(name: string, listener: (event: MessageEvent) => void) { listeners.set(name, listener); }
+      close() {}
+    });
+    render(<App />);
+    await screen.findByRole('heading', { name: 'Báo cáo doanh thu', exact: true });
+    await act(async () => listeners.get('session-ended')!(new MessageEvent('session-ended', { data: '{"code":"ACCOUNT_LOCKED"}' })));
+    await screen.findByRole('dialog', { name: 'Bạn đã bị đăng xuất' });
+    cleanup(); listeners.clear();
+    render(<App />);
+    await screen.findByRole('heading', { name: 'Báo cáo doanh thu', exact: true });
+    await act(async () => listeners.get('session-ended')!(new MessageEvent('session-ended', { data: '{"code":"UNAUTHENTICATED"}' })));
+    await screen.findByRole('heading', { name: 'Đăng nhập', exact: true });
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
   it('keeps order details read-only even for paid employee orders', async () => {
     const user = await startSale();
     await checkSale(user);
@@ -422,7 +512,7 @@ describe('native application architecture', () => {
     qrEnabled = true;
     const user = await startSale(); await checkSale(user);
     await user.click(screen.getByRole('button', { name: 'QR', exact: true }));
-    await screen.findByText('Đang chờ ngân hàng xác nhận thanh toán…');
+    await screen.findByAltText('QR thanh toán');
     await user.click(screen.getByRole('button', { name: 'Hủy đơn', exact: true }));
     await user.click(within(screen.getByRole('dialog', { name: 'Hủy đơn' })).getByRole('button', { name: 'Xác nhận', exact: true }));
     await screen.findByRole('heading', { name: 'Chọn món', exact: true });
@@ -652,12 +742,16 @@ describe('native application architecture', () => {
       within(dialog).getByRole('spinbutton', { name: 'Số tiền nhận được' }),
       '1000',
     );
+    const confirmCash = within(dialog).getByRole('button', { name: 'Xác nhận số tiền' }) as HTMLButtonElement;
+    expect(confirmCash.disabled).toBe(true);
+    expect(Array.from(dialog.querySelectorAll('.dialog-actions > button')).map(button => button.textContent)).toEqual(['Xác nhận số tiền', 'Chọn lại phương thức']);
     await user.click(
       within(dialog).getByRole('button', { name: 'Xác nhận số tiền' }),
     );
     await within(dialog).findByText(
       'Số tiền nhận được nhỏ hơn tổng tiền đơn hàng',
     );
+    expect(calls.filter(call => call.path === '/payments/cash')).toHaveLength(0);
     expect(screen.getByRole('main')).toBe(main);
     await user.clear(
       within(dialog).getByRole('spinbutton', { name: 'Số tiền nhận được' }),
@@ -666,6 +760,7 @@ describe('native application architecture', () => {
       within(dialog).getByRole('spinbutton', { name: 'Số tiền nhận được' }),
       '50000',
     );
+    expect(confirmCash.disabled).toBe(false);
     await user.click(
       within(dialog).getByRole('button', { name: 'Xác nhận số tiền' }),
     );
@@ -732,13 +827,27 @@ describe('native application architecture', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(location.hash).toBe('#/sales');
   });
+  it('returns from insufficient cash to payment selection without recording payment or replacing the order', async () => {
+    const user = await startSale(); await checkSale(user);
+    const orderId = order.ma_don;
+    await user.click(screen.getByRole('button', { name: 'Tiền mặt', exact: true }));
+    const cashDialog = screen.getByRole('dialog', { name: 'Thanh toán tiền mặt' });
+    await user.type(within(cashDialog).getByRole('spinbutton', { name: 'Số tiền nhận được' }), '1000');
+    await within(cashDialog).findByRole('alert');
+    await user.click(within(cashDialog).getByRole('button', { name: 'Chọn lại phương thức', exact: true }));
+    expect(screen.queryByRole('dialog', { name: 'Thanh toán tiền mặt' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'QR', exact: true })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Tiền mặt', exact: true })).toBeTruthy();
+    expect(order.ma_don).toBe(orderId); expect(order.da_thanh_toan).toBe(false);
+    expect(calls.filter(call => call.path === '/payments/cash')).toHaveLength(0);
+  });
   it('reflects automatic QR success from server refresh without clicking reconciliation', async () => {
     qrEnabled = true;
     const user = await startSale();
     await checkSale(user);
     const main = screen.getByRole('main');
     await user.click(screen.getByRole('button', { name: 'QR', exact: true }));
-    await screen.findByText('Đang chờ ngân hàng xác nhận thanh toán…');
+    await screen.findByAltText('QR thanh toán');
     expect(order.da_thanh_toan).toBe(false);
     order.da_thanh_toan = true;
     order.payments[0].trang_thai = 'Thành công';
@@ -746,16 +855,32 @@ describe('native application architecture', () => {
     await screen.findByRole('button', { name: 'Xuất hóa đơn' });
     expect(screen.queryByRole('dialog', { name: 'Thanh toán QR' })).toBeNull();
     expect(
-      calls.filter((call) => call.path.endsWith('/reconcile')),
+      calls.filter((call) => /^\/payments\/[^/]+\/(confirm|reconcile)$/.test(call.path)),
     ).toHaveLength(0);
     expect(screen.getByRole('main')).toBe(main);
+  });
+  it('records a QR payment immediately when the employee confirms it without a bank event', async () => {
+    qrEnabled = true;
+    const user = await startSale();
+    await checkSale(user);
+    await user.click(screen.getByRole('button', { name: 'QR', exact: true }));
+    await screen.findByAltText('QR thanh toán');
+    expect(order.da_thanh_toan).toBe(false);
+    expect(screen.queryByText('Đang chờ ngân hàng xác nhận thanh toán…')).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Đối soát thành công', exact: true }));
+    await screen.findByRole('button', { name: 'Xuất hóa đơn', exact: true });
+    expect(order.da_thanh_toan).toBe(true);
+    expect(screen.queryByAltText('QR thanh toán')).toBeNull();
+    expect(calls.filter(c => /^\/payments\/[^/]+\/confirm$/.test(c.path))).toHaveLength(1);
+    expect(calls.filter(c => c.path.endsWith('/reconcile'))).toHaveLength(0);
+    expect(calls.filter(c => c.path.endsWith('/start-preparing'))).toHaveLength(0);
   });
   it('polls pending automatic QR if the realtime notification is missed', async () => {
     qrEnabled = true;
     const user = await startSale();
     await checkSale(user);
     await user.click(screen.getByRole('button', { name: 'QR', exact: true }));
-    await screen.findByText('Đang chờ ngân hàng xác nhận thanh toán…');
+    await screen.findByAltText('QR thanh toán');
     order.da_thanh_toan = true;
     order.payments[0].trang_thai = 'Thành công';
     await screen.findByRole(
@@ -764,7 +889,7 @@ describe('native application architecture', () => {
       { timeout: 8000 },
     );
     expect(
-      calls.filter((call) => call.path.endsWith('/reconcile')),
+      calls.filter((call) => /^\/payments\/[^/]+\/(confirm|reconcile)$/.test(call.path)),
     ).toHaveLength(0);
   }, 12000);
   it('assigns employees without replacing the weekly calendar', async () => {
@@ -904,13 +1029,11 @@ describe('native application architecture', () => {
     const detail = screen.getByRole('dialog', {
       name: 'Thông tin đăng ký',
     });
-    expect(within(detail).getByText('12:00')).toBeTruthy();
-    expect(within(detail).getByText('14:00')).toBeTruthy();
-    await user.click(
-      within(detail)
-        .getAllByRole('button', { name: 'Đóng', exact: true })
-        .at(-1)!,
-    );
+    expect((within(detail).getByLabelText('Giờ bắt đầu') as HTMLInputElement).value).toBe('12:00');
+    expect((within(detail).getByLabelText('Giờ kết thúc') as HTMLInputElement).value).toBe('14:00');
+    expect((within(detail).getByLabelText('Ngày') as HTMLInputElement).readOnly).toBe(true);
+    expect(within(detail).queryByRole('button', { name: 'Đóng', exact: true })).toBeNull();
+    await act(async () => { detail.dispatchEvent(new Event('cancel', { cancelable: true })); });
     vi.mocked(Date.now).mockReturnValue(Date.parse('2026-11-09T05:01:00Z'));
     window.dispatchEvent(new Event('focus'));
     await waitFor(() =>

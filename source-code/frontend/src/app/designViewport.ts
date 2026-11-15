@@ -1,5 +1,5 @@
-// All pages share the 1440px-wide Figma composition. Resize the document as a
-// whole, without remounting the shell, checkout state or any open native dialog.
+// Share one Figma composition. Narrow windows scale down; wide desktops use
+// extra content space without magnifying the sidebar, text or controls.
 export const DESIGN_WIDTH = 1440;
 
 export function installDesignViewport() {
@@ -11,9 +11,9 @@ export function installDesignViewport() {
     : 0;
   const update = () => {
     const availableWidth = Math.max(1, window.innerWidth - scrollbar);
-    const scale = availableWidth / DESIGN_WIDTH;
+    const scale = Math.min(1, availableWidth / DESIGN_WIDTH);
     root.style.setProperty('--design-scale', String(scale));
-    root.style.setProperty('--design-viewport-width', `${DESIGN_WIDTH}px`);
+    root.style.setProperty('--design-viewport-width', `${Math.max(DESIGN_WIDTH, availableWidth)}px`);
     root.style.setProperty('--design-viewport-height', `${window.innerHeight / scale}px`);
   };
   update();

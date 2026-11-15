@@ -18,6 +18,8 @@ Base URL: `http://127.0.0.1:3000/api`. Mặc định trả JSON. `:id` là UUID.
 
 Tạo tài khoản: ten_dang_nhap (3–50 ký tự chữ/số/_.-), ho_ten, so_dien_thoai (9–15 chữ số, có thể có +), vai_tro (Quản lý/Nhân viên), mat_khau, xac_nhan_mat_khau. Sửa tài khoản gửi các trường tương tự, trừ hai trường mật khẩu. Không được khóa/hạ quyền quản lý hoạt động cuối cùng.
 
+Khóa tài khoản thu hồi các phiên hiện có. Một token hợp lệ chưa hết hạn của tài khoản đang bị khóa trả HTTP 401 với mã `ACCOUNT_LOCKED`; token hết hạn, không tồn tại hoặc bị thu hồi của tài khoản đang hoạt động trả `UNAUTHENTICATED`. SSE gửi `session-ended` kèm `{code}` tương ứng. Frontend dùng `ACCOUNT_LOCKED` để hiện hộp “Bạn đã bị đăng xuất” trên màn đăng nhập; hết phiên thông thường không hiện hộp khóa tài khoản. Kích hoạt lại tài khoản không khôi phục các phiên cũ, người dùng phải đăng nhập lại. Đăng nhập bằng tên/mật khẩu sai hoặc tài khoản khóa vẫn trả lỗi chung `INVALID_CREDENTIALS`.
+
 ## Menu và đơn hàng
 
 | Phương thức | Đường dẫn | Quyền | Nội dung |
@@ -58,6 +60,7 @@ Tra cứu đơn: page (mặc định 1), limit (mặc định 20, tối đa 100)
 | POST | /payments/cash | NV | ma_don, so_tien_nhan |
 | POST | /payments/qr | NV | ma_don |
 | POST | /payments/:id/reconcile | NV | Đối soát giao dịch QR |
+| POST | /payments/:id/confirm | NV | Nhân viên xác nhận QR thành công ngay, không cần sự kiện ngân hàng |
 | POST | /payments/webhook | Chữ ký máy chủ | Sự kiện từ cổng thanh toán |
 
 Tiền mặt thiếu bị từ chối; đủ/thừa trả thêm tien_thua. Mỗi đơn chỉ có một giao dịch thành công. Chỉ khi thanh toán thành công, phần tồn đã giữ được chuyển thành tiêu hao thực tế trên sổ lý thuyết.
@@ -76,7 +79,9 @@ Webhook body:
 {"eventId":"unique-event-id","paymentId":"<UUID>","orderCode":"ME-000001","reference":"<UUID>","amount":25000,"status":"success"}
 ```
 
-status nhận success/pending/failed. Header `X-Webhook-Signature` là HMAC-SHA256 của đúng raw body, mã hóa hex, dùng QR_WEBHOOK_SECRET; chấp nhận tiền tố sha256=. Webhook chỉ lưu sự kiện đã xác minh. Nhân viên gọi reconcile để ghi nhận thanh toán, chỉ thành công khi mã đơn/tham chiếu khớp và số tiền đủ. Sự kiện lặp không ghi nhận lại; cùng eventId mà khác nội dung bị từ chối. QR đang chờ hoặc chưa rõ kết quả không được tính vào doanh thu.
+status nhận success/pending/failed. Header `X-Webhook-Signature` là HMAC-SHA256 của đúng raw body, mã hóa hex, dùng QR_WEBHOOK_SECRET; chấp nhận tiền tố sha256=. Webhook chỉ lưu sự kiện đã xác minh. Endpoint reconcile vẫn yêu cầu sự kiện ngân hàng có mã đơn/tham chiếu khớp và số tiền đủ. Sự kiện lặp không ghi nhận lại; cùng eventId mà khác nội dung bị từ chối.
+
+Nút **Đối soát thành công** gọi `/payments/:id/confirm`: nhân viên được phân công trong ca đang diễn ra xác nhận thanh toán ngay mà không đợi webhook. API tự lấy số tiền từ đơn và giao dịch QR, không nhận số tiền hay cờ thành công từ client. Đơn phải đã xác nhận, giao dịch còn chờ và số tiền khớp; ca chưa kiểm kê. Sự kiện `employee-confirm:<id>` lưu nguồn `employee`, mã nhân viên và trạng thái `employee_confirmed`, phân biệt với giao dịch ngân hàng xác minh. Sự kiện này, thanh toán và trừ kho nằm trong cùng transaction. Bấm lại hoặc webhook đến sau không trừ kho lần hai. QR chờ vẫn chưa tính doanh thu cho đến khi nhân viên xác nhận hoặc webhook hợp lệ tự xác nhận.
 
 ## Ca làm
 

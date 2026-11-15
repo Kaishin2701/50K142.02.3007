@@ -151,29 +151,17 @@ export function RegistrationDetails({
       <Modal
         title="Thông tin đăng ký"
         className="registration-detail-dialog"
+        showClose={false}
         onClose={onClose}
         busy={task.pending}
       >
         <div className="dialog-body">
-          <dl className="detail-grid">
-            <dt>Ngày</dt>
-            <dd>{dateText(registration.ngay)}</dd>
-            <dt>Giờ bắt đầu</dt>
-            <dd>{visibleRange?.start ?? timeText(registration.gio_bat_dau)}</dd>
-            <dt>Giờ kết thúc</dt>
-            <dd>{visibleRange?.end ?? timeText(registration.gio_ket_thuc)}</dd>
-            <dt>Trạng thái</dt>
-            <dd>{registration.loai_dang_ky}</dd>
-          </dl>
-          {visibleRange &&
-            (visibleRange.start !== timeText(registration.gio_bat_dau) ||
-              visibleRange.end !== timeText(registration.gio_ket_thuc)) && (
-              <p className="muted">
-                Đăng ký gốc: {timeText(registration.gio_bat_dau)}–
-                {timeText(registration.gio_ket_thuc)}. Lịch chỉ hiển thị các
-                khung giờ còn trống.
-              </p>
-            )}
+          <div className="form-grid">
+            <Field label="Ngày" value={dateText(registration.ngay)} readOnly />
+            <Field label="Giờ bắt đầu" value={visibleRange?.start ?? timeText(registration.gio_bat_dau)} readOnly />
+            <Field label="Giờ kết thúc" value={visibleRange?.end ?? timeText(registration.gio_ket_thuc)} readOnly />
+          </div>
+          <div className="registration-status"><p>Trạng thái</p><p>{registration.loai_dang_ky}</p></div>
           <ErrorMessage message={task.error} />
         </div>
         <footer className="dialog-actions">

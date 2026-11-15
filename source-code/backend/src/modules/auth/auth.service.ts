@@ -41,7 +41,9 @@ export function authService(db: Database, hours: number) {
     authenticate: async (token?: string): Promise<{actor:Actor;user:Row}> => {
       if (typeof token!=='string' || !token || token.length>256) throw new AppError(401,'UNAUTHENTICATED','Vui lòng đăng nhập.');
       const user = await repo.session(db,tokenHash(token));
-      check(user,'Phiên đăng nhập đã hết hạn hoặc tài khoản bị khóa.','UNAUTHENTICATED',401);
+      check(user&&user.chua_het_han,'Phiên đăng nhập đã hết hạn.','UNAUTHENTICATED',401);
+      check(user.trang_thai!=='Đã khóa','Tài khoản của bạn đã bị khóa.','ACCOUNT_LOCKED',401);
+      check(!user.thu_hoi_luc,'Phiên đăng nhập đã bị thu hồi.','UNAUTHENTICATED',401);
       return { actor:{id:user.ma_nguoi_dung,role:user.vai_tro,sessionId:user.ma_phien}, user:publicUser(user) };
     },
     logout: (actor: Actor) => repo.revoke(db,actor.sessionId),

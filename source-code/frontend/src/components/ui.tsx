@@ -47,7 +47,7 @@ export function Field({
   hint,
   error,
   ...props
-}: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string; error?: string }) {
+}: InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string; error?: ReactNode }) {
   const id = useId();
   return (
     <label className="ui-field" htmlFor={id}>

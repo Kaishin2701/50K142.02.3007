@@ -2,6 +2,7 @@ import type { RequestHandler } from 'express';
 import type { Database } from './database.js';
 import type { authService } from '../modules/auth/auth.service.js';
 import { notificationList } from './notifications.js';
+import { AppError } from './errors.js';
 /** Best-effort refresh events. Business data is always fetched through authorized APIs. */
 export function eventStream(db:Database,auth:ReturnType<typeof authService>):RequestHandler{return(req,res)=>{
  res.status(200).set({'Content-Type':'text/event-stream','Cache-Control':'no-store','Connection':'keep-alive','X-Accel-Buffering':'no'});res.flushHeaders();
@@ -14,7 +15,10 @@ export function eventStream(db:Database,auth:ReturnType<typeof authService>):Req
      if(seen.size>1000){seen.clear();for(const notification of notifications)seen.add(notification.ma_thong_bao);}
      if(!closed&&fresh.length)res.write(`event: refresh\ndata: ${JSON.stringify({types:[...new Set(fresh.map(n=>n.loai))]})}\n\n`);
      else if(!closed)res.write(': heartbeat\n\n');
-   }catch{if(!closed){res.write('event: session-ended\ndata: {}\n\n');res.end();}}
+   }catch(error){if(!closed){
+     if(error instanceof AppError&&error.status===401){res.write(`event: session-ended\ndata: ${JSON.stringify({code:error.code})}\n\n`);res.end();}
+     else res.write(': heartbeat\n\n');
+   }}
    finally{busy=false;}
  };
  const interval=setInterval(()=>{void tick();},2000);interval.unref();res.on('close',()=>{closed=true;clearInterval(interval);});void tick();

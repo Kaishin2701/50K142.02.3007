@@ -100,6 +100,25 @@ export function paymentsService(db:Database,gateway:Gateway,secret?:string,autoC
       return {success:true};
     });
   },
+  confirmQr:(actor:Actor,id:string)=>db.transaction(async tx=>{
+    await lock(tx,'kho');
+    check(actor.role==='Nhân viên','Chỉ nhân viên được xác nhận thanh toán QR.','FORBIDDEN',403);
+    const payment=await repo.get(tx,id);
+    check(payment&&payment.phuong_thuc==='Chuyển khoản qua QR','Không tìm thấy giao dịch QR.','NOT_FOUND',404);
+    const order=await accessibleOrder(tx,payment.ma_don,actor);
+    if(payment.trang_thai==='Thành công')return payment;
+    check(order.da_xac_nhan,'Cần xác nhận đơn trước khi thanh toán.');
+    check(!order.da_thanh_toan,'Đơn hàng đã thanh toán.','ALREADY_PAID');
+    check(payment.trang_thai==='Chờ xác nhận','Giao dịch QR không còn chờ xác nhận.','PAYMENT_NOT_PENDING',422);
+    const shift=await ordersRepository.shift(tx,order.ma_ca,actor.id);
+    check(shift?.dang_dien_ra&&!shift.da_kiem_ke,'Ca làm đã kết thúc.');
+    check(Number(payment.so_tien_thanh_toan)>0&&Number(payment.so_tien_thanh_toan)===Number(order.tong_tien),'Số tiền QR không khớp đơn hàng.','PAYMENT_MISMATCH',422);
+    // Employee confirmation is deliberately distinct from a verified bank event.
+    // Its audit record and stock consumption commit or roll back together.
+    const event={eventId:'employee-confirm:'+id,paymentId:id,orderCode:order.ma_don_hien_thi,reference:payment.ma_tham_chieu_qr,amount:Number(order.tong_tien),status:'employee_confirmed',source:'employee',actorId:actor.id};
+    await repo.storeEvent(tx,event,createHash('sha256').update(JSON.stringify(event)).digest('hex'));
+    return finalize(tx,payment,order.tong_tien);
+  }),
   reconcile:(actor:Actor,id:string)=>db.transaction(async tx=>{await lock(tx,'kho');const payment=await repo.get(tx,id);
     check(payment&&payment.phuong_thuc==='Chuyển khoản qua QR','Không tìm thấy giao dịch QR.','NOT_FOUND',404);
     const order=await accessibleOrder(tx,payment.ma_don,actor);if(payment.trang_thai==='Thành công')return payment;

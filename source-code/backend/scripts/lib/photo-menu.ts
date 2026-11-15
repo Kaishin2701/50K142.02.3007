@@ -24,7 +24,7 @@ function recipe(name:string,category:string,size:string|null):Ingredient[]{
   const parts=new Map<string,Ingredient>();
   const add=(label:string,quantity:number,unit='ml')=>{
     const key=label+'|'+unit,old=parts.get(key);
-    parts.set(key,{id:menuId('ingredient:'+key),name:label+' (demo)',unit,quantity:(old?.quantity??0)+Math.round(quantity*scale*1000)/1000});
+    parts.set(key,{id:menuId('ingredient:'+key),name:label,unit,quantity:(old?.quantity??0)+Math.round(quantity*scale*1000)/1000});
   };
   const lower=name.toLocaleLowerCase('vi');
   if(category==='Topping'){
@@ -115,7 +115,7 @@ export async function importPhotoMenu(db:Database,items:PhotoItem[],managerId:st
     let stockAdded=false;
     if(!(await tx.query('SELECT ma_po FROM don_nhap_hang WHERE ma_po=$1',[receiptId])).rows.length){
       await tx.query(`INSERT INTO don_nhap_hang(ma_po,ten_nha_cung_cap,ngay_nhap,ma_nguoi_xac_nhan,trang_thai_thanh_toan,hinh_thuc_thanh_toan)
-        VALUES($1,'DỮ LIỆU DEMO - Tồn kho mẫu menu ảnh',(now() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date,$2,'Đã thanh toán','Tiền mặt')`,[receiptId,managerId]);
+        VALUES($1,'Nhập nguyên liệu ban đầu',(now() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date,$2,'Đã thanh toán','Tiền mặt')`,[receiptId,managerId]);
       for(const part of materials.values()){
         const amount=Math.ceil(part.quantity*300);
         await inventoryRepository.importLine(tx,receiptId,{ma_nguyen_lieu:part.id,so_luong_dat:amount,so_luong_nhan:amount,don_gia:0});

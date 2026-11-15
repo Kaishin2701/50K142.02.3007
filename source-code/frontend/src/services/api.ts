@@ -40,7 +40,7 @@ export async function api<T = RecordData>(
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 401 && !path.startsWith('/auth/'))
-      window.dispatchEvent(new Event('me-session-expired'));
+      window.dispatchEvent(new CustomEvent('me-session-expired', { detail: { code: data.error?.code } }));
     throw new ApiError(
       response.status,
       data.error?.code ?? 'NETWORK_ERROR',
@@ -54,6 +54,8 @@ export async function download(path: string, name: string) {
   const response = await fetch(apiBase + path, { credentials: 'include' });
   if (!response.ok) {
     const value = await response.json().catch(() => ({}));
+    if (response.status === 401)
+      window.dispatchEvent(new CustomEvent('me-session-expired', { detail: { code: value.error?.code } }));
     throw new ApiError(
       response.status,
       value.error?.code ?? 'DOWNLOAD_ERROR',

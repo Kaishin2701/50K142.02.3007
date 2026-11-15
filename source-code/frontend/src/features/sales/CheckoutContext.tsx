@@ -204,6 +204,22 @@ function useCheckoutModel() {
         line.ma_mon === id ? { ...line, so_luong: value } : line,
       ),
     );
+  const replaceItem = (id: string, item: MenuItem) => {
+    if (stored.orderId || order || task.pending || id === item.ma_mon) return;
+    const source = cart.find(line => line.ma_mon === id);
+    if (!source) return;
+    const target = cart.find(line => line.ma_mon === item.ma_mon);
+    if (target && Number(target.so_luong) + Number(source.so_luong) > 1000) {
+      task.setError('Số lượng là số nguyên từ 1 đến 1000.');
+      return;
+    }
+    changeCart(cart.flatMap(line => {
+      if (line.ma_mon === id) return target ? [] : [{ ...item, so_luong: source.so_luong }];
+      return line.ma_mon === item.ma_mon
+        ? [{ ...line, so_luong: String(Number(line.so_luong) + Number(source.so_luong)) }]
+        : [line];
+    }));
+  };
   const remove = (id: string) =>
     changeCart(cart.filter((line) => line.ma_mon !== id));
   const clear = () => {
@@ -281,7 +297,7 @@ function useCheckoutModel() {
     task.run(async () => {
       if (!payment) throw new Error('Chưa có giao dịch QR để đối soát.');
       setPayment(
-        await api<Payment>(`/payments/${payment.ma_giao_dich}/reconcile`, {
+        await api<Payment>(`/payments/${payment.ma_giao_dich}/confirm`, {
           method: 'POST',
         }),
       );
@@ -328,6 +344,7 @@ function useCheckoutModel() {
     task,
     add,
     quantity,
+    replaceItem,
     remove,
     clear,
     check,

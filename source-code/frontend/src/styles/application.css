@@ -1016,6 +1016,24 @@ a {
 .count-stock-panel .ui-table td {
   height: 66px;
 }
+.count-actions {
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 14px;
+  margin-top: 14px;
+}
+.count-actions .ui-button {
+  flex: 0 0 160px;
+  height: 44px;
+  white-space: nowrap;
+}
+.count-actions .ui-button-primary { flex-basis: 198px; }
+.count-actions .ui-button-primary:disabled {
+  opacity: 1;
+  background: #e5d6c4;
+  border-color: #e5d6c4;
+  color: #7d6657;
+}
 .closing-list-panel {
   min-height: 250px;
 }
@@ -1256,11 +1274,6 @@ a {
   margin: 14px 0 0;
   padding: 0;
   border: 0;
-}
-.payment-inline
-  .dialog-actions
-  > .ui-button:first-child:not(.ui-button-primary) {
-  display: none;
 }
 .payment-inline .dialog-actions .ui-button-primary {
   width: 100%;
@@ -1644,7 +1657,7 @@ h2 {
   font-size: 14px;
 }
 .ui-table [data-column='index'] {
-  width: 40px;
+  width: 44px;
 }
 .ui-table [data-column='code'] {
   font-weight: 600;
@@ -2865,6 +2878,16 @@ body,
   .account-list-panel .table-actions .ui-button:nth-child(2) { flex-basis: 94px; }
   .account-list-panel .table-actions .ui-button:nth-child(3) { flex-basis: 108px; }
 
+/* Figma account statuses are 115 x 26px and never split into two lines. */
+.account-list-panel .ui-table [data-column='status'] { padding-right: 4px; }
+.account-list-panel .ui-table [data-column='status'] .ui-badge {
+  width: 115px;
+  min-height: 26px;
+  padding: 4px 8px;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
 /* Shared Figma states from the full QA review. */
 .inline-form-error, .difference-value { color: #b8332a; }
 .shift-form-dialog .ui-error, .availability-dialog .ui-error, .count-stock-panel > .ui-error { background: transparent; border: 0; padding: 0; color: #b8332a; font-size: 12px; }
@@ -2902,7 +2925,7 @@ body,
 .receipt-metadata { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 24px 0 32px; }
 .receipt-metadata dt { color: #7d6657; font-size: 11px; margin-bottom: 8px; }
 .receipt-metadata dd { margin: 0; font-size: 13px; font-weight: 700; }
-.inventory-receipts .ui-table [data-column='index'] { width: 40px; }
+.inventory-receipts .ui-table [data-column='index'] { width: 44px; }
 .inventory-receipts .ui-table [data-column='code'] { width: 15%; }
 .inventory-receipts .ui-table [data-column='date'] { width: 14%; }
 .inventory-receipts .ui-table [data-column='supplier'] { width: 22%; }
@@ -2917,11 +2940,38 @@ body,
 .low-stock-request-dialog .dialog-actions { margin-top: auto; }
 .asset-overlay { display: inline-grid; place-items: center; vertical-align: middle; flex-shrink: 0; }
 .asset-overlay > img { grid-area: 1 / 1; max-width: none; }
-.sale-payment-notice { display: flex; align-items: center; gap: 8px; justify-content: flex-end; color: #296e4d; font-size: 12px; margin: -44px 0 24px auto; max-width: 60%; }
+/* Sales success notification follows Figma 261:51717 / 261:53473.
+   It belongs to the page header and must not change the panel layout. */
+.app-shell[data-page='sales'] .app-main { position: relative; }
+.sale-payment-notice {
+  position: absolute;
+  top: 36px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 427px;
+  max-width: calc(100% - 330px);
+  min-height: 44px;
+  margin: 0;
+  padding: 11px 14px;
+  border: 1px solid #e5f2e8;
+  border-radius: 10px;
+  background: #fff;
+  color: #296e4d;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+}
+.sale-payment-notice > .asset-overlay {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
 .sales-main { position: relative; }
 .sales-main > .ui-badge { align-self: flex-end; font-size: 11px; margin-bottom: 12px; }
 .sales-main .sale-table { margin-top: 16px; }
-.sale-table .ui-table [data-column='index'] { width: 6%; }
+.sale-table .ui-table [data-column='index'] { width: 44px; }
 .sale-table .ui-table [data-column='name'] { width: 34%; }
 .sale-table .ui-table [data-column='quantity'] { width: 16%; }
 .sale-table .ui-table [data-column='price'], .sale-table .ui-table [data-column='total'] { width: 19%; }
@@ -2937,13 +2987,32 @@ body,
 .empty-cart-total p { color: #7d6657; }
 .empty-cart-total + .checkout-cancel { margin-top: 0; }
 .continue-sale-action img, .sale-check-footer img, .checkout-panel .ui-button > img { flex-shrink: 0; max-width: none; }
-.payment-success-panel { background: #e5f2e8; border-radius: 10px; padding: 28px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; color: #296e4d; font-size: 13px; }
-.payment-success-panel > p { font-size: 12px; line-height: 20px; }
-.payment-success-panel > strong:last-child { font-size: 20px; }
+.payment-success-panel {
+  min-height: 207px;
+  padding: 22px 24px 20px;
+  border: 1px solid #e5f2e8;
+  border-radius: 14px;
+  background: #e5f2e8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #296e4d;
+}
+.payment-success-panel > .asset-overlay { width: 44px; height: 44px; flex-shrink: 0; }
+.payment-success-panel > strong:first-of-type { margin-top: 8px; font-size: 16px; line-height: 24px; font-weight: 700; }
+.payment-success-panel > p { margin-top: 8px; font-size: 12px; font-weight: 500; line-height: 18px; }
+.payment-success-panel > strong:last-child { margin-top: 8px; color: #1f140e; font-size: 22px; line-height: 33px; }
+.preparation-success-panel { min-height: 146px; padding: 22px 16px 16px; }
+.preparation-success-panel > img { flex-shrink: 0; max-width: none; }
 .printed-invoice-state { display: flex; align-items: center; gap: 12px; background: #fcf7f0; border-radius: 10px; padding: 16px; margin-top: auto; font-size: 12px; }
 .printed-invoice-state img { flex-shrink: 0; max-width: none; }
 .printed-invoice-state p { margin-top: 4px; color: #7d6657; font-size: 11px; }
 .printed-invoice-state > span { margin-left: auto; color: #296e4d; }
+.sales-main > .printed-invoice-state + .sale-check-footer {
+  /* Only the receipt strip absorbs free space; its footer stays 14px below it. */
+  margin-top: 14px;
+}
 .completed-order-count { font-size: 12px; color: #7d6657; margin-top: 16px; }
 .completed-order-count > span { float: right; }
 .cash-change { background: #e5f2e8; border: 0; color: #296e4d; padding: 14px; border-radius: 9px; }
@@ -2983,8 +3052,8 @@ body,
 .invoice-print-grid .quantity-stepper .ui-button { min-width: 0; padding: 5px; }
 .invoice-export-action { margin-top: auto; width: 100%; }
 
-/* One 1440px Figma composition at every window size. The viewport controller
-   scales the entire document, including native dialogs and fixed navigation.
+/* One Figma composition at every window size. The viewport controller scales
+   down narrow windows; wide desktops retain the original sidebar/control size.
    There are no alternate mobile, narrow-desktop or table-card layouts. */
 html {
   width: var(--design-viewport-width, 1440px);
@@ -3030,3 +3099,108 @@ body, #root {
 .registration-detail-dialog .dialog-actions .ui-button-primary { flex-basis: 220px; }
 .shift-change-dialog .dialog-actions { border-top: 0; }
 .ui-notice { width: 375px; min-height: 52px; padding: 14px 13px; right: 25px; bottom: 28px; border-color: #296e4d; font-weight: 600; line-height: 20px; }
+
+/* Figma GD2.3-7b2-2: forced sign-out after an account is locked. */
+.ui-dialog.locked-account-dialog {
+  width: 486px;
+  border: 0;
+  border-radius: 20px;
+  background: #fffdfa;
+  transform: translateX(44px);
+}
+.locked-account-dialog .dialog-surface { min-height: 342px; position: relative; }
+.locked-account-dialog .dialog-header { position: relative; z-index: 1; padding: 32px 40px 0 130px; }
+.locked-account-dialog .dialog-header h2 { font-size: 24px; line-height: 32px; white-space: nowrap; }
+.locked-account-dialog .dialog-body { padding: 45px 40px 0 130px; gap: 0; }
+.locked-account-dialog .dialog-body > p { position: relative; z-index: 1; font-size: 17px; line-height: 29px; color: #7d6657; white-space: nowrap; }
+.locked-account-frame { position: absolute; top: 0; left: 0; max-width: none; pointer-events: none; }
+.locked-account-icon { position: absolute; top: 40px; left: 35px; width: 78px; height: 78px; }
+.locked-account-icon > img { position: absolute; max-width: none; }
+.lock-circle { top: 0; left: 0; }
+.lock-shackle { top: 13.5px; left: 25.5px; }
+.lock-body { top: 34px; left: 23px; }
+.lock-keyhole { top: 42.5px; left: 35.5px; }
+.lock-keyhole-stem { top: 46.5px; left: 37.5px; }
+.locked-account-dialog .dialog-actions { position: relative; z-index: 1; margin: 25px 42px 0; padding: 45px 0 32px; border: 0; }
+.locked-account-divider { position: absolute; top: 0; left: 0; max-width: none; }
+.locked-account-dialog .dialog-actions .ui-button { position: relative; flex: 0 0 402px; height: 44px; padding: 0; border: 0; background: transparent; }
+.locked-account-dialog .dialog-actions .ui-button > img { position: absolute; top: 0; left: 0; max-width: none; }
+.locked-account-dialog .dialog-actions .ui-button > span { position: relative; }
+
+/* Figma sales rows use a bordered dish selector, including read-only snapshots. */
+.sale-table .sale-item-name .ui-field { max-width: none; width: 100%; }
+.sale-item-name { position: relative; }
+.sale-item-name select { appearance: none; height: 44px; min-height: 44px; width: 100%; padding: 10px 32px 10px 12px; }
+.sale-item-name > .sale-item-chevron { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; max-width: none; }
+.sale-item-name select:disabled { opacity: 1; color: #4a3525; -webkit-text-fill-color: #4a3525; }
+
+/* User QA batch: one sidebar size, boxed immutable sales rows and Figma cards. */
+.ui-table th[data-column='index'], .ui-table td[data-column='index'] {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.sales-main > .sale-locked-badge {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 236px;
+  height: 27px;
+  margin: 0;
+  padding: 4px 10px;
+  gap: 6px;
+  justify-content: flex-start;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  border-radius: 99px;
+  background: #fcebe3;
+  color: #ab4a36;
+  font-size: 11px;
+  line-height: 18px;
+}
+.sales-main:has(> .sale-locked-badge) > h2 { max-width: calc(100% - 256px); }
+.sales-main > .sale-locked-badge.is-qr { background: #ede0c8; color: #4a3525; }
+.sale-lock-icon { position: relative; width: 12px; height: 12px; flex: 0 0 12px; }
+.sale-lock-icon img { position: absolute; max-width: none; }
+.sale-lock-body { left: 1px; top: 5px; }
+.sale-lock-shackle { left: 3px; top: 0.5px; }
+.sale-table .ui-table [data-column='quantity'] .ui-field { max-width: 84px; }
+.sale-table .ui-table [data-column='quantity'] input { text-align: center; }
+.sale-table .ui-table [data-column='quantity'] input:read-only { background: #fcf7f0; opacity: 1; color: #4a3525; }
+.ui-dialog.registration-detail-dialog { width: 600px; }
+.registration-detail-dialog .dialog-surface { min-height: 518px; }
+.registration-detail-dialog .dialog-body { padding-top: 24px; gap: 24px; }
+.registration-detail-dialog .form-grid { gap: 19px 20px; }
+.registration-detail-dialog .form-grid > :first-child { grid-column: 1 / -1; }
+.registration-detail-dialog .ui-field { gap: 4px; }
+.registration-detail-dialog .ui-field > span { color: #1f140e; }
+.registration-detail-dialog input:read-only { background: #fcf7f0; color: #1f140e; }
+.registration-status { font-size: 13px; line-height: 20px; color: #1f140e; }
+.registration-status > p:first-child { font-size: 12px; margin-bottom: 6px; }
+.registration-detail-dialog .dialog-actions { margin-top: auto; }
+.inventory-stock { padding: 16px; }
+.inventory-stock .ui-table { border-collapse: separate; border-spacing: 0 16px; }
+.inventory-stock .ui-table th { padding: 0 8px; }
+.inventory-stock .ui-table tbody tr { position: relative; background: transparent; }
+.inventory-stock .ui-table tbody td { height: 74px; padding: 16px 8px; border-bottom: 0; }
+.inventory-stock .ui-table tbody tr::after { content: ''; position: absolute; left: 8px; right: 8px; bottom: -8px; height: 1px; background: #e5d6c4; }
+.inventory-stock .ui-table .low-stock-row > td { background: #fcebe3; color: #7a2e1d; }
+.inventory-stock .ui-table .low-stock-row > td:first-child { border-radius: 8px 0 0 8px; }
+.inventory-stock .ui-table .low-stock-row > td:last-child { border-radius: 0 8px 8px 0; }
+.inventory-stock .ui-table [data-column='code'] { width: 110px; }
+.inventory-stock .ui-table [data-column='name'] { width: 160px; }
+.inventory-stock .ui-table [data-column='unit'] { width: 80px; }
+.inventory-stock .ui-table [data-column='stock'] { width: 116px; }
+.inventory-stock .ui-table [data-column='counted'] { width: 126px; }
+.inventory-stock .ui-table [data-column='minimum'] { width: 145px; }
+.inventory-stock .ui-badge { width: 122px; min-height: 27px; white-space: nowrap; }
+
+/* Figma 261:53305: underpaid cash stays unpaid and offers a method retry. */
+.cash-payment .ui-field { gap: 4px; }
+.cash-payment .ui-field .field-error { display: flex; align-items: flex-start; gap: 6px; margin-top: 2px; color: #b8332a; font-size: 11px; font-weight: 500; line-height: 16.5px; }
+.cash-warning-icon { width: 14px; height: 14px; flex: 0 0 14px; margin-top: 1px; }
+.cash-payment .ui-field input[aria-invalid='true'] { border: 1.5px solid #b8332a; border-radius: 8px; }
+.cash-payment .dialog-body > .muted { color: #7d6657; font-size: 12px; font-weight: 500; line-height: 18px; }
+.cash-payment .dialog-actions { gap: 14px; }
+.cash-payment .cash-confirm-action:disabled { opacity: 1; background: #e5d6c4; border-color: #e5d6c4; color: #7d6657; }
+.cash-payment .cash-choose-method { display: inline-flex; justify-content: center; color: #4a3525; background: #fff; }

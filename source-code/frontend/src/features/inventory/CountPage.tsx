@@ -468,7 +468,8 @@ export default function CountPage() {
             {checked && (
               <p role="status">Đã đối chiếu tiền thực thu và tồn thực tế.</p>
             )}
-            <div className="ui-actions">
+          </Panel>
+            <div className="ui-actions count-actions">
               <Button
                 onClick={reconcile}
                 disabled={
@@ -485,7 +486,6 @@ export default function CountPage() {
                 Lưu phiếu kiểm kho
               </Button>
             </div>
-          </Panel>
         </>
       )}
       {createdReport && (
